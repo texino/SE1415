@@ -1,4 +1,6 @@
-package com.example.esp1415;
+package it.dei.unipd.esp1415;
+
+import com.example.esp1415.R;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
