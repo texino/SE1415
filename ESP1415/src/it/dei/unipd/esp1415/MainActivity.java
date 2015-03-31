@@ -1,11 +1,12 @@
 package it.dei.unipd.esp1415;
 
-import com.example.esp1415.R;
-
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.esp1415.R;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -14,6 +15,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        //Let's start the service
+        startService(new Intent(this, FirstService.class));
     }
 
 
