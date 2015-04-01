@@ -1,23 +1,36 @@
 package it.dei.unipd.esp1415;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.esp1415.R;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    @Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
         //Let's start the service
-        startService(new Intent(this, FirstService.class));
+        //startService(new Intent(this, FirstService.class));
+        
+        Button next = (Button) findViewById(R.id.Button01);
+		next.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View view) {
+				Context context = getApplicationContext();
+				Intent i = new Intent(context, FirstService.class);
+		        //i.putExtra("Prova", "Stringa di Prova");
+		        context.startService(i);
+			}
+		});
     }
 
 

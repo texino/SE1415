@@ -6,32 +6,33 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class FirstService extends Service {
-	
+
 	private static String TAG = "TAG di prova";
-	
-	@Override
-	public IBinder onBind(Intent arg0) {
-		return null;
-	}
- 
-	public void onCreate(){
-		super.onCreate();
-	}
+
+	// call when created
+	/*
+	 * public void onCreate(){ super.onCreate(); }
+	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-	    /*handleCommand(intent);
-	    // We want this service to continue running until it is explicitly
-	    // stopped, so return sticky.
-	    return START_STICKY;*/
-		super.onStartCommand(intent, flags, startId);
+		//operations to do
+		//this method write to the log of the phone
 		Log.d(TAG, "FirstService started");
+		//stop the service
 		this.stopSelf();
-		return START_STICKY;
+		return Service.START_NOT_STICKY;
 	}
- 
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO for communication return IBinder implementation
+		return null;
+	}
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		//this method write to the log of the phone
 		Log.d(TAG, "FirstService destroyed");
 	}
 }

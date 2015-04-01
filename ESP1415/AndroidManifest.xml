@@ -22,7 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="FirstService" ></service>
+        <service android:name="it.dei.unipd.esp1415.FirstService"
+            	 android:enabled="true" >
+        </service>
     </application>
 
 </manifest>
