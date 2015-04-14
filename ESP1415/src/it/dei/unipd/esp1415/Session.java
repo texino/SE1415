@@ -37,16 +37,16 @@ public class Session {
                 return picture;
         }
 	//public method to create a string of the actually date and time 
-	public String getDateHour() {
+	public static String getDateHour() {
 		String date = "";		
 		GregorianCalendar gc = new GregorianCalendar();
 		int year = gc.get(Calendar.YEAR);
-		int month = gc.get(Calendar.MONTH); //+ 1;
+		int month = gc.get(Calendar.MONTH) + 1;//addition, out of phase otherwise
 		int day = gc.get(Calendar.DATE);
 		int hour = gc.get(Calendar.HOUR);
 		int minute = gc.get(Calendar.MINUTE);
 		//int second = gc.get(Calendar.SECOND);
-		date = day + "/" + month + "/" + year + "/" + " " + hour + ":"
+		date = day + "/" + month + "/" + year + " " + hour + ":"
 			 + minute;		
 		return date;
 	}	 

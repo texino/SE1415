@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.esp1415.R;
-
 
 public class MainActivity extends ActionBarActivity {
 
@@ -48,7 +48,10 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+        	String TAG = "TAG MIO";
+        	String log = Session.getDateHour();
+        	Log.d(TAG, log);
+        	return true;
         }
         return super.onOptionsItemSelected(item);
     }
