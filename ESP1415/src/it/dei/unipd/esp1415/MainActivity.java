@@ -26,11 +26,9 @@ public class MainActivity extends ActionBarActivity {
 		next.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				Context context = getApplicationContext();
-				/*Intent i = new Intent(context, FirstService.class);
+				Intent i = new Intent(context, FirstService.class);
 		        //i.putExtra("Prova", "Stringa di Prova");
-		        context.startService(i);*/
-				Intent i = new Intent(context, SessionList.class);
-				startActivity(i);
+		        context.startService(i);
 			}
 		});
     }
