@@ -6,12 +6,12 @@ import java.util.GregorianCalendar;
 public class Session {
 	private String name;
 	private String date;
-	private int duration;
+	private String duration;
 	private int fallNum;
 	private int picture;
 
 	// Constructor that build an object representing a session
-	public Session(String name, String date, int duration, int fallNum,
+	public Session(String name, String date, String duration, int fallNum,
 			int picture) {
 		super();
 		this.name = name;
@@ -30,7 +30,7 @@ public class Session {
 		return date;
 	}
 
-	public int getDuration() {
+	public String getDuration() {
 		return duration;
 	}
 
