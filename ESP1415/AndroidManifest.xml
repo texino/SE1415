@@ -22,9 +22,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="it.dei.unipd.esp1415.FirstService"
-            	 android:enabled="true" >
+
+        <service
+            android:name="it.dei.unipd.esp1415.FirstService"
+            android:enabled="true" >
         </service>
+
+        <activity
+            android:name="it.dei.unipd.esp1415.SessionList"
+            android:label="@string/title_activity_session_list" >
+        </activity>
     </application>
 
 </manifest>
