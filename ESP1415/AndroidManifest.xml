@@ -29,7 +29,7 @@
         </service>
 
         <activity
-            android:name="it.dei.unipd.esp1415.SessionList"
+            android:name="it.dei.unipd.esp1415.MyListFragment"
             android:label="@string/title_activity_session_list" >
         </activity>
     </application>

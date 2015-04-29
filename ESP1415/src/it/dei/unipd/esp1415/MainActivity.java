@@ -29,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
 				/*Intent i = new Intent(context, FirstService.class);
 		        //i.putExtra("Prova", "Stringa di Prova");
 		        context.startService(i);*/
-				Intent i = new Intent(context, SessionList.class);
+				Intent i = new Intent(context, MyListFragment.class);
 				startActivity(i);
 			}
 		});
