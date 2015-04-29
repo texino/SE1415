@@ -3,16 +3,18 @@ package it.dei.unipd.esp1415;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.graphics.drawable.Drawable;
+
 public class Session {
 	private String name;
 	private String date;
 	private String duration;
 	private int fallNum;
-	private int picture;
+	private Drawable picture;
 
 	// Constructor that build an object representing a session
 	public Session(String name, String date, String duration, int fallNum,
-			int picture) {
+			Drawable picture) {
 		super();
 		this.name = name;
 		this.date = date;
@@ -38,7 +40,7 @@ public class Session {
 		return fallNum;
 	}
 
-	public int getPicture() {
+	public Drawable getPicture() {
 		return picture;
 	}
 
