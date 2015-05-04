@@ -1,8 +1,8 @@
 package it.dei.unipd.esp1415;
 
-import android.content.Context;
-import android.content.Intent;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -19,18 +19,31 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        // Create new fragment and transaction
+        ListFragment newFragment = new MyListFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.listfragment, newFragment);
+        transaction.addToBackStack(null);
+
+     // Commit the transaction
+     transaction.commit();
         //Let's start the service
         //startService(new Intent(this, FirstService.class));
         
         Button next = (Button) findViewById(R.id.Button01);
 		next.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				Context context = getApplicationContext();
-				/*Intent i = new Intent(context, FirstService.class);
+				/*Context context = getApplicationContext();
+				Intent i = new Intent(context, FirstService.class);
 		        //i.putExtra("Prova", "Stringa di Prova");
-		        context.startService(i);*/
+		        context.startService(i);
 				Intent i = new Intent(context, MyListFragment.class);
-				startActivity(i);
+				startActivity(i);*/
+				String TAG = "TAG MIO";
+	        	String log = Session.getDateHour();
+	        	Log.d(TAG, log);
 			}
 		});
     }
@@ -50,9 +63,6 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-        	String TAG = "TAG MIO";
-        	String log = Session.getDateHour();
-        	Log.d(TAG, log);
         	return true;
         }
         return super.onOptionsItemSelected(item);
