@@ -19,7 +19,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // Create new fragment and transaction
+        /*// Create new fragment and transaction
         ListFragment newFragment = new MyListFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         // Replace whatever is in the fragment_container view with this fragment,
@@ -28,7 +28,7 @@ public class MainActivity extends ActionBarActivity {
         transaction.addToBackStack(null);
 
      // Commit the transaction
-     transaction.commit();
+     transaction.commit();*/
         //Let's start the service
         //startService(new Intent(this, FirstService.class));
         
