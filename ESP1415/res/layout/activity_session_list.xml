@@ -8,10 +8,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <ListView android:id="@id/android:list"
+    <ListFragment android:id="@id/android:list"
                android:layout_width="match_parent"
                android:layout_height="match_parent"
-               android:layout_weight="1"
                android:drawSelectorOnTop="false"/>
 
 </RelativeLayout>

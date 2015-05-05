@@ -60,12 +60,16 @@ public class Session {
 		int year = gc.get(Calendar.YEAR);
 		int intMonth = gc.get(Calendar.MONTH) + 1;// addition, out of phase otherwise
 		if (intMonth < 10) month = fixDate(intMonth);
+		else month += intMonth;
 		int intDay = gc.get(Calendar.DATE);
-		if (intDay < 10) month = fixDate(intDay);
+		if (intDay < 10) day = fixDate(intDay);
+		else day += intDay;
 		int intHour = gc.get(Calendar.HOUR_OF_DAY);
-		if (intHour < 10) month = fixDate(intHour);
+		if (intHour < 10) hour = fixDate(intHour);
+		else hour += intHour;
 		int intMinute = gc.get(Calendar.MINUTE);
-		if (intMinute < 10) month = fixDate(intMinute);
+		if (intMinute < 10) minute = fixDate(intMinute);
+		else minute += intMinute;
 		// int second = gc.get(Calendar.SECOND); FIXME need this?
 		date = day + "/" + month + "/" + year + " " + hour + ":" + minute;
 		return date;
