@@ -26,6 +26,14 @@
             android:name="it.dei.unipd.esp1415.SessionInfo"
             android:label="@string/title_activity_session_info" >
         </activity>
+        <activity
+            android:name="it.dei.unipd.esp1415.SecondActiity"
+            android:label="@string/title_activity_second_actiity" >
+        </activity>
+        <activity
+            android:name="it.dei.unipd.esp1415.SecondAcitivity"
+            android:label="@string/title_activity_second_acitivity" >
+        </activity>
     </application>
 
 </manifest>
