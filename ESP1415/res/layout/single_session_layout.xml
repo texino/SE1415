@@ -57,13 +57,13 @@
             android:textAppearance="@android:style/TextAppearance.Small" />
     </LinearLayout>
     
-    <Button
-        android:id="@+id/Button01"
+    <!-- <Button
+        android:id="@+id/RenameB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="@id/picture"
         android:text="Rinomina"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true" /> -->
 
 </RelativeLayout>

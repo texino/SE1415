@@ -3,9 +3,7 @@ package it.dei.unipd.esp1415;
 import android.graphics.drawable.Drawable;
 
 public class Session {
-	private String name;
-	private String date;
-	private String duration;
+	private String name, date, duration;
 	private int fallNum;
 	private Drawable picture;
 
