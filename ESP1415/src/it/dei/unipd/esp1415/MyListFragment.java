@@ -1,5 +1,7 @@
 package it.dei.unipd.esp1415;
 
+import it.dei.unipd.esp1415.utils.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class MyListFragment extends ListFragment {
         items = new ArrayList<Session>();
         Resources resources = getResources();
         
-        items.add(new Session("Prova","22/04/15","10:15",15, resources.getDrawable(R.drawable.abc_btn_radio_material)));
+        items.add(new Session("Prova",Utils.getDateHour(),"10:15",15, resources.getDrawable(R.drawable.abc_btn_radio_material)));
         /*items.add(new ListViewItem(resources.getDrawable(R.drawable.bebo), getString(R.string.bebo), getString(R.string.bebo_description)));
         :
         mItems.add(new ListViewItem(resources.getDrawable(R.drawable.youtube), getString(R.string.youtube), getString(R.string.youtube_description)));

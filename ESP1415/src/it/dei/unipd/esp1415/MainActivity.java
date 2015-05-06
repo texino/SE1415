@@ -1,5 +1,6 @@
 package it.dei.unipd.esp1415;
 
+import it.dei.unipd.esp1415.utils.Utils;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class MainActivity extends FragmentActivity {
 				Intent i = new Intent(context, MyListFragment.class);
 				startActivity(i);*/
 				String TAG = "TAG MIO";
-	        	String log = Session.getDateHour();
+	        	String log = Utils.getDateHour();
 	        	Log.d(TAG, log);
 			}
 		});
