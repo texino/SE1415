@@ -1,9 +1,7 @@
 package it.dei.unipd.esp1415;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +10,7 @@ import android.widget.Button;
 
 import com.example.esp1415.R;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
