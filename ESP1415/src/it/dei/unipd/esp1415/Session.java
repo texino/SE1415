@@ -1,8 +1,5 @@
 package it.dei.unipd.esp1415;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import android.graphics.drawable.Drawable;
 
 public class Session {

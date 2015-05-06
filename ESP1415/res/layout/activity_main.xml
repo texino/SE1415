@@ -14,13 +14,11 @@
         android:id="@+id/Button01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="Bottone" />
 
     <fragment android:name="it.dei.unipd.esp1415.MyListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/myfragment"
-        android:layout_weight="2"/>
+        android:id="@+id/myfragment"/>
     
 </LinearLayout>
