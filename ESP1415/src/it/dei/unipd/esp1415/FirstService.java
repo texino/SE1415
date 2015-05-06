@@ -8,11 +8,7 @@ import android.util.Log;
 public class FirstService extends Service {
 
 	private static String TAG = "TAG di prova";
-
-	// call when created
-	/*
-	 * public void onCreate(){ super.onCreate(); }
-	 */
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		//operations to do

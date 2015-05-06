@@ -2,7 +2,7 @@ package it.dei.unipd.esp1415;
 
 import it.dei.unipd.esp1415.utils.Utils;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,40 +11,30 @@ import android.widget.Button;
 
 import com.example.esp1415.R;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends ActionBarActivity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        /*// Create new fragment and transaction
-        ListFragment newFragment = new MyListFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack
-        transaction.replace(R.id.listfragment, newFragment);
-        transaction.addToBackStack(null);
-
-     // Commit the transaction
-     transaction.commit();*/
-        //Let's start the service
-        //startService(new Intent(this, FirstService.class));
+        /*ActionBar actionBar = getSupportActionBar();
+        actionBar.show();*/
         
-        Button next = (Button) findViewById(R.id.Button01);
+        /*Button next = (Button) findViewById(R.id.Button01);
 		next.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View view) {
-				/*Context context = getApplicationContext();
+				
+				Context context = getApplicationContext();
 				Intent i = new Intent(context, FirstService.class);
-		        //i.putExtra("Prova", "Stringa di Prova");
-		        context.startService(i);
-				Intent i = new Intent(context, MyListFragment.class);
-				startActivity(i);*/
-				String TAG = "TAG MIO";
+		        startActivity(i);
+				
+		        String TAG = "TAG MIO";
 	        	String log = Utils.getDateHour();
 	        	Log.d(TAG, log);
 			}
-		});
+		});*/
     }
 
 

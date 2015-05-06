@@ -8,10 +8,11 @@ import java.util.List;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v7.appcompat.R;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
 	private List<Session> items;
@@ -24,12 +25,10 @@ public class MyListFragment extends ListFragment {
         items = new ArrayList<Session>();
         Resources resources = getResources();
         
-        items.add(new Session("Prova1",Utils.getDateHour(),"10:15",15, resources.getDrawable(R.drawable.abc_btn_radio_material)));
-        items.add(new Session("Prova2",Utils.getDateHour(),"10:15",15, resources.getDrawable(R.drawable.abc_btn_radio_material)));
-        /*items.add(new ListViewItem(resources.getDrawable(R.drawable.bebo), getString(R.string.bebo), getString(R.string.bebo_description)));
-        :
-        mItems.add(new ListViewItem(resources.getDrawable(R.drawable.youtube), getString(R.string.youtube), getString(R.string.youtube_description)));
-        */
+        int i;
+        for(i=1; i<100; i++)
+        	items.add(new Session("Prova"+i,Utils.getDateHour(),"1"+i+":1"+i,i, resources.getDrawable(R.drawable.ic_launcher)));
+        
         // initialize and set the list adapter
         setListAdapter(new CustomArrayAdapter(getActivity(), items));
     }
@@ -49,21 +48,4 @@ public class MyListFragment extends ListFragment {
         // do something
         Toast.makeText(getActivity(), item.getName(), Toast.LENGTH_SHORT).show();
     }
-	/*@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		Session[] values = 
-			{new Session("Prova","22/04/15","10:15",15, R.drawable.abc_ab_share_pack_holo_dark),
-				new Session("Prova","22/04/15","10:15",15, R.drawable.abc_ab_share_pack_holo_dark)};
-		ArrayAdapter<Session> adapter = new ArrayAdapter<Session>(getActivity(),
-				R.layout.single_session_layout, values);
-		setListAdapter(adapter);
-	}
-
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		Object clickedObj = l.getAdapter().getItem(position);
-		Log.i("onItemClick", clickedObj.toString());
-	}*/
 }
