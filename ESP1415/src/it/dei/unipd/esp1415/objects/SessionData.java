@@ -6,9 +6,9 @@ import it.dei.unipd.esp1415.exceptions.IllegalNameException;
 import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
 
 public class SessionData extends SessionInfo{
-	
+
 	private FallInfo[] fallList;
-	
+
 	/**
 	 * Create an object for the session with all the datas
 	 * @param Id The session's id <br>
@@ -19,8 +19,6 @@ public class SessionData extends SessionInfo{
 	 * (It must be in the format "gg/mm/aaaa-hh:mm")
 	 * @param duration The duration of this session in seconds<br>
 	 * (It can't be negative)
-	 * @param n The number of falls in this session<br>
-	 * (It can't be negative)
 	 * @param status The status of the session (true=running, false=terminated)
 	 * @param fallList An array for the list of falls happened in this session<br>
 	 * (null if there is no fall in this session)
@@ -29,12 +27,15 @@ public class SessionData extends SessionInfo{
 	 * @throws IllegalIdException if the id isn't acceptable
 	 * @throws IllegalNumberException if "n" or "duration" are negative
 	 */
-	public SessionData(String id,String name,String date,int duration,int n,boolean status,FallInfo[] falls) 
+	public SessionData(String id,String name,String date,int duration,boolean status,FallInfo[] falls) 
 			throws IllegalDateFormatException, IllegalNameException, IllegalNumberException ,IllegalIdException
-	{
-		super(id,name,date,duration,n,status);
+			{
+		super(id,name,date,duration,0,status);
 		this.fallList=falls;
-	}
+		if(fallList!=null)
+			this.numberFalls=falls.length;
+
+			}
 
 	/**
 	 * Get the list of falls happened in this session

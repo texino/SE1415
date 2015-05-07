@@ -1,5 +1,6 @@
 package it.dei.unipd.esp1415.tasks;
 
+import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.utils.DataArray;
 import android.app.Service;
 import android.content.Context;
@@ -35,6 +36,7 @@ public class ESPService extends Service{
 	//Sensor data
 	private SensorManager sensorManager;
 	private Sensor sensor;
+	private String sessionId;
 	private ESPEventListener listener=new ESPEventListener();
 
 	@Override
@@ -42,6 +44,7 @@ public class ESPService extends Service{
 		//un activity si sta collegando a questo service
 		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
 		return binder;
 	}
 
@@ -63,6 +66,13 @@ public class ESPService extends Service{
 		running=true;
 		startTime=System.currentTimeMillis();
 		sensorManager.registerListener(listener,sensor,1);
+	}
+	
+	public void stop()
+	{
+		running=false;
+		pausedTime=totalTime;
+		sensorManager.unregisterListener(listener,sensor);
 	}
 
 	/**
@@ -115,7 +125,7 @@ public class ESPService extends Service{
 					float x=event.values[0],y=event.values[1],z=event.values[2];
 					data.add(x,y,z);
 					sendBroadcastMessage(totalTime,x,y,z);
-					(new ElaborateTask(data)).execute(null,null,null);
+					(new ElaborateTask(data,sessionId)).execute(null,null,null);
 					//TODO elaborate data
 					String a;
 				}

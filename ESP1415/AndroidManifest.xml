@@ -4,6 +4,8 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="21" />
@@ -13,17 +15,21 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <service
-            android:name="it.dei.unipd.esp1415.tasks.ESPService" >
+        <service android:name="it.dei.unipd.esp1415.tasks.ESPService" >
         </service>
+
         <activity
-            android:name="it.dei.unipd.esp1415.activity.CurrentSessionActivity"
+            android:name="it.dei.unipd.esp1415.activity.ConnectedActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="it.dei.unipd.esp1415.activity.CurrentSessionActivity"
+            android:label="@string/app_name" >
         </activity>
     </application>
 
