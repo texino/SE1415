@@ -11,7 +11,9 @@ import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.utils.DataArray;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class ElaborateTask extends AsyncTask<Void,Void,Void>{
@@ -25,7 +27,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 		this.dY=dY;
 		this.dZ=dZ;
 	}
-	
+
 	public ElaborateTask (DataArray data,String sessionId)
 	{
 		this.dX=data.getXData();
@@ -34,7 +36,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 		this.index=data.getIndex();
 		this.sessionId=sessionId;
 	}
-	
+
 	@Override
 	protected Void doInBackground(Void... params) {
 		int prevIndex=index-1;
@@ -48,12 +50,12 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			int px=0;
 			for(int i=index;i<dX.length;i++)
 			{
-			points[px]=new AccelPoint(dX[i],dY[i],dZ[i]);
-			px++;}
+				points[px]=new AccelPoint(dX[i],dY[i],dZ[i]);
+				px++;}
 			for(int i=0;i<index;i++)
 			{
-			points[px]=new AccelPoint(dX[i],dY[i],dZ[i]);
-			px++;}
+				points[px]=new AccelPoint(dX[i],dY[i],dZ[i]);
+				px++;}
 			FallData data;
 			try {
 				data = new FallData(""+System.currentTimeMillis(),date,true,200,200,points);

@@ -2,6 +2,7 @@ package it.dei.unipd.esp1415.tasks;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.utils.DataArray;
+import it.dei.unipd.esp1415.utils.LocalStorage;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,39 +13,56 @@ import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 public class ESPService extends Service{
 
 	//Tags
+	private final static String TAG="SERVICE";
 	public static final String EXTRA_TIME="extra_time";
 	public static final String EXTRA_X="extra_x";
 	public static final String EXTRA_Y="extra_y";
 	public static final String EXTRA_Z="extra_z";	
-	public static final String ACTION_LOCATION_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
+	public static final String ACTION_GRAPHIC_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
+	public static final String ACTION_TIME_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
+	public static final String ACTION_FALL_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
 
-	//data
+	//Data
 	private DataArray data;
-
-	//time 
-	private long totalTime,oldTime,dataTime;
-	private long startTime,pausedTime;
-
+	private String sessionId;
+	//Time
+	private long totalDuration=0;
 	//Service data
-	private IBinder binder=new LocalBinder();
+	private IBinder binder=new ESPBinder();
 	private boolean running=false;
-
 	//Sensor data
 	private SensorManager sensorManager;
 	private Sensor sensor;
-	private String sessionId;
 	private ESPEventListener listener=new ESPEventListener();
-
+	//Classes
+	public class ESPBinder extends Binder{
+		public ESPService getService(){
+			// Return this instance of LocalService so clients can call public methods
+			return ESPService.this;}}
+	
 	@Override
-	public IBinder onBind(Intent intent) {
-		//un activity si sta collegando a questo service
+	public int onStartCommand(Intent intent,int flags,int startId)
+	{
+		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
+		totalDuration=Long.parseLong(intent.getExtras().getString(CurrentSessionActivity.DURATION_TAG));
 		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		play();
+		return super.onStartCommand(intent, flags, startId);
+	}
+	
+	@Override
+ 	public IBinder onBind(Intent intent) {
+		//l' activity di una sessione si sta collegando a questo service
+		
+		//prendiamo l'id della sessione
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
+		Log.d(TAG,"Running: "+running);
 		return binder;
 	}
 
@@ -64,15 +82,9 @@ public class ESPService extends Service{
 	public void play()
 	{
 		running=true;
-		startTime=System.currentTimeMillis();
+		//ascoltiamo il sensore
 		sensorManager.registerListener(listener,sensor,1);
-	}
-	
-	public void stop()
-	{
-		running=false;
-		pausedTime=totalTime;
-		sensorManager.unregisterListener(listener,sensor);
+		Log.d(TAG,"Running: "+running);
 	}
 
 	/**
@@ -81,59 +93,72 @@ public class ESPService extends Service{
 	public void pause()
 	{
 		running=false;
-		pausedTime=totalTime;
+		prevDataTime=System.currentTimeMillis();
+		//smettiamo di ascoltare il sensore
 		sensorManager.unregisterListener(listener,sensor);
+		this.stopSelf();
+		Log.d(TAG,"Running: "+running);
 	}
-
-	public class LocalBinder extends Binder 
+	
+	/**
+	 * Ferma completamente il lavoro del service
+	 */
+	public void stop()
 	{
-		public ESPService getService() 
-		{
-			// Return this instance of LocalService so clients can call public methods
-			return ESPService.this;
-		}
+		pause();
 	}
+	
+	/**
+	 * Guarda la durata attuale della sessione
+	 */
+	public long getDuration()
+	{
+		return totalDuration;
+	}
+	
 
+
+
+
+
+	private long prevDataTime,dataTime;
+	
 	private class ESPEventListener implements SensorEventListener{
 
 		public ESPEventListener()
 		{
 			int rate=10;
-			data=new DataArray(rate);
-			
+			data=new DataArray(rate);	
 			dataTime=(1000/rate);
-			totalTime=0;
-			pausedTime=0;
-			oldTime=startTime;
+			prevDataTime=System.currentTimeMillis();
 		}
 
 		@Override
 		public void onSensorChanged(SensorEvent event)
 		{
-			if(running)
-			{
+			if(running){//considera i dati solo se il service è attivo
 				//tempo in cui si stanno prendendo i dati
 				long aTime=System.currentTimeMillis();
 				
 				//tempo passato dall'ultimo dato elaborato
-				if((aTime-oldTime)>=dataTime)
+				int deltaTime=(int) (aTime-prevDataTime);
+				if(deltaTime>=dataTime)
 				{
-					oldTime=aTime;
+					prevDataTime=aTime-(deltaTime-dataTime);
+					
 					//tempo passato dall'inizio della sessione (in millisecondi)
-					totalTime = pausedTime+(aTime-startTime);
+					totalDuration+=dataTime;
 					
 					float x=event.values[0],y=event.values[1],z=event.values[2];
 					data.add(x,y,z);
-					sendBroadcastMessage(totalTime,x,y,z);
+					sendBroadcastMessage(totalDuration,x,y,z);
 					(new ElaborateTask(data,sessionId)).execute(null,null,null);
-					//TODO elaborate data
-					String a;
 				}
 			}
 		}
 
 		private void sendBroadcastMessage(long time,float x,float y,float z) {
-			Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
+			Intent intent = new Intent(ACTION_GRAPHIC_BROADCAST);
 			intent.putExtra(EXTRA_TIME, time);
 			intent.putExtra(EXTRA_X, x);
 			intent.putExtra(EXTRA_Y, y);

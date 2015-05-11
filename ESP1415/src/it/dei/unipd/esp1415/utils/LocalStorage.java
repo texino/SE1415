@@ -435,6 +435,37 @@ public class LocalStorage {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void pauseSession(String sessionId,int totalDuration) throws NoSuchSessionException
+	{
+		try{
+			String sessionPath=sessionsDataFolderPath+sessionId+"/";
+			File sessionFile=new File(sessionPath+sessionId+".txt");
+			if(!sessionFile.exists())
+				throw new NoSuchSessionException();
+			String finalS="";
+			//Leggiamo dal file
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
+			//SESSIONE
+			finalS+=bufferedReader.readLine()+"\n";
+			finalS+=bufferedReader.readLine()+"\n";//saltiamo nome e data
+			bufferedReader.readLine();
+			finalS+=totalDuration+"\n";
+			finalS+=bufferedReader.readLine()+"\n";
+			String line;
+			while((line=bufferedReader.readLine())!=null)
+				finalS+=line+"\n";
+			bufferedReader.close();
+
+			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
+			bufferedWriter.write(finalS);
+			bufferedWriter.flush();
+			bufferedWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Rename an existing session
 	 * @param context The context that call this method
