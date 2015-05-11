@@ -6,6 +6,16 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_session_info">SessionInfo</string>
     <string name="title_activity_second_actiity">SecondActiity</string>
-    <string name="title_activity_second_acitivity">SecondAcitivity</string>
+    <string name="SessionIm">SessionIm</string><string name="title_activity_second_acitivity">SecondAcitivity</string>
+    <string name="date_session">dd/mm/yyyy</string>
+    <string name="name_session">Name Session</string>
+    <string name="nDurata">Durata:</string>
+    <string name="nDate">Data:</string>
+    <string name="durata_session">00:00</string>
+    
+    
+    
+    
+    
 
 </resources>
