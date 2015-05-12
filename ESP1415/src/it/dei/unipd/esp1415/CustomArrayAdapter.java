@@ -46,7 +46,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Session> {
         viewHolder.name.setText(item.getName());
         viewHolder.duration.setText(item.getDuration());
         viewHolder.date.setText(item.getDate());
-        viewHolder.falls.setText(""+item.getFalls());
+        viewHolder.falls.setText("Cadute: "+item.getFalls());
         
         return convertView;
     }

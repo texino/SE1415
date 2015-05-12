@@ -9,14 +9,14 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
 	private List<Session> items;
-	
+	private boolean clicked = false;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +42,25 @@ public class MyListFragment extends ListFragment {
  
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // retrieve theListView item
+        
+		if (!clicked) {
+			ImageView rename = (ImageView) v.findViewById(R.id.rename);
+			rename.setVisibility(View.VISIBLE);
+			ImageView delete = (ImageView) v.findViewById(R.id.delete);
+			delete.setVisibility(View.VISIBLE);
+			clicked = true;
+		}
+		else {
+			ImageView rename = (ImageView) v.findViewById(R.id.rename);
+			rename.setVisibility(View.INVISIBLE);
+			ImageView delete = (ImageView) v.findViewById(R.id.delete);
+			delete.setVisibility(View.INVISIBLE);
+			clicked = false;
+		}
+    	/*// retrieve theListView item
         Session item = items.get(position);
         
         // do something
-        Toast.makeText(getActivity(), item.getName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), item.getName(), Toast.LENGTH_SHORT).show();*/
     }
 }

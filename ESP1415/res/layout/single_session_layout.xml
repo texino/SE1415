@@ -28,12 +28,13 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textAppearance="@android:style/TextAppearance.Medium" />
-
+        
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@android:style/TextAppearance.Small" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -45,12 +46,12 @@
         android:layout_toRightOf="@id/picture" >
 
         <TextView
-            android:id="@+id/duration"
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textAppearance="@android:style/TextAppearance.Small" />
-
+        
         <TextView
             android:id="@+id/falls"
             android:layout_width="wrap_content"
@@ -68,7 +69,8 @@
         android:contentDescription="@string/picture_descriptor1"
         android:padding="5dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_action_edit" />
+        android:src="@drawable/ic_action_edit"
+        android:visibility="invisible" />
     
     <ImageView
         android:id="@+id/delete"
@@ -80,7 +82,8 @@
         android:contentDescription="@string/picture_descriptor2"
         android:padding="5dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_action_discard" />
+        android:src="@drawable/ic_action_discard"
+        android:visibility="invisible" />
 
     <!-- <Button
         android:id="@+id/RenameB"
