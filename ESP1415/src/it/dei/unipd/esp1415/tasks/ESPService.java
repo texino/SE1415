@@ -1,6 +1,7 @@
 package it.dei.unipd.esp1415.tasks;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
+import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.utils.DataArray;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import android.app.Service;
@@ -48,56 +49,42 @@ public class ESPService extends Service{
 	@Override
 	public int onStartCommand(Intent intent,int flags,int startId)
 	{
+		if(!running)
+		{//Se non è attivo si registra al sensore
+			sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+			sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+			sensorManager.registerListener(listener,sensor,1);
+			totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
+			Log.d(TAG,"STARTED WITH DURATION: "+totalDuration);
+		}
+		running=true;
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
-		totalDuration=Long.parseLong(intent.getExtras().getString(CurrentSessionActivity.DURATION_TAG));
-		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		play();
+		Log.d(TAG,"RESTARTED "+totalDuration);
+		prevDataTime=System.currentTimeMillis();
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
 	@Override
  	public IBinder onBind(Intent intent) {
 		//l' activity di una sessione si sta collegando a questo service
-		
-		//prendiamo l'id della sessione
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
-		Log.d(TAG,"Running: "+running);
 		return binder;
 	}
-
-	/**
-	 * Dice se il service sta lavorando o no
-	 * @return true se il service sta lavorando <br>
-	 * false se il service è in pausa
-	 */
+	
 	public boolean isRunning()
 	{
 		return running;
 	}
-
-	/**
-	 * Avvia il lavoro del service (non effettua azioni se il service è già attivo)
-	 */
-	public void play()
+	
+	public void onDestroy()
 	{
-		running=true;
-		//ascoltiamo il sensore
-		sensorManager.registerListener(listener,sensor,1);
-		Log.d(TAG,"Running: "+running);
-	}
-
-	/**
-	 * Mette in pausa il lavoro del service (non effettua azioni se il service è già in pausa)
-	 */
-	public void pause()
-	{
-		running=false;
-		prevDataTime=System.currentTimeMillis();
-		//smettiamo di ascoltare il sensore
-		sensorManager.unregisterListener(listener,sensor);
-		this.stopSelf();
-		Log.d(TAG,"Running: "+running);
+		//Cerco di salvare la durata attuale nel file 
+		try {
+			LocalStorage.pauseSession(sessionId, (int) totalDuration);
+		} catch (NoSuchSessionException e) {
+			//se il tempo non è aggiornato semplicemente non abbiamo dei dati aggiornati
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -105,7 +92,9 @@ public class ESPService extends Service{
 	 */
 	public void stop()
 	{
-		pause();
+		running=false;
+		sensorManager.unregisterListener(listener,sensor);
+		this.stopSelf();
 	}
 	
 	/**
@@ -116,11 +105,6 @@ public class ESPService extends Service{
 		return totalDuration;
 	}
 	
-
-
-
-
-
 	private long prevDataTime,dataTime;
 	
 	private class ESPEventListener implements SensorEventListener{
@@ -136,7 +120,6 @@ public class ESPService extends Service{
 		@Override
 		public void onSensorChanged(SensorEvent event)
 		{
-			if(running){//considera i dati solo se il service è attivo
 				//tempo in cui si stanno prendendo i dati
 				long aTime=System.currentTimeMillis();
 				
@@ -155,7 +138,6 @@ public class ESPService extends Service{
 					(new ElaborateTask(data,sessionId)).execute(null,null,null);
 				}
 			}
-		}
 
 		private void sendBroadcastMessage(long time,float x,float y,float z) {
 			Intent intent = new Intent(ACTION_GRAPHIC_BROADCAST);

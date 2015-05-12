@@ -11,6 +11,7 @@ import it.dei.unipd.esp1415.tasks.ESPService.ESPBinder;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.views.GraphicView;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -35,14 +36,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CurrentSessionActivity extends Activity{
+@SuppressLint("InflateParams") public class CurrentSessionActivity extends Activity{
 
 	//Views
 	private GraphicView graphic;
 	private Button btnStart,btnStop;
 	private TextView textHours,textMinutes,textSeconds,textName,textDate;
-	private ImageView imgSession;
-
+	private Context actContext;
 	String sessionId;
 	boolean running;
 	AlertDialog alertDialog;
@@ -61,7 +61,8 @@ public class CurrentSessionActivity extends Activity{
 			//prendiamo il service vero e proprio
 			service = binder.getService();
 			setTimeText(service.getDuration());
-			if(service.isRunning())
+			running=service.isRunning();
+			if(running)
 				btnStart.setBackgroundResource(R.drawable.button_pause);
 			else
 				btnStart.setBackgroundResource(R.drawable.button_play);
@@ -76,12 +77,35 @@ public class CurrentSessionActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//prende i dati per popolare il layout
-		getData();
+		actContext=this;
 		//Imposta layout ed eventi
 		setLayout();
-		//Popola layout coi dati
-		populateLayout();
+		
+		//Dobbiamo ottenere sessionId, running, duration
+		Bundle extras=getIntent().getExtras();
+		if(extras.getBoolean(EMPTY_TAG))//è una sessione ancora da creare
+			showDialog();
+		else//la sessione esiste
+		{
+			//la durata è presa dai dati della sessione
+			duration=getDurationPreference();
+			setTimeText(duration);
+			sessionId=extras.getString(ID_TAG);
+			running=checkServiceStatus();
+			textName.setText(extras.getString(NAME_TAG));
+			textDate.setText(extras.getString(DATE_TAG));
+			if(running)
+			{
+				//ci leghiamo al service che dovrebbe essere già esistente dandogli l'id della sessione
+				//la durata è aggiornata dal service
+				Intent serviceIntent = new Intent(CurrentSessionActivity.this,ESPService.class);
+				serviceIntent.putExtra(ID_TAG,sessionId);
+				serviceIntent.putExtra(DURATION_TAG,duration);
+				startService(serviceIntent);
+				bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
+				btnStart.setBackgroundResource(R.drawable.button_pause);
+			}
+		}
 
 		//inizializza broadcast manager
 		LocalBroadcastManager manager=LocalBroadcastManager.getInstance(this);
@@ -107,18 +131,12 @@ public class CurrentSessionActivity extends Activity{
 
 	//BUILDING METHODS
 
-	private void getData()
+	private boolean checkServiceStatus()
 	{
-		Bundle extras=getIntent().getExtras();
-		emptySession=extras.getBoolean(EMPTY_TAG);
-		duration=getDurationPreference();
-		running=getStatusPreference();
-
+		//TODO deve restituire l'attuale stato del service
+		return getStatusPreference();
 	}
 
-	/**
-	 * Imposta il layout per quest'activity e iniziaizza oggetti ed eventi
-	 */
 	private void setLayout()
 	{
 		setContentView(R.layout.current_session_activity_layout);
@@ -135,66 +153,58 @@ public class CurrentSessionActivity extends Activity{
 		btnStart.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!running){//il service non c'è quindi lo avvio dandogli sessione e durata
-					Intent serviceIntent = new Intent(actContext,ESPService.class);
-					serviceIntent.putExtra(ID_TAG,sessionId);
-					serviceIntent.putExtra(DURATION_TAG,duration);
-					actContext.startService(serviceIntent);
-					//lego l'activity al service
-					bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
-					storeStatusPreference(true);
-					running=true;
-					btnStart.setBackgroundResource(R.drawable.button_pause);}
-				else{//il service è attivo quindi lo fermo
-					btnStart.setBackgroundResource(R.drawable.button_play);
-					storeDurationPreference(service.getDuration());
-					storeStatusPreference(false);
-					running=false;
-					service.pause();
-					try {
-						LocalStorage.pauseSession(sessionId,(int)duration);}
-					catch (NoSuchSessionException e) {
-						e.printStackTrace();}}}});
+				if(!running)
+					startClicked();
+				else
+					pauseClicked();}});
 		btnStop.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				btnStart.setBackgroundResource(R.drawable.button_play);
-				//Fermo la sessione e il service e vado alla schermata associata
-				service.stop();
-				PreferenceStorage.storeSimpleData(CurrentSessionActivity.this,"ServiceStatus","false");
-				try {
-					LocalStorage.stopSession(sessionId,duration);}
-				catch (NoSuchSessionException e) {
-					e.printStackTrace();}
-				CurrentSessionActivity.this.finish();}});
+				stopClicked();}});
 	}
 
-	private void populateLayout()
-	{	
-		//impostiamo la durata
-		duration=getDurationPreference();
-		setTimeText(duration);
+	private void startClicked()
+	{
+		running=true;
+		btnStart.setBackgroundResource(R.drawable.button_pause);
+		
+		//si avvia il service dandogli durata e id Sessione
+		Intent serviceIntent = new Intent(actContext,ESPService.class);
+		serviceIntent.putExtra(ID_TAG,sessionId);
+		serviceIntent.putExtra(DURATION_TAG,duration);
+		startService(serviceIntent);
+		//lego l'activity al service
+		bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
+		storeStatusPreference(true);
+	}
 
-		Bundle extras=getIntent().getExtras();
-		if(extras.getBoolean(EMPTY_TAG))//è una sessione ancora da creare
-		{	
-			showDialog();
-			return;
-		}
-		//è una sessione già creata
-		//recuperiamo e impostiamo i dati della sessione
-		sessionId=extras.getString(ID_TAG);
-		textName.setText(extras.getString(NAME_TAG));
-		textDate.setText(extras.getString(DATE_TAG));
-		running=getStatusPreference();
-		if(running)
-		{
-			//ci leghiamo al service già esistente dandogli l'id della sessione
-			Intent serviceIntent = new Intent(CurrentSessionActivity.this,ESPService.class);
-			serviceIntent.putExtra(ID_TAG,sessionId);
-			bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
-			btnStart.setBackgroundResource(R.drawable.button_pause);
-		}
+	private void pauseClicked()
+	{
+		running=false;
+		btnStart.setBackgroundResource(R.drawable.button_play);
+		
+		this.unbindService(connection);
+		//la durata è salvata alla chiusura del service
+		duration=service.getDuration();
+		service.stop();
+		storeDurationPreference(duration);
+		storeStatusPreference(false);
+	}
+
+	private void stopClicked()
+	{
+		running=false;
+		btnStart.setBackgroundResource(R.drawable.button_play);
+		
+		if(service!=null)//siamo legati ad una sessione attiva
+			service.stop();
+		storeStatusPreference(false);
+		try {
+			LocalStorage.stopSession(sessionId,(int)duration);}
+		catch (NoSuchSessionException e) {
+			e.printStackTrace();}
+		
+		CurrentSessionActivity.this.finish();
 	}
 
 	/**
@@ -230,6 +240,8 @@ public class CurrentSessionActivity extends Activity{
 						textName.setText(s.getName());
 						textDate.setText(s.getDate());
 						sessionId=s.getId();
+						duration=0;
+						running=false;
 						//impostiamo lo stato del service e la durata della sessione
 						storeStatusPreference(false);
 						storeDurationPreference(0);
