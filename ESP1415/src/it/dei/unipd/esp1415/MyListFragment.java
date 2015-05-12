@@ -62,5 +62,5 @@ public class MyListFragment extends ListFragment {
         
         // do something
         Toast.makeText(getActivity(), item.getName(), Toast.LENGTH_SHORT).show();*/
-    }
+   }
 }
