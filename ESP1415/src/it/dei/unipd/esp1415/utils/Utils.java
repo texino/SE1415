@@ -48,7 +48,7 @@ public class Utils {
 			if (intMinute < 10) minute = fixDate(intMinute);
 			else minute += intMinute;
 			// int second = gc.get(Calendar.SECOND); FIXME need this?
-			date = day + "/" + month + "/" + year + "\n" + hour + ":" + minute;
+			date = day + "/" + month + "/" + year + " " + hour + ":" + minute;
 			return date;
 		}
 		//this method fix date format (X to 0X)

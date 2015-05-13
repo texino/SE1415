@@ -59,29 +59,31 @@
     </LinearLayout>
     
     <ImageView
-        android:id="@+id/rename"
+        android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/picture_descriptor1"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_action_edit"
-        android:visibility="invisible" />
-    
-    <ImageView
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/rename"
-        android:layout_toStartOf="@id/rename"
+        android:clickable="true"
         android:contentDescription="@string/picture_descriptor2"
+        android:paddingLeft="5dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_action_discard"
         android:visibility="invisible" />
 
+	<ImageView
+        android:id="@+id/rename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/delete"
+        android:layout_toStartOf="@id/delete"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:contentDescription="@string/picture_descriptor1"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_action_edit"
+        android:visibility="invisible" />
     <!-- <Button
         android:id="@+id/RenameB"
         android:layout_width="wrap_content"
