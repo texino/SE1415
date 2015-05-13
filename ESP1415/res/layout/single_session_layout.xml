@@ -83,6 +83,7 @@
         android:layout_centerVertical="true"
         android:clickable="true"
         android:contentDescription="@string/picture_descriptor2"
+        android:onClick="onDeleteClick"
         android:paddingLeft="5dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_action_discard"

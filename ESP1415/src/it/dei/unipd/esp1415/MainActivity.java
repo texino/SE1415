@@ -1,9 +1,11 @@
 package it.dei.unipd.esp1415;
 
+import it.dei.unipd.esp1415.views.DeleteDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.esp1415.R;
 
@@ -51,5 +53,10 @@ public class MainActivity extends ActionBarActivity {
         	return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    //metodo che viene eseguito al click del tasto elimina
+    public void onDeleteClick(View v){
+    	DeleteDialog deleteDialog = new DeleteDialog();
+    	deleteDialog.show(getSupportFragmentManager(),"delete");
     }
 }
