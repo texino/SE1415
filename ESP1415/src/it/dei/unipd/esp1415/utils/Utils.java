@@ -51,9 +51,10 @@ public class Utils {
 			date = day + "/" + month + "/" + year + " " + hour + ":" + minute;
 			return date;
 		}
-		//this method fix date format (X to 0X)
-		public static String fixDate(int date){
-			return "0" + date;
-		}
+
+	// this method fix date format (X to 0X)
+	public static String fixDate(int date) {
+		return "0" + date;
+	}
 
 }
