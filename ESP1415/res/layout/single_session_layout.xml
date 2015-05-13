@@ -11,7 +11,8 @@
         android:layout_alignParentStart="true"
         android:contentDescription="@string/picture_descriptor"
         android:scaleType="fitXY"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_launcher"/>
 
     <LinearLayout
         android:id="@+id/firstline"

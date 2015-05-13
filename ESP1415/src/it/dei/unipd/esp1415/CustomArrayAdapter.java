@@ -1,5 +1,7 @@
 package it.dei.unipd.esp1415;
 
+import it.dei.unipd.esp1415.objects.SessionInfo;
+
 import java.util.List;
 
 import android.content.Context;
@@ -12,9 +14,9 @@ import android.widget.TextView;
 
 import com.example.esp1415.R;
 
-public class CustomArrayAdapter extends ArrayAdapter<Session> {
+public class CustomArrayAdapter extends ArrayAdapter<SessionInfo> {
 	
-	public CustomArrayAdapter(Context context, List<Session> items) {
+	public CustomArrayAdapter(Context context, List<SessionInfo> items) {
         super(context, R.layout.single_session_layout, items);
     }
 	
@@ -29,7 +31,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Session> {
             
             // initialize the view holder
             viewHolder = new ViewHolder();
-            viewHolder.picture = (ImageView) convertView.findViewById(R.id.picture);
+            //viewHolder.picture = (ImageView) convertView.findViewById(R.id.picture);
             viewHolder.name = (TextView) convertView.findViewById(R.id.name);
             viewHolder.date = (TextView) convertView.findViewById(R.id.date);
             viewHolder.duration = (TextView) convertView.findViewById(R.id.duration);
@@ -41,12 +43,12 @@ public class CustomArrayAdapter extends ArrayAdapter<Session> {
         }
         
         // update the item view
-        Session item = getItem(position);
-        viewHolder.picture.setImageDrawable(item.getPicture());
+        SessionInfo item = getItem(position);
+        //viewHolder.picture.setImageDrawable(item.getPicture());
         viewHolder.name.setText(item.getName());
-        viewHolder.duration.setText(item.getDuration());
+        viewHolder.duration.setText(""+item.getDuration());
         viewHolder.date.setText(item.getDate());
-        viewHolder.falls.setText("Cadute: "+item.getFalls());
+        viewHolder.falls.setText("Cadute: "+item.getNumberOfFalls());
         
         return convertView;
     }
@@ -58,7 +60,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Session> {
      * @see http://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder
      */
     private static class ViewHolder {
-        ImageView picture;
+        //ImageView picture;
         TextView name;
         TextView date;
         TextView duration;

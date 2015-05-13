@@ -1,5 +1,6 @@
 package it.dei.unipd.esp1415;
 
+import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.Utils;
 
 import java.util.ArrayList;
@@ -15,19 +16,19 @@ import android.widget.ListView;
 import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
-	private List<Session> items;
+	private List<SessionInfo> items;
 	private boolean clicked = false;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         // initialize the items list
-        items = new ArrayList<Session>();
-        Resources resources = getResources();
+        items = new ArrayList<SessionInfo>();
+        //Resources resources = getResources();
         
         int i;
         for(i=1; i<100; i++)
-        	items.add(new Session("Prova"+i,Utils.getDateHour(),"1"+i+":1"+i,i, resources.getDrawable(R.drawable.ic_launcher)));
+        	items.add(new SessionInfo(""+i,"Prova"+i,Utils.getDateHour(),i,i, true));
         
         // initialize and set the list adapter
         setListAdapter(new CustomArrayAdapter(getActivity(), items));
