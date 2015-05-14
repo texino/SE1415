@@ -24,9 +24,10 @@ public class ESPService extends Service{
 	public static final String EXTRA_X="extra_x";
 	public static final String EXTRA_Y="extra_y";
 	public static final String EXTRA_Z="extra_z";	
-	public static final String ACTION_GRAPHIC_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
-	public static final String ACTION_TIME_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
-	public static final String ACTION_FALL_BROADCAST=ESPService.class.getName()+"LocationBroadcast";
+	public static final String EXTRA_FALL_DATE="date";	
+	public static final String ACTION_GRAPHIC_BROADCAST="GRAPHIC";
+	public static final String ACTION_TIME_BROADCAST="TIME";
+	public static final String ACTION_FALL_BROADCAST="FALL";
 
 	//Data
 	private DataArray data;
@@ -135,7 +136,7 @@ public class ESPService extends Service{
 					float x=event.values[0],y=event.values[1],z=event.values[2];
 					data.add(x,y,z);
 					sendBroadcastMessage(totalDuration,x,y,z);
-					(new ElaborateTask(data,sessionId)).execute(null,null,null);
+					(new ElaborateTask(ESPService.this,data,sessionId)).execute(null,null,null);
 				}
 			}
 

@@ -11,6 +11,7 @@ import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.utils.DataArray;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,9 +19,11 @@ import android.util.Log;
 
 public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 
+	private static final String TAG = "ELABORATE TASK";
 	float[] dX,dY,dZ;
 	int index;
 	String sessionId;
+	Context context;
 	public ElaborateTask (float[] dX,float[] dY,float[] dZ)
 	{
 		this.dX=dX;
@@ -28,13 +31,14 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 		this.dZ=dZ;
 	}
 
-	public ElaborateTask (DataArray data,String sessionId)
+	public ElaborateTask (Context context,DataArray data,String sessionId)
 	{
 		this.dX=data.getXData();
 		this.dY=data.getYData();
 		this.dZ=data.getYData();
 		this.index=data.getIndex();
 		this.sessionId=sessionId;
+		this.context=context;
 	}
 
 	@Override
@@ -60,6 +64,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			try {
 				data = new FallData(""+System.currentTimeMillis(),date,true,200,200,points);
 				LocalStorage.storeFallData(sessionId,data);
+				sendBroadcastMessage(date);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalDateFormatException e) {
@@ -72,5 +77,11 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			Log.d("FALL EVENT","FALLEN");
 		}
 		return null;
+	}
+	private void sendBroadcastMessage(String date) {
+		Log.d(TAG,"FALL DATE : "+date);
+		Intent intent = new Intent(ESPService.ACTION_FALL_BROADCAST);
+		intent.putExtra(ESPService.EXTRA_FALL_DATE,date);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 }

@@ -1,5 +1,7 @@
 package it.dei.unipd.esp1415.objects;
 
+import java.util.ArrayList;
+
 import it.dei.unipd.esp1415.exceptions.IllegalDateFormatException;
 import it.dei.unipd.esp1415.exceptions.IllegalIdException;
 import it.dei.unipd.esp1415.exceptions.IllegalNameException;
@@ -7,7 +9,7 @@ import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
 
 public class SessionData extends SessionInfo{
 
-	private FallInfo[] fallList;
+	private ArrayList<FallInfo> fallList;
 
 	/**
 	 * Create an object for the session with all the datas
@@ -27,13 +29,13 @@ public class SessionData extends SessionInfo{
 	 * @throws IllegalIdException if the id isn't acceptable
 	 * @throws IllegalNumberException if "n" or "duration" are negative
 	 */
-	public SessionData(String id,String name,String date,int duration,boolean status,FallInfo[] falls) 
+	public SessionData(String id,String name,String date,int duration,boolean status,ArrayList<FallInfo> falls) 
 			throws IllegalDateFormatException, IllegalNameException, IllegalNumberException ,IllegalIdException
 			{
 		super(id,name,date,duration,0,status);
 		this.fallList=falls;
 		if(fallList!=null)
-			this.numberFalls=falls.length;
+			this.numberFalls=falls.size();
 
 			}
 
@@ -41,7 +43,7 @@ public class SessionData extends SessionInfo{
 	 * Get the list of falls happened in this session
 	 * @return null if there is no fall
 	 */
-	public FallInfo[] getFalls()
+	public ArrayList<FallInfo> getFalls()
 	{
 		return fallList;
 	}

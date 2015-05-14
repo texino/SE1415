@@ -218,18 +218,18 @@ public class LocalStorage {
 	{
 		if((context==null)||(sessionId==null))
 			throw new IllegalArgumentException();
-
-		File sdCardDirectory = Environment.getExternalStorageDirectory();
-		String sessionDataPath=sdCardDirectory+sessionsDataFolderPath+sessionId+"/";
-		File f=new File(sessionDataPath+sessionId+".txt");
-		if(!f.exists())
+		String sessionPath=sessionsDataFolderPath+sessionId+"/";
+		File sessionFile=new File(sessionPath+sessionId+".txt");
+		Log.d(TAG,"SEARCHING FILE : "+sessionFile.getAbsolutePath()+"\n"
+				+"Exist : "+sessionFile.exists()+"\n"+
+				"Is file : "+sessionFile.isFile()+"\n"+
+				"Is directory : "+sessionFile.isDirectory());
+		if(!sessionFile.exists())
 			throw new NoSuchSessionException();
-
 		String finalS="";
 		//Leggiamo dal file
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
 		//INFORMAZIONI
-		int numero=Integer.parseInt(bufferedReader.readLine());
 		String name=bufferedReader.readLine();
 		finalS+=name+"\n";
 		String date=bufferedReader.readLine();
@@ -239,25 +239,21 @@ public class LocalStorage {
 		boolean running=Boolean.parseBoolean(bufferedReader.readLine());
 		finalS+=running+"\n";
 
-		FallInfo[] list=new FallInfo[numero];
+		ArrayList<FallInfo> list=new ArrayList<FallInfo>();
 		String line;
 		JSONObject json;
-		int listSize=0;
 		while((line=bufferedReader.readLine())!=null)
 		{
 			//Se catturiamo un'eccezione è perchè i dati sono corrotti e non li consideriamo
 			try{
 				json=new JSONObject(line);
-				String fallId=json.getString("filePath");//percorso del file della sessione
-				File fall=new File(sessionDataPath+fallId+".txt");
+				String fallId=json.getString(ID_TAG);//percorso del file della sessione
+				File fall=new File(sessionPath+fallId+".txt");
 				//passiamo in uscita le info della sessione solo se il file associato esiste
 				if(fall.exists()){
 					FallInfo info=new FallInfo(fallId,json.getString(DATE_TAG),json.getBoolean(STATUS_TAG));
-					list[listSize]=info;
-					listSize++;
+					list.add(info);
 					finalS+=line+"\n";
-					if(listSize>=numero)
-						break;
 				}
 			} catch(JSONException e){
 				e.printStackTrace();
@@ -268,17 +264,13 @@ public class LocalStorage {
 			}
 		}
 		bufferedReader.close();
-		finalS=""+listSize+"\n"+finalS;
-		FallInfo[] reducedList=new FallInfo[listSize];
-		for(int i=0;i<listSize;i++)
-			reducedList[i]=list[i];
 		//Scriviamo sul file tutte le righe (raccolte in finalS) scartando così tutti quei dati corrotti
-		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
 		bufferedWriter.write(finalS);
 		bufferedWriter.flush();
 		bufferedWriter.close();
 		try {
-			return new SessionData(sessionId,name,date,durata,running,reducedList);
+			return new SessionData(sessionId,name,date,durata,running,list);
 		} catch (IllegalDateFormatException e) {
 			e.printStackTrace();
 		} catch (IllegalNameException e) {

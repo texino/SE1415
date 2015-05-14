@@ -3,6 +3,9 @@ package it.dei.unipd.esp1415.activity;
 import java.io.IOException;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 
@@ -25,6 +28,22 @@ public class ConnectedActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Button b=(Button)findViewById(R.id.button1);
+		
+		try {
+			JSONObject json=new JSONObject("{}");
+			System.out.println("ho convertito {}");
+		} catch (JSONException e) {
+			e.printStackTrace();
+			System.out.println("non ho convertito {}");
+		}
+		try {
+			JSONObject json=new JSONObject("[]");
+			System.out.println("ho convertito []");
+		} catch (JSONException e) {
+			e.printStackTrace();
+			System.out.println("non ho convertito []");
+		}
+		
 		try {
 			list=LocalStorage.getSessionInfos();
 			for(int i=0;i<list.size();i++)
