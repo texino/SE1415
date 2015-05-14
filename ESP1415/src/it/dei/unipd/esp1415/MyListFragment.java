@@ -93,7 +93,7 @@ public class MyListFragment extends ListFragment {
         Log.i(TAG, "onLongListItemClick id=" + id);
         EditText text = (EditText) getView().findViewById(R.id.renamesession);
     	SessionInfo item = items.get(pos);
-    	//text.setText(item.getName());
+    	text.setText(item.getName());
     	RenameDeleteDialog dialog = new RenameDeleteDialog();
         dialog.show(getFragmentManager(),"dialog");
         //returning true means that Android stops event propagation
