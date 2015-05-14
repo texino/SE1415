@@ -93,13 +93,13 @@
         android:text="@string/durata_session" />
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/fall_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tHour"
-        android:layout_alignStart="@+id/tHour"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/tHour"
-        android:layout_marginTop="106dp" >
+        android:layout_marginTop="36dp" >
     </ListView>
 
 </RelativeLayout>
