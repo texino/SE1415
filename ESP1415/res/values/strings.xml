@@ -7,5 +7,6 @@
     <string name="delete_dialog">Eliminare la sessione?</string>
     <string name="conferma">Ok</string>
     <string name="annulla">Annulla</string>
+    <string name="rinomina">Rinomina</string>
 
 </resources>

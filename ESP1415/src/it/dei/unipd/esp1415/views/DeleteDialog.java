@@ -10,7 +10,7 @@ import com.example.esp1415.R;
 
 public class DeleteDialog extends DialogFragment{
 
-	String id;
+	//String id;
 	
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
