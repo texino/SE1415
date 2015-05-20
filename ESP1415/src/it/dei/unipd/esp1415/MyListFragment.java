@@ -2,6 +2,7 @@ package it.dei.unipd.esp1415;
 
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.RenameDeleteDialog;
 
 import java.io.IOException;
@@ -32,6 +33,13 @@ public class MyListFragment extends ListFragment {
 			items = LocalStorage.getSessionInfos();
 		} catch (IOException e) {
 
+		}
+		int i;
+		for(i=1; i<100; i++){
+        	try{
+        		items.add(new SessionInfo(""+i,"Prova"+i,Utils.getDateHour(),i,i, true));
+        	}
+        	catch(Exception e){}
 		}
 		// initialize and set the list adapter
 		setListAdapter(new CustomArrayAdapter(getActivity(), items));

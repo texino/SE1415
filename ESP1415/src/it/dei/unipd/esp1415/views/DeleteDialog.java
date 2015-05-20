@@ -19,14 +19,22 @@ public class DeleteDialog extends DialogFragment{
         builder.setMessage(R.string.delete_dialog)
                .setPositiveButton(R.string.conferma, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       // TODO cancella la sessione
+                       // TODO rinomina la sessione
                    }
                })
                .setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                        // User cancelled the dialog
                    }
-               });
+               })
+               .setNeutralButton(R.string.elimina, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
         // Create the AlertDialog object and return it
         return builder.create();
     }

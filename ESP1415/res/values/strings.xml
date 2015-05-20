@@ -8,5 +8,7 @@
     <string name="conferma">Ok</string>
     <string name="annulla">Annulla</string>
     <string name="rinomina">Rinomina</string>
+    <string name="dialog_title">Session</string>
+    <string name="elimina">Elimina</string>
 
 </resources>

@@ -8,7 +8,18 @@
 	    android:id="@+id/renamesession"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:hint="Nome Sessione"
 	    android:inputType="text"
 	    android:text="" />
+
+	<ImageView
+	    android:id="@+id/delete"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="end"
+	    android:clickable="true"
+	    android:contentDescription="@string/picture_descriptor2"
+	    android:scaleType="fitXY"
+	    android:src="@drawable/ic_action_discard" />
 	
 </LinearLayout>
