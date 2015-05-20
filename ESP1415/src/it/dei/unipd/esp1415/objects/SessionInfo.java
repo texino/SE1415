@@ -18,7 +18,7 @@ public class SessionInfo {
 	
 	private String sessionId;
 	private String sessionName,sessionDate;
-	private int numberFalls,sessionDuration;
+	int numberFalls,sessionDuration;
 	private boolean running;
 	
 	/**
@@ -110,6 +110,15 @@ public class SessionInfo {
 	 * @return the duration in seconds
 	 */
 	public int getDuration()
+	{
+		return sessionDuration;
+	}
+	
+	/**
+	 * Get the duration of this session
+	 * @return the duration in seconds
+	 */
+	public int setFallNumber(int n)
 	{
 		return sessionDuration;
 	}

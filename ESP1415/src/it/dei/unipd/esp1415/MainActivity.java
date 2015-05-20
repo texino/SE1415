@@ -1,12 +1,5 @@
 package it.dei.unipd.esp1415;
 
-import it.dei.unipd.esp1415.exceptions.IOException;
-import it.dei.unipd.esp1415.objects.SessionInfo;
-import it.dei.unipd.esp1415.utils.LocalStorage;
-
-import java.util.List;
-
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -16,20 +9,12 @@ import com.example.esp1415.R;
 
 public class MainActivity extends ActionBarActivity {
 
-	private Context context;
-	private static List<SessionInfo> sessionList;
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_main);
         
-		context = getApplicationContext();
-		// get the list of session saved in the storage
-		try{
-			sessionList = LocalStorage.getSessionInfos(context);
-		}
-		catch(IOException e){}
-		catch(IllegalArgumentException e){}
 		
 		/*ActionBar actionBar = getSupportActionBar();
         actionBar.show();*/

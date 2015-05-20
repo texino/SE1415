@@ -1,11 +1,12 @@
 package it.dei.unipd.esp1415;
 
 import it.dei.unipd.esp1415.objects.SessionInfo;
+import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.views.RenameDeleteDialog;
 
+import java.io.IOException;
 import java.util.List;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -23,28 +24,18 @@ public class MyListFragment extends ListFragment {
 	
 	//private boolean clicked = false; TOCLEAN
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        //context = getApplicationContext();
-        
-        /*// initialize the items list
-        items = new ArrayList<SessionInfo>();
-        //Resources resources = getResources();
-        
-        int i;
-        for(i=1; i<100; i++){
-        	try{
-        		items.add(new SessionInfo(""+i,"Prova"+i,Utils.getDateHour(),i,i, true));
-        	}
-        	catch(IllegalDateFormatException e){}
-        	catch(IllegalNameException e){}
-        	catch(IllegalNumberException e){}
-        	catch(IllegalIdException e){}
-        }*/
-        // initialize and set the list adapter
-        setListAdapter(new CustomArrayAdapter(getActivity(), items));
-    }
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// get the list of session saved in the storage
+		try {
+			items = LocalStorage.getSessionInfos();
+		} catch (IOException e) {
+
+		}
+		// initialize and set the list adapter
+		setListAdapter(new CustomArrayAdapter(getActivity(), items));
+	}
     
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -101,7 +92,7 @@ public class MyListFragment extends ListFragment {
         Log.i(TAG, "onLongListItemClick id=" + id);
         EditText text = (EditText) getView().findViewById(R.id.renamesession);
     	SessionInfo item = items.get(pos);
-    	text.setText(item.getName());
+    	//text.setText(item.getName());
     	RenameDeleteDialog dialog = new RenameDeleteDialog();
         dialog.show(getFragmentManager(),"dialog");
         //returning true means that Android stops event propagation
