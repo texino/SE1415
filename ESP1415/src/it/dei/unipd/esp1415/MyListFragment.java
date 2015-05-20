@@ -1,18 +1,16 @@
 package it.dei.unipd.esp1415;
 
 import it.dei.unipd.esp1415.objects.SessionInfo;
-import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.RenameDeleteDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -20,20 +18,30 @@ import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
 	private List<SessionInfo> items;
-	String TAG = "OnClick";
+	private String TAG = "OnClick";
+	//private Context context;
+	
 	//private boolean clicked = false; TOCLEAN
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // initialize the items list
+        //context = getApplicationContext();
+        
+        /*// initialize the items list
         items = new ArrayList<SessionInfo>();
         //Resources resources = getResources();
         
         int i;
-        for(i=1; i<100; i++)
-        	items.add(new SessionInfo(""+i,"Prova"+i,Utils.getDateHour(),i,i, true));
-        
+        for(i=1; i<100; i++){
+        	try{
+        		items.add(new SessionInfo(""+i,"Prova"+i,Utils.getDateHour(),i,i, true));
+        	}
+        	catch(IllegalDateFormatException e){}
+        	catch(IllegalNameException e){}
+        	catch(IllegalNumberException e){}
+        	catch(IllegalIdException e){}
+        }*/
         // initialize and set the list adapter
         setListAdapter(new CustomArrayAdapter(getActivity(), items));
     }

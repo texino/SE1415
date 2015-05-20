@@ -40,16 +40,16 @@ public class SessionInfo {
 	 * @throws IllegalNumberException if "n" or "duration" are negative
 	 */
 	public SessionInfo(String id,String name,String date,int duration,int n,boolean status) 
-			//throws IllegalDateFormatException, IllegalNameException, IllegalNumberException ,IllegalIdException
+			throws IllegalDateFormatException, IllegalNameException, IllegalNumberException ,IllegalIdException
 	{
-		/*if((id==null)||(id.length()<1))
+		if((id==null)||(id.length()<1))
 			throw new IllegalIdException();
 		if((date==null)||(!Utils.checkDateFormat(date)))
 			throw new IllegalDateFormatException();
 		if((name==null)||(name.length()<1))
 			throw new IllegalNumberException();
 		if(n<0||duration<0)
-			throw new IllegalNumberException();*/
+			throw new IllegalNumberException();
 		this.sessionId=id;
 		this.sessionName=name;
 		this.sessionDate=date;
