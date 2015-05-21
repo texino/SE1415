@@ -5,12 +5,18 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 
 import com.example.esp1415.R;
 
 public class RenameDeleteDialog extends DialogFragment {
 
+	
+	private String title = "";
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// Use the Builder class for convenient dialog construction
@@ -18,7 +24,7 @@ public class RenameDeleteDialog extends DialogFragment {
 		// Get the layout inflater
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 
-		builder.setTitle(R.string.dialog_title);
+		builder.setTitle(title);
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
 		builder.setView(inflater.inflate(R.layout.rename_delete_dialog, null))
@@ -27,7 +33,14 @@ public class RenameDeleteDialog extends DialogFragment {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								// set the new name
+								//TODO set the new name
+								EditText newname = (EditText) getView().findViewById(R.id.renamesession);
+								//if newname is an empty string, dismiss dialog
+								/*if (newname.getText().equals("")) RenameDeleteDialog.this.getDialog().cancel();
+								else {
+									//scrive il nuovo nome TODO
+									//newname.getText()
+								}*/
 							}
 						})
 				.setNegativeButton(R.string.annulla,
@@ -40,4 +53,7 @@ public class RenameDeleteDialog extends DialogFragment {
 
 	}
 
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }

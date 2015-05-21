@@ -25,7 +25,7 @@ public class SessionList extends ActionBarActivity {
         
 		super.onCreate(savedInstanceState);
         //set the activity layout
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.session_list);
         //set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
 		.withDrawable(getResources().getDrawable(R.drawable.ic_plus_grey600_36dp))
@@ -47,7 +47,7 @@ public class SessionList extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.sessionlist_action_item, menu);
         return true;
     }
 
@@ -64,10 +64,11 @@ public class SessionList extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    /*//metodo che viene eseguito al click del tasto elimina
-    public void onDeleteClick(View v){
-    	DeleteDialog deleteDialog = new DeleteDialog();
-    	deleteDialog.show(getSupportFragmentManager(),"delete");
-    }*/
-    //TOCLEAN
+  
+    //FIXME metodo che viene eseguito al click del tasto elimina
+    public void deleteSession(View v){
+    	Log.i("OnClick", "delete button pressed from dialog");
+    	/*DeleteDialog deleteDialog = new DeleteDialog();
+    	deleteDialog.show(getSupportFragmentManager(),"delete");*/
+    }
 }

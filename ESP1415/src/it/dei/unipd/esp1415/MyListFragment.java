@@ -81,15 +81,21 @@ public class MyListFragment extends ListFragment {
     //
     protected void onListItemClick(View v, int pos, long id) {
         Log.i(TAG, "onListItemClick id=" + id);
+        //TODO intent that launch second activity and add extra info (n' session pressed)
     }
     
     protected boolean onLongListItemClick(View v, int pos, long id) {
         Log.i(TAG, "onLongListItemClick id=" + id);
-        EditText text = (EditText) getView().findViewById(R.id.renamesession);
+        //FIXME non trova il riferimento alla textview (null pointer exception)
+        //EditText text = (EditText) getView().findViewById(R.id.renamesession);
     	SessionInfo item = items.get(pos);
     	//text.setText(item.getName());
+    	//create the dialog
     	RenameDeleteDialog dialog = new RenameDeleteDialog();
-        dialog.show(getFragmentManager(),"dialog");
+        //set session clicked name to the dialog title
+    	dialog.setTitle("Session: " + item.getName());
+    	//show the dialog
+    	dialog.show(getFragmentManager(),"dialog");
         //returning true means that Android stops event propagation
     	return true;
     }

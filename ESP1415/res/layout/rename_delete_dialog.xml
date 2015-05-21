@@ -2,24 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
-    
-	<EditText
-	    android:id="@+id/renamesession"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:hint="Nome Sessione"
-	    android:inputType="text"
-	    android:text="" />
+    android:orientation="horizontal"
+    android:weightSum="1" >
 
-	<ImageView
-	    android:id="@+id/delete"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="end"
-	    android:clickable="true"
-	    android:contentDescription="@string/picture_descriptor2"
-	    android:scaleType="fitXY"
-	    android:src="@drawable/ic_action_discard" />
-	
+    <EditText
+        android:id="@+id/renamesession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:hint="Nuovo nome sessione"
+        android:inputType="text" />
+
+    <ImageView
+        android:id="@+id/delete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_weight="0.2"
+        android:clickable="true"
+        android:onClick="deleteSession"
+        android:contentDescription="@string/picture_descriptor2"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_discard" />
+
 </LinearLayout>
