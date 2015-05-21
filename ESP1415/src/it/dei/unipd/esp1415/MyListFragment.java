@@ -19,11 +19,10 @@ import android.widget.ListView;
 import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
-	private List<SessionInfo> items;
-	private String TAG = "OnClick";
-	//private Context context;
 	
-	//private boolean clicked = false; TOCLEAN
+	private List<SessionInfo> items;
+	private String TAG = "OnClick"; //TOCLEAN
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,8 +31,9 @@ public class MyListFragment extends ListFragment {
 		try {
 			items = LocalStorage.getSessionInfos();
 		} catch (IOException e) {
-
+			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
+		//create a session list to test fragment
 		int i;
 		for(i=1; i<100; i++){
         	try{
@@ -50,8 +50,10 @@ public class MyListFragment extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		//setting up onClick listeners
+		
 		//get the ListView witch handle the click and long press Android events
 		ListView lv = getListView();
+		
 		//setting up single click
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 		    @Override
@@ -59,6 +61,7 @@ public class MyListFragment extends ListFragment {
 		        onListItemClick(v,pos,id);
 		    }
 		});
+		
 		//setting up long click
 		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 		    @Override
@@ -66,22 +69,6 @@ public class MyListFragment extends ListFragment {
 		    	return onLongListItemClick(v,pos,id);
 		    }
 		});
-		/*OnItemLongClickListener listener = new OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int position, long id) {
-				SessionInfo item = items.get(position);
-				Toast.makeText(getActivity().getBaseContext(),
-						"Long Clicked " + item.getName(), Toast.LENGTH_SHORT)
-						.show();
-				DeleteDialog deleteDialog = new DeleteDialog();
-		    	deleteDialog.show(getFragmentManager(),"delete");
-				return false;
-			}
-		};
-
-		getListView().setOnItemLongClickListener(listener);*/
-
 	}
 	
     @Override
@@ -106,7 +93,7 @@ public class MyListFragment extends ListFragment {
         //returning true means that Android stops event propagation
     	return true;
     }
-    
+    //TOCLEAN
     /*@Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         

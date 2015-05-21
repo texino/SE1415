@@ -5,10 +5,11 @@
     <string name="action_settings">Settings</string>
     <string name="picture_descriptor">Session\'s Picture</string><string name="picture_descriptor1">Rename\'s button</string><string name="picture_descriptor2">Delete\'s button</string><string name="picture_descriptor3">Details\'s button</string>
     <string name="delete_dialog">Eliminare la sessione?</string>
-    <string name="conferma">Ok</string>
+    <string name="conferma">OK</string>
     <string name="annulla">Annulla</string>
     <string name="rinomina">Rinomina</string>
     <string name="dialog_title">Session</string>
     <string name="elimina">Elimina</string>
+    <string name="session_list">Session List</string>
 
 </resources>

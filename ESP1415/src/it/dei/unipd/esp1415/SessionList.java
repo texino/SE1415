@@ -7,32 +7,19 @@ import android.view.MenuItem;
 
 import com.example.esp1415.R;
 
-public class MainActivity extends ActionBarActivity {
+/**
+ * SessionList class
+ * First activity to be display that show and manage a list of sessions
+ */
+public class SessionList extends ActionBarActivity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.activity_main);
+		super.onCreate(savedInstanceState);
+        //set the activity layout
+		setContentView(R.layout.activity_main);
         
-		
-		/*ActionBar actionBar = getSupportActionBar();
-        actionBar.show();*/
-        //TOCLEAN
-        /*Button next = (Button) findViewById(R.id.Button01);
-		next.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				
-				Context context = getApplicationContext();
-				Intent i = new Intent(context, FirstService.class);
-		        startActivity(i);
-				
-		        String TAG = "TAG MIO";
-	        	String log = Utils.getDateHour();
-	        	Log.d(TAG, log);
-			}
-		});*/
     }
 
 

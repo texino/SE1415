@@ -16,22 +16,13 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="it.dei.unipd.esp1415.MainActivity"
-            android:label="@string/app_name" >
+            android:name="it.dei.unipd.esp1415.SessionList"
+            android:label="@string/session_list" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <service
-            android:name="it.dei.unipd.esp1415.FirstService"
-            android:enabled="true" >
-        </service>
-
-        <activity
-            android:name="it.dei.unipd.esp1415.MyListFragment" >
         </activity>
     </application>
 
