@@ -81,7 +81,8 @@ public class MyListFragment extends ListFragment {
     //
     protected void onListItemClick(View v, int pos, long id) {
         Log.i(TAG, "onListItemClick id=" + id);
-        //TODO intent that launch second activity and add extra info (n' session pressed)
+        //TODO intent that launch activity 2 and add extra info (n' session pressed)
+        //if the session is running than display activity 3
     }
     
     protected boolean onLongListItemClick(View v, int pos, long id) {
