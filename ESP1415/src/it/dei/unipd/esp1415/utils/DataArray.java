@@ -120,7 +120,6 @@ public class DataArray {
 	 */
 	public void drawOnCanvas(Canvas ca,int w,int h)
 	{
-		Log.d("DATA_ARRAY","DRAWING");
 		int x=0;
 		int xOff=w/(rate-1);
 		for(int i=index+1;i<rate;i++)

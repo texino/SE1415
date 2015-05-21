@@ -63,7 +63,7 @@ public class FallInfo {
 	 */
 	public String getDate()
 	{
-		return date.substring(0,10);
+		return date;
 	}
 	
 	/**

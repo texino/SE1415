@@ -46,58 +46,87 @@ public class ESPService extends Service{
 		public ESPService getService(){
 			// Return this instance of LocalService so clients can call public methods
 			return ESPService.this;}}
-	
+
 	@Override
 	public int onStartCommand(Intent intent,int flags,int startId)
 	{
 		if(!running)
 		{//Se non è attivo si registra al sensore
-			sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-			sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-			sensorManager.registerListener(listener,sensor,1);
 			totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
-			Log.d(TAG,"STARTED WITH DURATION: "+totalDuration);
+			start();
 		}
+		prevDataTime=System.currentTimeMillis();
 		running=true;
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
-		Log.d(TAG,"RESTARTED "+totalDuration);
-		prevDataTime=System.currentTimeMillis();
 		return super.onStartCommand(intent, flags, startId);
 	}
-	
+
 	@Override
- 	public IBinder onBind(Intent intent) {
+	public IBinder onBind(Intent intent) {
 		//l' activity di una sessione si sta collegando a questo service
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
 		return binder;
 	}
-	
+
+	/**
+	 * Dice se il service è in corso oppure no
+	 * @return true se il service è in corso
+	 */
 	public boolean isRunning()
 	{
 		return running;
 	}
-	
+
+	@Override
 	public void onDestroy()
 	{
+		Log.d(TAG,"DESTROYED");
 		//Cerco di salvare la durata attuale nel file 
 		try {
-			LocalStorage.pauseSession(sessionId, (int) totalDuration);
+			LocalStorage.pauseSession(sessionId,(int)totalDuration);
 		} catch (NoSuchSessionException e) {
 			//se il tempo non è aggiornato semplicemente non abbiamo dei dati aggiornati
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Avvia il lavoro del service
+	 */
+	public void start()
+	{
+		Log.d("SERVICE","STARTED:    STORING= "+totalDuration);
+		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sensorManager.registerListener(listener,sensor,1);
+	}
+
 	/**
 	 * Ferma completamente il lavoro del service
 	 */
 	public void stop()
 	{
+		Log.d("SERVICE","STOPPED:    STORING= "+totalDuration);
 		running=false;
 		sensorManager.unregisterListener(listener,sensor);
+		try {LocalStorage.stopSession(sessionId,(int) totalDuration);} 
+		catch (NoSuchSessionException e) {e.printStackTrace();}
 		this.stopSelf();
 	}
-	
+
+	/**
+	 * Mette in pausa il lavoro del service
+	 */
+	public void pause()
+	{
+		Log.d("SERVICE","PAUSED:    STORING= "+totalDuration);
+		running=false;
+		sensorManager.unregisterListener(listener,sensor);
+		try {LocalStorage.pauseSession(sessionId,(int) totalDuration);} 
+		catch (NoSuchSessionException e) {e.printStackTrace();}
+		this.stopSelf();
+	}
+
 	/**
 	 * Guarda la durata attuale della sessione
 	 */
@@ -105,9 +134,19 @@ public class ESPService extends Service{
 	{
 		return totalDuration;
 	}
-	
+
+	@Override
+	public void finalize()
+	{
+		Log.d(TAG,"FINALIZED");
+		try {LocalStorage.pauseSession(sessionId,(int) totalDuration);
+		super.finalize();} 
+		catch (NoSuchSessionException e) {e.printStackTrace();}
+		catch (Throwable e) {e.printStackTrace();}
+	}
+
 	private long prevDataTime,dataTime;
-	
+
 	private class ESPEventListener implements SensorEventListener{
 
 		public ESPEventListener()
@@ -121,24 +160,24 @@ public class ESPService extends Service{
 		@Override
 		public void onSensorChanged(SensorEvent event)
 		{
-				//tempo in cui si stanno prendendo i dati
-				long aTime=System.currentTimeMillis();
-				
-				//tempo passato dall'ultimo dato elaborato
-				int deltaTime=(int) (aTime-prevDataTime);
-				if(deltaTime>=dataTime)
-				{
-					prevDataTime=aTime-(deltaTime-dataTime);
-					
-					//tempo passato dall'inizio della sessione (in millisecondi)
-					totalDuration+=dataTime;
-					
-					float x=event.values[0],y=event.values[1],z=event.values[2];
-					data.add(x,y,z);
-					sendBroadcastMessage(totalDuration,x,y,z);
-					(new ElaborateTask(ESPService.this,data,sessionId)).execute(null,null,null);
-				}
+			//tempo in cui si stanno prendendo i dati
+			long aTime=System.currentTimeMillis();
+
+			//tempo passato dall'ultimo dato elaborato
+			int deltaTime=(int)(aTime-prevDataTime);
+			if(deltaTime>=dataTime)
+			{
+				prevDataTime=aTime-(deltaTime-dataTime);
+
+				//tempo passato dall'inizio della sessione (in millisecondi)
+				totalDuration+=dataTime;
+
+				float x=event.values[0],y=event.values[1],z=event.values[2];
+				data.add(x,y,z);
+				sendBroadcastMessage(totalDuration,x,y,z);
+				(new ElaborateTask(ESPService.this,data,sessionId)).execute(null,null,null);
 			}
+		}
 
 		private void sendBroadcastMessage(long time,float x,float y,float z) {
 			Intent intent = new Intent(ACTION_GRAPHIC_BROADCAST);

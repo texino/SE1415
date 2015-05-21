@@ -220,10 +220,6 @@ public class LocalStorage {
 			throw new IllegalArgumentException();
 		String sessionPath=sessionsDataFolderPath+sessionId+"/";
 		File sessionFile=new File(sessionPath+sessionId+".txt");
-		Log.d(TAG,"SEARCHING FILE : "+sessionFile.getAbsolutePath()+"\n"
-				+"Exist : "+sessionFile.exists()+"\n"+
-				"Is file : "+sessionFile.isFile()+"\n"+
-				"Is directory : "+sessionFile.isDirectory());
 		if(!sessionFile.exists())
 			throw new NoSuchSessionException();
 		String finalS="";
@@ -249,6 +245,10 @@ public class LocalStorage {
 				json=new JSONObject(line);
 				String fallId=json.getString(ID_TAG);//percorso del file della sessione
 				File fall=new File(sessionPath+fallId+".txt");
+				Log.d(TAG,"FALL FILE : "+fall.getAbsolutePath()+"\n"
+						+"Exist : "+fall.exists()+"\n"+
+						"Is file : "+fall.isFile()+"\n"+
+						"Is directory : "+fall.isDirectory());
 				//passiamo in uscita le info della sessione solo se il file associato esiste
 				if(fall.exists()){
 					FallInfo info=new FallInfo(fallId,json.getString(DATE_TAG),json.getBoolean(STATUS_TAG));
@@ -418,7 +418,7 @@ public class LocalStorage {
 			while((line=bufferedReader.readLine())!=null)
 				finalS+=line+"\n";
 			bufferedReader.close();
-
+			Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
 			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
 			bufferedWriter.write(finalS);
 			bufferedWriter.flush();
@@ -449,6 +449,7 @@ public class LocalStorage {
 				finalS+=line+"\n";
 			bufferedReader.close();
 
+			Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
 			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
 			bufferedWriter.write(finalS);
 			bufferedWriter.flush();

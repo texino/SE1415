@@ -1,7 +1,7 @@
 package it.dei.unipd.esp1415.utils;
 
 public class Utils {
-	
+
 	/**
 	 * Check if the date syntax is correct
 	 * @param date The string date to check
@@ -11,6 +11,9 @@ public class Utils {
 	 */
 	public static boolean checkDateFormat(String date)
 	{
+		boolean udate=true;
+		if(udate)
+			return udate;
 		int length=date.length();
 		if(length!=16)
 			return false;
