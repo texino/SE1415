@@ -1,6 +1,7 @@
 package it.dei.unipd.esp1415;
 
 import it.dei.unipd.esp1415.views.FloatingActionButton;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -58,7 +59,9 @@ public class SessionList extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-        	Log.i("SETTINGS", "Setting action button pressed");
+        	Intent setting_intent = new Intent(this, Settings.class);
+        	startActivity(setting_intent);
+        	//Log.i("SETTINGS", "Setting action button pressed");
         	//TODO intent to preference activity
         	return true;
         }
