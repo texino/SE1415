@@ -34,7 +34,7 @@ public class RenameDeleteDialog extends DialogFragment {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								//TODO set the new name
-								EditText newname = (EditText) getView().findViewById(R.id.renamesession);
+								//EditText newname = (EditText) getView().findViewById(R.id.renamesession);
 								//if newname is an empty string, dismiss dialog
 								/*if (newname.getText().equals("")) RenameDeleteDialog.this.getDialog().cancel();
 								else {
