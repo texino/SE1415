@@ -21,8 +21,13 @@
     <!-- Settings strings -->
     <string name="setting_category1">Session data</string>
     <string name='setting_category2'>Mail notification</string>
-    <string name="setting_category3">ToDo notification</string>
+    <string name="setting_category3">Notification</string>
     <string name="vibration_title">Vibrate</string>
     <string name="ringtone_title">Ringtone</string>
-
+    <string name="alarm_title">Alarm</string>
+    <string name="summary_alarm">Remember you to do a new daily session</string>
+    <string name="dialog_title1">Choose a hour</string>
+    <string name="alarmtime_title">Time to alarm</string>
+    
+    
 </resources>

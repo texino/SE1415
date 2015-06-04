@@ -1,32 +1,42 @@
 package it.dei.unipd.esp1415;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import it.dei.unipd.esp1415.views.MyDialogPreference;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.esp1415.R;
 
 public class Settings extends PreferenceActivity {
-
+	public static final int TIME_DIALOG_ID = 1;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.settings_activity);
 		
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences
-					// to their stored values.
-					bindPreferenceSummaryToValue(findPreference("ringtone key"));
-					
+		// to their stored values.
+		bindPreferenceSummaryToValue(findPreference("ringtone key"));
+		
+		Preference timedialog = (Preference) findPreference("alarmtime_key");
+		timedialog.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		             public boolean onPreferenceClick(Preference preference) {
+		            	 /*DialogFragment newFragment = new MyDialogPreference();
+		            	    newFragment.show(getSupportFragmentManager(), "timePicker");*/
+		            	 Log.i("OnClick", "Preference dialog clicked");
+		            	 //showDialog(TIME_DIALOG_ID);
+		            	 return true;
+		             }
+		         });
 		/*getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, new PrefsFragment()).commit();
 		PreferenceManager.setDefaultValues(Settings.this,
@@ -43,7 +53,7 @@ public class Settings extends PreferenceActivity {
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			//This string contains the changed preference's value.
 			String stringValue = value.toString();
-
+/*
 			//If the preference is the editable 'Display Name'.
 			if (preference instanceof EditTextPreference) {
 				if (stringValue.equalsIgnoreCase("User") || stringValue.equals("")) {
@@ -53,7 +63,7 @@ public class Settings extends PreferenceActivity {
 				} else {
 					preference.setSummary(stringValue);
 				}
-			} else if (preference instanceof RingtonePreference) {
+			} else */if (preference instanceof RingtonePreference) {
 				//If the preference is the ringtone: for ringtone preferences,
 				//look up the correct display value using RingtoneManager.
 				if (TextUtils.isEmpty(stringValue)) {

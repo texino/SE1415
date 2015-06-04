@@ -10,6 +10,24 @@
     
     <PreferenceCategory android:title="@string/setting_category3" >
         
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="alarm key"
+            android:summary="@string/summary_alarm"
+            android:title="@string/alarm_title" />
+        
+        <PreferenceScreen
+            android:key="alarmtime_key"
+            android:title="@string/alarmtime_title" >
+        </PreferenceScreen>
+        
+        <!-- <DialogPreference
+            android:key="dialog_pref_key"
+            android:dialogTitle="@string/dialog_title1"
+            android:negativeButtonText="@string/annulla"
+            android:positiveButtonText="@string/conferma"
+            android:dialogLayout="@layout/rename_delete_dialog" /> -->
+        
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:key="ringtone key"
