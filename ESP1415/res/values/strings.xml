@@ -14,5 +14,26 @@
     <string name="error_file_writing">Error in writing</string>
     <string name="error_arguments">Wrong arguments, please retry</string>
     <string name="error_inexistent_session">Sessione inesistente</string>
+    <string name="picture_descriptor">Session\'s Picture</string>
+    <string name="picture_descriptor1">Rename\'s button</string>
+    <string name="picture_descriptor2">Delete\'s button</string>
+    <string name="picture_descriptor3">Details\'s button</string>
+    <string name="delete_dialog">Eliminare la sessione?</string>
+    <string name="conferma">OK</string>
+    <string name="annulla">Cancels</string>
+    <string name="rinomina">Rename</string>
+    <string name="dialog_title">Session</string>
+    <string name="elimina">Elimina</string>
+    <string name="session_list">Session List</string>
+    <string name="hint_dialog_1">New name session</string> <!-- Settings strings -->
+    <string name="setting_category1">Session data</string>
+    <string name="setting_category2">Mail notification</string>
+    <string name="setting_category3">Notification</string>
+    <string name="vibration_title">Vibrate</string>
+    <string name="ringtone_title">Ringtone</string>
+    <string name="alarm_title">Alarm</string>
+    <string name="summary_alarm">Remember you to do a new daily session</string>
+    <string name="dialog_title1">Choose a hour</string>
+    <string name="alarmtime_title">Time to alarm</string>
 
 </resources>

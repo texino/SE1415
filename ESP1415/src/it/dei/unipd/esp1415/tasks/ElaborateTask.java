@@ -1,5 +1,6 @@
 package it.dei.unipd.esp1415.tasks;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,6 +8,8 @@ import java.util.Date;
 import it.dei.unipd.esp1415.exceptions.IllegalDateFormatException;
 import it.dei.unipd.esp1415.exceptions.IllegalIdException;
 import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
+import it.dei.unipd.esp1415.exceptions.LowSpaceException;
+import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.utils.DataArray;
@@ -67,7 +70,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			try {
 				data = new FallData(""+System.currentTimeMillis(),date,true,200,200,points);
 				LocalStorage.storeFallData(sessionId,data);
-				sendBroadcastMessage(date);
+				sendBroadcastMessage(data.getId());
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalDateFormatException e) {
@@ -75,6 +78,15 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			} catch (IllegalNumberException e) {
 				e.printStackTrace();
 			} catch (IllegalIdException e) {
+				e.printStackTrace();
+			} catch (NoSuchSessionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (LowSpaceException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Log.d("FALL EVENT","FALLEN");

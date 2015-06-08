@@ -85,6 +85,11 @@ public class DataArray {
 		return index;
 	}
 
+	public int getRate()
+	{
+		return rate;
+	}
+	
 	/**
 	 * Prende l'array di valori sull'asse X di questo array
 	 * @return Un array di valori float

@@ -1,6 +1,9 @@
 package it.dei.unipd.esp1415.tasks;
 
+import java.io.IOException;
+
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
+import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.utils.DataArray;
 import it.dei.unipd.esp1415.utils.LocalStorage;
@@ -50,12 +53,17 @@ public class ESPService extends Service{
 	@Override
 	public int onStartCommand(Intent intent,int flags,int startId)
 	{
+		//L'activity chiede di avviare il service
 		if(!running)
-		{//Se non è attivo si registra al sensore
+		{
+			//Il service non è attivo
+			Log.d(TAG,"STARTED WITH = "+(totalDuration/1000)+" seconds");
 			totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
-			start();
+			prevDataTime=System.currentTimeMillis();
+			sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+			sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+			sensorManager.registerListener(listener,sensor,1);
 		}
-		prevDataTime=System.currentTimeMillis();
 		running=true;
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
 		return super.onStartCommand(intent, flags, startId);
@@ -63,7 +71,7 @@ public class ESPService extends Service{
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		//l' activity di una sessione si sta collegando a questo service
+		//L'activity cerca di legarsi a questo service
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
 		return binder;
 	}
@@ -80,25 +88,18 @@ public class ESPService extends Service{
 	@Override
 	public void onDestroy()
 	{
-		Log.d(TAG,"DESTROYED");
+		Log.d(TAG,"ON DESTROY");
 		//Cerco di salvare la durata attuale nel file 
 		try {
 			LocalStorage.pauseSession(sessionId,(int)totalDuration);
 		} catch (NoSuchSessionException e) {
 			//se il tempo non è aggiornato semplicemente non abbiamo dei dati aggiornati
 			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Avvia il lavoro del service
-	 */
-	public void start()
-	{
-		Log.d("SERVICE","STARTED:    STORING= "+totalDuration);
-		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		sensorManager.registerListener(listener,sensor,1);
 	}
 
 	/**
@@ -106,11 +107,17 @@ public class ESPService extends Service{
 	 */
 	public void stop()
 	{
-		Log.d("SERVICE","STOPPED:    STORING= "+totalDuration);
+		Log.d(TAG,"STOPPED:    STORING= "+(totalDuration/1000)+" seconds");
 		running=false;
 		sensorManager.unregisterListener(listener,sensor);
-		try {LocalStorage.stopSession(sessionId,(int) totalDuration);} 
-		catch (NoSuchSessionException e) {e.printStackTrace();}
+		try {LocalStorage.stopSession(sessionId,(int)totalDuration);} 
+		catch (NoSuchSessionException e) {e.printStackTrace();} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (LowSpaceException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.stopSelf();
 	}
 
@@ -119,11 +126,17 @@ public class ESPService extends Service{
 	 */
 	public void pause()
 	{
-		Log.d("SERVICE","PAUSED:    STORING= "+totalDuration);
+		Log.d(TAG,"PAUSED:    STORING= "+(totalDuration/1000)+" seconds");
 		running=false;
 		sensorManager.unregisterListener(listener,sensor);
 		try {LocalStorage.pauseSession(sessionId,(int) totalDuration);} 
-		catch (NoSuchSessionException e) {e.printStackTrace();}
+		catch (NoSuchSessionException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.stopSelf();
 	}
 
@@ -145,15 +158,17 @@ public class ESPService extends Service{
 		catch (Throwable e) {e.printStackTrace();}
 	}
 
-	private long prevDataTime,dataTime;
+	private long prevDataTime;
+	private float dataThreshold;
 
 	private class ESPEventListener implements SensorEventListener{
 
 		public ESPEventListener()
 		{
+			//TODO get the rate from 
 			int rate=10;
-			data=new DataArray(rate);	
-			dataTime=(1000/rate);
+			data=new DataArray(rate);
+			dataThreshold=(1000f/rate);
 			prevDataTime=System.currentTimeMillis();
 		}
 
@@ -164,17 +179,17 @@ public class ESPService extends Service{
 			long aTime=System.currentTimeMillis();
 
 			//tempo passato dall'ultimo dato elaborato
-			int deltaTime=(int)(aTime-prevDataTime);
-			if(deltaTime>=dataTime)
+			long deltaTime=aTime-prevDataTime;
+			if(deltaTime>=dataThreshold)
 			{
-				prevDataTime=aTime-(deltaTime-dataTime);
-
+				//prev data deve rappresentare un "multiplo" di dataThreshold
+				prevDataTime=System.currentTimeMillis();
 				//tempo passato dall'inizio della sessione (in millisecondi)
-				totalDuration+=dataTime;
-
+				totalDuration+=deltaTime;
 				float x=event.values[0],y=event.values[1],z=event.values[2];
 				data.add(x,y,z);
 				sendBroadcastMessage(totalDuration,x,y,z);
+
 				(new ElaborateTask(ESPService.this,data,sessionId)).execute(null,null,null);
 			}
 		}

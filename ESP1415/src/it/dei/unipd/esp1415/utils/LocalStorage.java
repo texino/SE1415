@@ -5,6 +5,7 @@ import it.dei.unipd.esp1415.exceptions.IllegalIdException;
 import it.dei.unipd.esp1415.exceptions.IllegalNameException;
 import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
+import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
@@ -12,9 +13,11 @@ import it.dei.unipd.esp1415.objects.FallInfo;
 import it.dei.unipd.esp1415.objects.SessionData;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,12 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,7 +39,7 @@ import android.os.StatFs;
 import android.util.Log;
 
 /**
- * A class to manage the local storage for this application
+ * Classe che gestisce il salvataggio ed il recupero delle sessioni
  */
 public class LocalStorage {
 
@@ -48,10 +50,8 @@ public class LocalStorage {
 	private final static String sessionImagesFolderPath=extDirectory+"/Working/SessionsImages/";
 	private final static String TAG="LOCAL STORAGE";
 	private final static String ID_TAG="ID";
-	private final static String NAME_TAG="NAME";
-	private final static String DURATION_TAG="DURATION";
 	private final static String DATE_TAG="DATE";
-	private final static String NUMBER_TAG="NUMBER",STATUS_TAG="STATUS";
+	private final static String STATUS_TAG="STATUS";
 
 	/**
 	 * Prende la lista delle informazioni di tutte le sessioni memorizzate
@@ -63,53 +63,24 @@ public class LocalStorage {
 	public static List<SessionInfo> getSessionInfos() throws IOException
 	{
 		List<SessionInfo> list=new ArrayList<SessionInfo>();
-
 		String pathInfo=infoFolderPath;
-		File infoFile=new File(pathInfo);
-		if(!infoFile.exists())
-			infoFile.mkdirs();
-		infoFile=new File(pathInfo+infoFileName);
 		try{
+			File infoFile=new File(pathInfo);
+			if(!infoFile.exists())
+				infoFile.mkdirs();
+			infoFile=new File(pathInfo+infoFileName);
 			if(!infoFile.exists())
 				infoFile.createNewFile();
 			String finalS="";
 			//Leggiamo le info dal file (che è una lista di id dal meno recente in poi)
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(infoFile));
-			BufferedReader sessionReader;
 			String id;
 			while((id=bufferedReader.readLine())!=null)
 			{
-				Log.d(TAG,"INFO LINE:"+id);
-				/*Se catturiamo un'eccezione è perchè i dati sulle info della sessione sono corrotti
-				quindi non le consideriamo*/
-				try{
-					String sessionFolderPath=sessionsDataFolderPath+id+"/";//percorso del file della sessione
-					File session=new File(sessionFolderPath+id+".txt");
-					//passiamo in uscita le info della sessione solo se il file associato esiste
-					if(session.exists()){
-						sessionReader = new BufferedReader(new FileReader(session));
-						String name=sessionReader.readLine();
-						String date=sessionReader.readLine();
-						String duration=sessionReader.readLine();
-						String status=sessionReader.readLine();
-						int number=0;
-						while(sessionReader.readLine()!=null)
-							number++;
-						sessionReader.close();
-						SessionInfo info=new SessionInfo(id,name,date,Integer.parseInt(duration),
-								number,Boolean.parseBoolean(status));
-						list.add(info);
-						finalS+=id+"\n";
-					}
-				} catch (IllegalDateFormatException e) {
-					e.printStackTrace();
-				} catch (IllegalNameException e) {
-					e.printStackTrace();
-				} catch (IllegalNumberException e) {
-					e.printStackTrace();
-				} catch (IllegalIdException e) {
-					e.printStackTrace();
-				}
+				SessionInfo info=getSessionInfo(id);
+				if(info!=null)//consideriamo l'id solo se appunto i dati esistono e non sono corrotti
+					list.add(info);
+				finalS+=id+"\n";
 			}
 			bufferedReader.close();
 			/*Scriviamo sul file tutte le righe (raccolte in finalS) che hanno un file associato
@@ -127,23 +98,23 @@ public class LocalStorage {
 
 	/**
 	 * Crea una nuova sessione in memoria
-	 * @param context Il contesto in cui viene creata la sessione
 	 * @param name Il nome della nuova sessione
-	 * @return l'id della nuova sessione
+	 * @return la SessionData salvata se il salvataggio ha avuto successo (null altrimenti)
 	 * @throws IllegalArgumentException se il nome è null o non ha almeno un carattere
 	 * @throws IOException se c'è un'errore nella lettura/scrittura dei file
+	 * @throws LowSpaceException se non c'è abbastanza spazio in memoria per salvare
 	 */
-	public static SessionData createNewSession(Context context,String name) throws IllegalArgumentException,IOException,LowSpaceException
+	public static SessionInfo createNewSession(String name) throws IllegalArgumentException,IOException,LowSpaceException
 	{
 		if((name==null)||(name.length()<1))
 			throw new IllegalArgumentException();
-
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm",Locale.ITALIAN);
 		String date=dateFormat.format(new Date());
-		String id=name;
-		SessionData session;
+		String id=""+System.currentTimeMillis();
+		SessionInfo session;
 		try {
-			session = new SessionData(id,name,date,0,true,null);
+			session = new SessionInfo(id,name,date,0,0,true);
+			saveSessionInfoInFile(session);
 		} catch (IllegalDateFormatException e1) {
 			e1.printStackTrace();throw new IllegalArgumentException();
 		} catch (IllegalNameException e1) {
@@ -152,72 +123,27 @@ public class LocalStorage {
 			e1.printStackTrace();throw new IllegalArgumentException();
 		} catch (IllegalIdException e1) {
 			e1.printStackTrace();throw new IllegalArgumentException();
+		}catch (LowSpaceException e1) {
+			throw e1;
+		}catch (IOException e1) {
+			throw e1;
 		}
-		String data=name+"\n"+
-				date+"\n"+
-				"0\n"+
-				"true\n";//stringa da scrivere nel file della sessione
-
-		String pathInfo=infoFolderPath;
-		String pathSession=sessionsDataFolderPath+id+"/";
-		File infoFile=new File(pathInfo+infoFileName);
-		Log.d(TAG,"INFO FILE:\nPath:"+infoFile.getAbsolutePath()+
-				"\nexist:"+infoFile.exists()+
-				"\nisFile:"+infoFile.isFile());
-
-		File sessionFile=new File(pathSession+id+".txt"); //Creiamo il file
-		Log.d(TAG,"SESSION FILE\n"+"Path:"+sessionFile.getAbsolutePath()+
-				"\nexist:"+sessionFile.exists()+
-				"\nisFile:"+sessionFile.isFile());
-		try{
-			if(!infoFile.exists())
-			{
-				File folders=new File(pathInfo);
-				folders.mkdirs();
-				infoFile.createNewFile();
-			}
-			if(!sessionFile.exists())
-			{
-				File folders=new File(pathSession);
-				folders.mkdirs();
-				sessionFile.createNewFile();
-			}
-			StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-			long bytesAvailable = (long)stat.getBlockCount()*(long)stat.getBlockSize();
-			if(bytesAvailable<(id.length()+data.length()))
-			{
-				//non c'è abbastanza spazio
-				throw new LowSpaceException(bytesAvailable,id.length()+data.length());
-			}
-			//SCRIVIAMO LE INFO
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(infoFile,true));
-			bufferedWriter.write(id+"\n");
-			bufferedWriter.flush();
-			bufferedWriter.close();
-			//SCRIVIAMO LA SESSIONE
-			bufferedWriter = new BufferedWriter(new FileWriter(sessionFile,true));
-			bufferedWriter.write(data);
-			bufferedWriter.flush();
-			bufferedWriter.close();
-			return session;
-		} catch (java.io.IOException e) {
-			e.printStackTrace();
-			throw e;}
+		return session;
 	}
 
 	/**
 	 * Prende i dati di una sessione specifica
-	 * @param context The context that call this method
 	 * @param sessionId L'id della sessione
-	 * @return an object of the session data
-	 * @throws NoSuchSessionException if this session isn't stored
-	 * @throws IOException if there's been an error reading from files
-	 * @throws IllegalArgumentException if one of the parameters is null
+	 * @return un oggetto di tipo SessionData se sono stati raccolti i dati (null altrimenti)
+	 * @throws NoSuchSessionException Se la sessione non esiste
+	 * @throws IOException se c'è stato un'errore di salvataggio
+	 * @throws IllegalArgumentException Se l'id della sessione non è valido
 	 */
-	public static SessionData getSessionData(Context context,String sessionId) throws NoSuchSessionException,IOException,IllegalArgumentException
+	public static SessionData getSessionData(String sessionId) throws NoSuchSessionException,IOException,IllegalArgumentException
 	{
-		if((context==null)||(sessionId==null))
+		if(sessionId==null||sessionId.equals(""))
 			throw new IllegalArgumentException();
+
 		String sessionPath=sessionsDataFolderPath+sessionId+"/";
 		File sessionFile=new File(sessionPath+sessionId+".txt");
 		if(!sessionFile.exists())
@@ -245,10 +171,6 @@ public class LocalStorage {
 				json=new JSONObject(line);
 				String fallId=json.getString(ID_TAG);//percorso del file della sessione
 				File fall=new File(sessionPath+fallId+".txt");
-				Log.d(TAG,"FALL FILE : "+fall.getAbsolutePath()+"\n"
-						+"Exist : "+fall.exists()+"\n"+
-						"Is file : "+fall.isFile()+"\n"+
-						"Is directory : "+fall.isDirectory());
 				//passiamo in uscita le info della sessione solo se il file associato esiste
 				if(fall.exists()){
 					FallInfo info=new FallInfo(fallId,json.getString(DATE_TAG),json.getBoolean(STATUS_TAG));
@@ -285,44 +207,23 @@ public class LocalStorage {
 	}
 
 	/**
-	 * Prende l'immagine della sessione specificata
+	 * Prende i dati di una specifica caduta di una sessione
 	 * @param sessionId L'Id della sessione
-	 * @return un oggetto di tipo Bitmap dell'immagine <br>
-	 * (null se l'immagine non esiste o è danneggiata)
-	 * @throws IllegalArgumentException se uno dei parametri è null
+	 * @param fallId L'Id della caduta
+	 * @return un oggetto di tipo FallData se ci sono i dati (null altrimenti)
+	 * @throws NoSuchFallException Se la caduta non esiste
+	 * @throws IOException Se c'è stato un errore nella lettura dei file
+	 * @throws IllegalArgumentException Se uno dei parametri è incosistente
 	 */
-	public static Bitmap getSessionImage(Context context,String sessionId) throws IOException,IllegalArgumentException
+	public static FallData getFallData(String sessionId,String fallId) throws NoSuchFallException,IOException,IllegalArgumentException
 	{
-		if((context==null)||(sessionId==null))
+		if(sessionId==null||fallId==null||sessionId.equals("")||fallId.equals(""))
 			throw new IllegalArgumentException();
 
-		File sdCardDirectory = Environment.getExternalStorageDirectory();
-		String path=sdCardDirectory+sessionImagesFolderPath+sessionId+".png";
-		File imageFile=new File(path);
-		if(!imageFile.exists())
-			return null;
-		return BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-	}
-
-	/**
-	 * Get the data of the specified session's fall
-	 * @param context The context that call this method
-	 * @param sessionId The id of the session to get
-	 * @param fallId The id of the fall in the session
-	 * @return an object of the fall data
-	 * @throws NoSuchSessionException if this session isn't stored
-	 * @throws IOException if there's been an error reading from files
-	 * @throws IllegalArgumentException if one of the parameters is null
-	 */
-	public static FallData getFallData(Context context,String sessionId,String fallId) throws NoSuchSessionException,IOException,IllegalArgumentException
-	{
-		if((context==null)||(sessionId==null))
-			throw new IllegalArgumentException();
-
-		File sdCardDirectory = Environment.getExternalStorageDirectory();
-		String path=sdCardDirectory+sessionsDataFolderPath+sessionId+"/"+fallId+".txt";
+		String path=sessionsDataFolderPath+sessionId+"/"+fallId+".txt";
 		File fallFile=new File(path);
-
+		if(!fallFile.exists())
+			throw new NoSuchFallException();
 		//Leggiamo i dati
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(fallFile));
 		//INFORMAZIONI
@@ -356,160 +257,361 @@ public class LocalStorage {
 		return null;
 	}
 
-	public static void storeFallData(String sessionId,FallData data)
+	/**
+	 * Salva i dati della caduta in un file specifico
+	 * @param sessionId L'Id della sessione in cui è avvenuta la caduta
+	 * @param data Un oggetto di tipo FallData per i dati della caduta
+	 * @throws IllegalArgumentException se i parametri sono incosistenti (null o "")
+	 * @throws IOException se c'è un'errore nella lettura/scrittura dei file
+	 * @throws NoSuchSessionException se non esiste in memoria la sessione associata a questa caduta
+	 * @throws LowSpaceException se non c'è abbastanza spazio in memoria per salvare
+	 */
+	public static boolean storeFallData(String sessionId,FallData data) throws NoSuchSessionException,IllegalArgumentException,IOException,LowSpaceException
 	{
-		String dataId=data.getId();
-		String path=sessionsDataFolderPath+sessionId+"/";
-		File fallFile=new File(path+dataId+".txt");
-		File sessionFile=new File(path+sessionId+".txt");
-		try{
-			JSONObject json=new JSONObject();
-			try {
-				json.put(ID_TAG, dataId);
-				json.put(DATE_TAG, data.getDate());
-				json.put(STATUS_TAG, data.isNotified());
-			} catch (JSONException e) {
-				e.printStackTrace();
-				return;
-			}
-			BufferedWriter bufferedWriter=new BufferedWriter(new FileWriter(sessionFile,true));
-			bufferedWriter.write(json.toString()+"\n");
-			bufferedWriter.flush();
-			bufferedWriter.close();
+		if((sessionId==null)||(sessionId.length()<1)||(data==null))
+			throw new IllegalArgumentException();
 
-			fallFile.createNewFile();
-			AccelPoint[] dataPoints=data.getAccelDatas();
-			bufferedWriter = new BufferedWriter(new FileWriter(fallFile));
-			bufferedWriter.write(""+dataPoints.length+"\n");
-			bufferedWriter.write(""+data.getDate()+"\n");
-			bufferedWriter.write(""+data.isNotified()+"\n");
-			bufferedWriter.write(""+data.getLongitude()+"\n");
-			bufferedWriter.write(""+data.getLatitude()+"\n");
-			for(int i=0;i<dataPoints.length;i++)
-				bufferedWriter.write(""+dataPoints[i].getX()+";"+dataPoints[i].getY()+";"
-						+dataPoints[i].getZ()+"\n");
-			bufferedWriter.flush();
-			bufferedWriter.close();
-		}
-		catch(IOException e)
+		//CONTENUTO AGGIUNTIVO NEL FILE INFO DELLA SESSIONE
+		JSONObject json=new JSONObject();
+		try{
+			json.put(ID_TAG,data.getId());
+			json.put(DATE_TAG, data.getDate());
+			json.put(STATUS_TAG, data.isNotified());
+		}catch(JSONException e)
 		{
 			e.printStackTrace();
+			throw new IOException();
 		}
-	}
+		String info=json.toString();
 
-	public static void stopSession(String sessionId,int totalDuration) throws NoSuchSessionException
-	{
-		try{
-			String sessionPath=sessionsDataFolderPath+sessionId+"/";
-			File sessionFile=new File(sessionPath+sessionId+".txt");
-			if(!sessionFile.exists())
-				throw new NoSuchSessionException();
-			String finalS="";
-			//Leggiamo dal file
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
-			//SESSIONE
-			finalS+=bufferedReader.readLine()+"\n";
-			finalS+=bufferedReader.readLine()+"\n";//saltiamo nome e data
-			bufferedReader.readLine();
-			finalS+=totalDuration+"\n";
-			bufferedReader.readLine();
-			finalS+="false\n";
-			String line;
-			while((line=bufferedReader.readLine())!=null)
-				finalS+=line+"\n";
-			bufferedReader.close();
-			Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
-			bufferedWriter.write(finalS);
-			bufferedWriter.flush();
-			bufferedWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void pauseSession(String sessionId,int totalDuration) throws NoSuchSessionException
-	{
-		try{
-			String sessionPath=sessionsDataFolderPath+sessionId+"/";
-			File sessionFile=new File(sessionPath+sessionId+".txt");
-			if(!sessionFile.exists())
-				throw new NoSuchSessionException();
-			String finalS="";
-			//Leggiamo dal file
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
-			//SESSIONE
-			finalS+=bufferedReader.readLine()+"\n";
-			finalS+=bufferedReader.readLine()+"\n";//saltiamo nome e data
-			bufferedReader.readLine();
-			finalS+=totalDuration+"\n";
-			finalS+=bufferedReader.readLine()+"\n";
-			String line;
-			while((line=bufferedReader.readLine())!=null)
-				finalS+=line+"\n";
-			bufferedReader.close();
+		//CONTENUTO DEL FILE DELLA SESSIONE
+		AccelPoint[] dataPoints=data.getAccelDatas();
+		int pointsN=dataPoints.length;
+		String file="";
+		file+=(dataPoints.length)+"\n";
+		file+=data.getDate()+"\n";
+		file+=data.isNotified()+"\n";
+		file+=data.getLongitude()+"\n";
+		file+=data.getLatitude()+"\n";
+		for(int i=0;i<pointsN;i++)
+			file+=dataPoints[i].getX()+";"+dataPoints[i].getY()+";"
+					+dataPoints[i].getZ()+"\n";
 
-			Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
-			bufferedWriter.write(finalS);
-			bufferedWriter.flush();
-			bufferedWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		//CONTROLLIAMO CHE CI SIA ABBASTANZA SPAZIO
+		long bytesAvailable=getAvailableSpace();
+		if(bytesAvailable<(info.length()+file.length()))
+		{
+			//non c'è abbastanza spazio
+			throw new LowSpaceException(bytesAvailable,file.length()+info.length());
 		}
-	}
-	
-	/**
-	 * Rename an existing session
-	 * @param context The context that call this method
-	 * @param sessionId The id of the session to rename
-	 * @param name The new name of the session
-	 * @throws NoSuchSessionException if this session isn't stored
-	 * @throws IOException if there's been an error reading from files
-	 * @throws IllegalArgumentException if one of the parameters is null (or name is "")
-	 */
-	public static void renameSession(Context context,String sessionId,String name) throws NoSuchSessionException,IOException,IllegalArgumentException
-	{
-		try{
-			String sessionPath=sessionsDataFolderPath+sessionId+"/";
-			File sessionFile=new File(sessionPath+sessionId+".txt");
-			if(!sessionFile.exists())
-				throw new NoSuchSessionException();
-			String finalS="";
-			//Leggiamo dal file
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
-			//SESSIONE
-			bufferedReader.readLine();
-			finalS=name+"\n";
-			finalS+=bufferedReader.readLine()+"\n";
-			finalS+=bufferedReader.readLine()+"\n";
-			finalS+=bufferedReader.readLine()+"\n";
-			String line;
-			while((line=bufferedReader.readLine())!=null)
-				finalS+=line+"\n";
-			bufferedReader.close();
+		String pathSession=sessionsDataFolderPath+sessionId+"/";
+		File mfile=new File(pathSession);
+		if(!mfile.exists())
+			throw new NoSuchSessionException();
+		mfile=new File(pathSession+sessionId+".txt");
+		if(!mfile.exists())
+			throw new NoSuchSessionException();
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(mfile,true));
+		bufferedWriter.write(info+"\n");
+		bufferedWriter.flush();
+		bufferedWriter.close();
 
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
-			bufferedWriter.write(finalS);
-			bufferedWriter.flush();
-			bufferedWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		mfile=new File(pathSession+data.getId()+".txt"); //Creiamo il file
+		if(!mfile.exists())
+			mfile.createNewFile();
+		bufferedWriter = new BufferedWriter(new FileWriter(mfile,true));
+		bufferedWriter.write(info+"\n");
+		bufferedWriter.flush();
+		bufferedWriter.close();
+		return true;
 	}
 
 	/**
-	 * Delete an existing session
-	 * @param context The context that call this method
-	 * @param sessionId The id of the session to delete
-	 * @throws NoSuchSessionException if this session isn't stored
-	 * @throws IOException if there's been an error reading from files
-	 * @throws IllegalArgumentException if one of the parameters is null
+	 * Prende l'immagine della sessione specificata
+	 * @param sessionId L'Id della sessione
+	 * @return un oggetto di tipo Bitmap dell'immagine <br>
+	 * (null se l'immagine non esiste o è danneggiata)
+	 * @throws IllegalArgumentException se uno dei parametri è null
+	 * @throws IOException se c'è stato un'errore nella lettura
 	 */
-	public static void deleteSession(Context context,String sessionId) throws NoSuchSessionException,IOException,IllegalArgumentException
+	public static Bitmap getSessionImage(Context context,String sessionId) throws IOException,IllegalArgumentException
 	{
 		if((context==null)||(sessionId==null))
 			throw new IllegalArgumentException();
-		//TODO make this method
+
+		String path=sessionImagesFolderPath+sessionId+".png";
+		File imageFile=new File(path);
+		if(!imageFile.exists())
+			return null;
+		return BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+	}
+
+	/**
+	 * Ferma una sessione cambiandone lo stato nei file e salvandone un'immagine
+	 * @param sessionId L'id della sessione (deve essere diversa da null)
+	 * @param totalDuration La durata totale dell'intera sessione (deve essere >0)
+	 * @throws IllegalArgumentException Se i parametri non sono coerenti
+	 * @throws NoSuchSessionException Se la sessione non esiste
+	 * @throws IOException Se c'è stato un'errore nella scrittura
+	 * @throws LowSpaceException Se non c'è abbastanza spazio per salvare l'immagine
+	 */
+	public static void stopSession(String sessionId,int totalDuration) throws LowSpaceException,NoSuchSessionException,IllegalArgumentException,IOException
+	{
+		if(sessionId==null||totalDuration<0)
+			throw new IllegalArgumentException();
+		String sessionPath=sessionsDataFolderPath+sessionId+"/";
+		File sessionFile=new File(sessionPath+sessionId+".txt");
+		if(!sessionFile.exists())
+			throw new NoSuchSessionException();
+		String finalS="";
+		//Leggiamo dal file
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
+		//SESSIONE
+		finalS+=bufferedReader.readLine()+"\n";//nome
+		finalS+=bufferedReader.readLine()+"\n";//data
+		bufferedReader.readLine();
+		finalS+=totalDuration+"\n";//durata
+		bufferedReader.readLine();
+		finalS+="false\n";//stato di esecuzione
+		String line;
+		while((line=bufferedReader.readLine())!=null)
+			finalS+=line+"\n";
+		bufferedReader.close();
+		Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
+		bufferedWriter.write(finalS);
+		bufferedWriter.flush();
+		bufferedWriter.close();
+		storeImageForSession(sessionId);
+	}
+
+	/**
+	 * Salva in memoria un'immagine identificativa per la sessione specificata
+	 * @param sessionId
+	 * @throws IllegalArgumentException Se i parametri sono incosistenti
+	 * @throws NoSuchSessionException Se la sessione non esiste in memoria
+	 * @throws LowSpaceException Se non c'è abbastanzaa spazio in memoria per l'immagine
+	 * @throws IOException Se c'è stato un problema nella scrittura dei file
+	 */
+	private static void storeImageForSession(String sessionId) throws IllegalArgumentException,NoSuchSessionException,IOException, LowSpaceException
+	{
+		String todo;
+		//TODO pensare ad un logaritmo
+		if((sessionId==null))
+			throw new IllegalArgumentException();
+
+		String path=sessionImagesFolderPath+sessionId+".png";
+		File imageFile=new File(path);
+		if(!imageFile.exists())
+			imageFile.createNewFile();
+		int[] pixels=new int[50*50];
+		for(int c=0;c<50;c++)
+		{
+			for(int r=0;r<50;r++)
+				pixels[(r*50)+c]=0xffffff00;
+		}
+		Bitmap b=Bitmap.createBitmap(pixels, 50, 50, Bitmap.Config.ARGB_8888);
+		storeBitmapInFile(b,imageFile.getAbsolutePath());
+	}
+
+	/**
+	 * Salva una bitmap nel file al percorso specificato (creandolo se necessario)
+	 * @param btm La bitmap da salvare
+	 * @param filePath Il percorso in cui salvare la bitmap
+	 * @throws IOException se c'è stato un'errore nella scrittura
+	 * @throws LowSpaceException se non c'è abbastanza spazio in memoria
+	 */
+	public static void storeBitmapInFile(Bitmap btm,String filePath) throws IOException,LowSpaceException
+	{
+		long availableSpace=getAvailableSpace();
+		int neededSpace=4*(btm.getWidth()*btm.getHeight());//spazio necessario in byte
+		if(availableSpace<neededSpace)
+			throw new LowSpaceException(availableSpace,neededSpace);
+		File file=new File(filePath);
+		if(!file.exists())
+			file.createNewFile();
+		file.setWritable(true,false);
+		BufferedOutputStream fOut = new BufferedOutputStream(new FileOutputStream(file));
+		btm.compress(Bitmap.CompressFormat.JPEG,100,fOut);
+		fOut.flush();
+		fOut.close();
+		System.gc();
+	}
+
+	/**
+	 * Aggiorna la durata di una determinata sessione
+	 * @param sessionId L'id della sessione (deve essere diversa da null)
+	 * @param totalDuration L'attuale durata della sessione (deve essere >0)
+	 * @throws IllegalArgumentException Se i parametri non sono coerenti
+	 * @throws NoSuchSessionException Se la sessione non esiste
+	 * @throws IOException Se c'è stato un'errore nella scrittura
+	 */
+	public static void pauseSession(String sessionId,int totalDuration) throws IllegalArgumentException,IOException,NoSuchSessionException
+	{
+		if(sessionId==null||totalDuration<0)
+			throw new IllegalArgumentException();
+		String sessionPath=sessionsDataFolderPath+sessionId+"/";
+		File sessionFile=new File(sessionPath+sessionId+".txt");
+		if(!sessionFile.exists())
+			throw new NoSuchSessionException();
+		String finalS="";
+		//Leggiamo dal file
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
+		//SESSIONE
+		finalS+=bufferedReader.readLine()+"\n";//nome
+		finalS+=bufferedReader.readLine()+"\n";//data
+		bufferedReader.readLine();
+		finalS+=totalDuration+"\n";//durata
+		finalS+=bufferedReader.readLine()+"\n";//stato di esecuzione
+		String line;
+		while((line=bufferedReader.readLine())!=null)
+			finalS+=line+"\n";
+		bufferedReader.close();
+		Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
+		bufferedWriter.write(finalS);
+		bufferedWriter.flush();
+		bufferedWriter.close();
+	}
+
+	/**
+	 * Rinomina una sessione
+	 * @param sessionId L'id della sessione (deve essere diversa da null)
+	 * @param newName il nuovo nome della sessione (deve essere diverso da null)
+	 * @throws IllegalArgumentException Se i parametri non sono coerenti
+	 * @throws NoSuchSessionException Se la sessione non esiste
+	 * @throws IOException Se c'è stato un'errore nella scrittura
+	 */
+	public static void renameSession(String sessionId,String newName) throws NoSuchSessionException,IOException,IllegalArgumentException
+	{
+		if(sessionId==null||newName==null)
+			throw new IllegalArgumentException();
+		String sessionPath=sessionsDataFolderPath+sessionId+"/";
+		File sessionFile=new File(sessionPath+sessionId+".txt");
+		if(!sessionFile.exists())
+			throw new NoSuchSessionException();
+		String finalS="";
+		//Leggiamo dal file
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
+		//SESSIONE
+		bufferedReader.readLine();
+		finalS+=newName+"\n";//nome
+		String line;
+		while((line=bufferedReader.readLine())!=null)
+			finalS+=line+"\n";
+		bufferedReader.close();
+		Log.d(TAG,"STORING: "+finalS+"\nIn "+sessionId);
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
+		bufferedWriter.write(finalS);
+		bufferedWriter.flush();
+		bufferedWriter.close();
+	}
+
+	/**
+	 * Cancella una sessione
+	 * @param sessionId L'id della sessione (deve essere diversa da null)
+	 * @throws IllegalArgumentException Se i parametri non sono coerenti
+	 * @throws NoSuchSessionException Se la sessione non esiste
+	 */
+	public static void deleteSession(String sessionId) throws NoSuchSessionException,IllegalArgumentException
+	{
+		if(sessionId==null)
+			throw new IllegalArgumentException();
+		String sessionPath=sessionsDataFolderPath+sessionId+"/";
+		File sessionFolder=new File(sessionPath);
+		if(!sessionFolder.exists())
+			throw new NoSuchSessionException();
+		String[] fileNames=sessionFolder.list();
+		int nFiles=fileNames.length;
+		for(int i=0;i<nFiles;i++)
+		{
+			File internalFile=new File(sessionFolder,fileNames[i]);
+			if(internalFile.isFile())
+			{
+				internalFile.delete();
+				continue;
+			}
+			//TODO Delete content of subfolders
+		}
+		sessionFolder.delete();
+		String path=sessionImagesFolderPath+sessionId+".png";
+		File imageFile=new File(path);
+		if(!imageFile.exists())
+			return;
+		imageFile.delete();
+	}
+
+	private static long getAvailableSpace()
+	{
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		return (long)stat.getBlockCount()*(long)stat.getBlockSize();
+	}
+
+	/**
+	 * Prende i dati di informazione di una sessione specifica
+	 * @param sessionId L'id della sessione di cui prendere i dati
+	 * @return null Se i dati non ci sono o sono corrotti (o l'id non è valido)
+	 */
+	private static SessionInfo getSessionInfo(String sessionId)
+	{
+		if(sessionId==null)
+			return null;
+		String sessionPath=sessionsDataFolderPath+sessionId+"/";
+		File sessionFile=new File(sessionPath+sessionId+".txt");
+		if(!sessionFile.exists())
+			return null;
+		try{
+			//Leggiamo dal file
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(sessionFile));
+			//SESSIONE
+			String name=bufferedReader.readLine();//nome
+			String date=bufferedReader.readLine();//data
+			String duration=bufferedReader.readLine();//durata
+			String running=bufferedReader.readLine();//stato di esecuzione
+			int nFalls=0;
+			while((bufferedReader.readLine())!=null)
+				nFalls++;
+			bufferedReader.close();
+			return new SessionInfo(sessionId,name,date,Integer.parseInt(duration),nFalls,Boolean.parseBoolean(running));
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		} catch (IllegalDateFormatException e) {
+			e.printStackTrace();
+		} catch (IllegalNameException e) {
+			e.printStackTrace();
+		} catch (IllegalNumberException e) {
+			e.printStackTrace();
+		} catch (IllegalIdException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Salva i dati di informazione di una sessione nell'apposito file
+	 * @param session I dati della sessione
+	 * @return false Se i dati non sono stati salvati (poco spazio o errore di scrittura)
+	 */
+	private static void saveSessionInfoInFile(SessionInfo session) throws LowSpaceException,IOException
+	{
+		String finalS="";
+		finalS+=session.getName()+"\n";//nome
+		finalS+=session.getDate()+"\n";//data
+		finalS+=session.getDuration()+"\n";//durata
+		finalS+=session.getStatus()+"\n";//stato di esecuzione
+		long aSpace=getAvailableSpace();
+		int nSpace=finalS.length();
+		if(aSpace<nSpace)
+			throw new LowSpaceException(aSpace,nSpace);
+		String sessionPath=sessionsDataFolderPath+session.getId()+"/";
+		File sessionFile=new File(sessionPath+session.getId()+".txt");
+		if(!sessionFile.exists())
+			sessionFile.createNewFile();
+		//Scriviamo nel file
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
+		bufferedWriter.write(finalS);
+		bufferedWriter.flush();
+		bufferedWriter.close();
 	}
 }
