@@ -115,6 +115,7 @@ public class LocalStorage {
 		try {
 			session = new SessionInfo(id,name,date,0,0,true);
 			saveSessionInfoInFile(session);
+			saveSessionIdInInfoFile(id);
 		} catch (IllegalDateFormatException e1) {
 			e1.printStackTrace();throw new IllegalArgumentException();
 		} catch (IllegalNameException e1) {
@@ -608,12 +609,40 @@ public class LocalStorage {
 		if(aSpace<nSpace)
 			throw new LowSpaceException(aSpace,nSpace);
 		String sessionPath=sessionsDataFolderPath+session.getId()+"/";
-		File sessionFile=new File(sessionPath+session.getId()+".txt");
+		File sessionFile=new File(sessionPath);
+		if(!sessionFile.exists())
+			sessionFile.mkdirs();
+		sessionFile=new File(sessionPath+session.getId()+".txt");
 		if(!sessionFile.exists())
 			sessionFile.createNewFile();
 		//Scriviamo nel file
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(sessionFile));
 		bufferedWriter.write(finalS);
+		bufferedWriter.flush();
+		bufferedWriter.close();
+	}
+
+	/**
+	 * Aggiunge l'id di una sessione alla lista di sessioni accessibili dal file info
+	 * @param session I dati della sessione
+	 * @return false Se i dati non sono stati salvati (poco spazio o errore di scrittura)
+	 */
+	private static void saveSessionIdInInfoFile(String sessionId) throws LowSpaceException,IOException
+	{
+		long aSpace=getAvailableSpace();
+		int nSpace=sessionId.length();
+		if(aSpace<nSpace)
+			throw new LowSpaceException(aSpace,nSpace);
+
+		File infoFile=new File(infoFolderPath);		
+		if(!infoFile.exists())
+			infoFile.mkdirs();
+		infoFile=new File(infoFolderPath+infoFileName);
+		if(!infoFile.exists())
+			infoFile.createNewFile();
+		//Scriviamo nel file
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(infoFile,true));
+		bufferedWriter.write(sessionId);
 		bufferedWriter.flush();
 		bufferedWriter.close();
 	}

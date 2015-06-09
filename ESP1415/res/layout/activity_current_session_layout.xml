@@ -82,48 +82,12 @@
             android:src="@drawable/button_stop" />
 
         <TextView
-            android:id="@+id/text_hours"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/left_point"
-            android:layout_toStartOf="@+id/left_point"
-            android:text="@string/default_number" />
-
-        <TextView
-            android:id="@+id/text_minutes"
+            android:id="@+id/text_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="@string/default_number" />
-
-        <TextView
-            android:id="@+id/text_seconds"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/right_point"
-            android:layout_toRightOf="@+id/right_point"
-            android:text="@string/default_number" />
-
-        <TextView
-            android:id="@+id/right_point"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/text_minutes"
-            android:layout_toRightOf="@+id/text_minutes"
-            android:text="@string/number_separator" />
-
-        <TextView
-            android:id="@+id/left_point"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/text_minutes"
-            android:layout_toStartOf="@+id/text_minutes"
-            android:text="@string/number_separator" />
     </RelativeLayout>
 
     <RelativeLayout

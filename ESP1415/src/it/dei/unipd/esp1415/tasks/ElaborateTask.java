@@ -91,10 +91,10 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 		return null;
 	}
 	
-	private void sendBroadcastMessage(String date) {
-		Log.d(TAG,"FALL DATE : "+date);
+	private void sendBroadcastMessage(String id) {
+		Log.d(TAG,"FALL ID : "+id);
 		Intent intent = new Intent(ESPService.ACTION_FALL_BROADCAST);
-		intent.putExtra(ESPService.EXTRA_FALL_DATE,date);
+		intent.putExtra(ESPService.EXTRA_FALL_ID,id);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 }

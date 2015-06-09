@@ -29,7 +29,7 @@ public class ESPService extends Service{
 	public static final String EXTRA_X="extra_x";
 	public static final String EXTRA_Y="extra_y";
 	public static final String EXTRA_Z="extra_z";	
-	public static final String EXTRA_FALL_DATE="date";	
+	public static final String EXTRA_FALL_ID="fall_Id";	
 	public static final String ACTION_GRAPHIC_BROADCAST="GRAPHIC";
 	public static final String ACTION_TIME_BROADCAST="TIME";
 	public static final String ACTION_FALL_BROADCAST="FALL";
