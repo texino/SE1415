@@ -52,7 +52,8 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			middleIndex=middleIndex-dZ.length;
 		if(index==0)
 			prevIndex=dZ.length-1;
-		if((dZ[middleIndex]-dZ[index]>10)&&(dZ[middleIndex]-dZ[prevIndex]>10))
+		//if((dZ[middleIndex]-dZ[index]>10)&&(dZ[middleIndex]-dZ[prevIndex]>10))
+		if((dZ[index]-dZ[prevIndex])>5)
 		{
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
 			String date=dateFormat.format(new Date());

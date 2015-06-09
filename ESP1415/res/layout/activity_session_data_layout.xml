@@ -1,0 +1,105 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_second_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <Button
+        android:id="@+id/rename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:drawableLeft="@drawable/button_rename"
+        android:drawableStart="@drawable/button_rename"
+        android:height="16dp"
+        android:minWidth="48dp"
+        android:width="16dp" />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/rename"
+        android:layout_toStartOf="@+id/rename"
+        android:minWidth="48dp"
+        android:drawableLeft="@drawable/button_delete"
+        android:drawableStart="@drawable/button_delete" />
+
+    <ImageView
+        android:id="@+id/image_session"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/SessionIm"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/Session_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/delete"
+        android:layout_alignBottom="@+id/delete"
+        android:layout_marginLeft="23dp"
+        android:layout_marginStart="23dp"
+        android:layout_toEndOf="@+id/image_session"
+        android:layout_toRightOf="@+id/image_session"
+        android:text="@string/name_session" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/delete"
+        android:layout_alignEnd="@+id/delete"
+        android:layout_below="@+id/delete"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="58dp"
+        android:gravity="center"
+        android:text="@string/date_session" />
+
+    <TextView
+        android:id="@+id/tDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/date"
+        android:layout_alignBottom="@+id/date"
+        android:layout_alignLeft="@+id/Session_Name"
+        android:layout_alignStart="@+id/Session_Name"
+        android:text="@string/nDate" />
+
+    <TextView
+        android:id="@+id/tHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tDate"
+        android:layout_alignStart="@+id/tDate"
+        android:layout_below="@+id/tDate"
+        android:layout_marginTop="33dp"
+        android:text="@string/nDurata" />
+
+    <TextView
+        android:id="@+id/durata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tHour"
+        android:layout_alignBottom="@+id/tHour"
+        android:layout_alignLeft="@+id/date"
+        android:layout_alignStart="@+id/date"
+        android:text="@string/durata_session" />
+
+    <ListView
+        android:id="@+id/fall_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tHour"
+        android:layout_marginTop="36dp" >
+    </ListView>
+
+</RelativeLayout>
