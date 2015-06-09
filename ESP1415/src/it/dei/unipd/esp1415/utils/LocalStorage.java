@@ -400,8 +400,11 @@ public class LocalStorage {
 		if((sessionId==null))
 			throw new IllegalArgumentException();
 
+		File imageFile=new File(sessionImagesFolderPath);
+		if(!imageFile.exists())
+			imageFile.mkdirs();
 		String path=sessionImagesFolderPath+sessionId+".png";
-		File imageFile=new File(path);
+		imageFile=new File(path);
 		if(!imageFile.exists())
 			imageFile.createNewFile();
 		int[] pixels=new int[50*50];

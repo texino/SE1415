@@ -6,7 +6,9 @@ import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.utils.DataArray;
+import it.dei.unipd.esp1415.utils.GlobalConstants;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -165,8 +167,16 @@ public class ESPService extends Service{
 
 		public ESPEventListener()
 		{
-			//TODO get the rate from 
-			int rate=10;
+			//String r=PreferenceStorage.getSimpleData(ESPService.this,PreferenceStorage.ACCEL_RATIO);
+			String r="10";
+			int rate;
+			if(r.equals(""))
+			{
+				rate=GlobalConstants.MIN_RATIO;
+				PreferenceStorage.storeSimpleData(ESPService.this,PreferenceStorage.ACCEL_RATIO,""+rate);
+			}
+			else
+				rate=Integer.parseInt(r);
 			data=new DataArray(rate);
 			dataThreshold=(1000f/rate);
 			prevDataTime=System.currentTimeMillis();

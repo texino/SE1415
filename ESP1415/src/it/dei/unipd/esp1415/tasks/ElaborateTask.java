@@ -80,13 +80,10 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			} catch (IllegalIdException e) {
 				e.printStackTrace();
 			} catch (NoSuchSessionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (LowSpaceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Log.d("FALL EVENT","FALLEN");

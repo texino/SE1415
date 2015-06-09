@@ -39,6 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class CurrentSessionActivity extends Activity{
 
 	//Views
 	private GraphicView graphic;
-	private Button btnStart,btnStop;
+	private ImageButton btnStart,btnStop;
 	private TextView textHours,textMinutes,textSeconds,textName,textDate;
 	private Context actContext;
 	private ListView listFalls;
@@ -59,7 +60,7 @@ public class CurrentSessionActivity extends Activity{
 	private long duration;
 	private boolean empty;
 	private ESPService service;
-	public final static String TAG="ACTIVITY",ID_TAG="ID",NAME_TAG="NAME",DATE_TAG="DATE",EMPTY_TAG="EMPTY";
+	public final static String TAG="ACTIVITY",ID_TAG="ID",EMPTY_TAG="EMPTY";
 	public final static String DURATION_TAG="DURATION";
 
 	private BroadcastReceiver graphicReceiver=new BroadcastReceiver() {
@@ -82,17 +83,12 @@ public class CurrentSessionActivity extends Activity{
 			//prendiamo il service vero e proprio
 			service = binder.getService();
 			setTimeText(service.getDuration());
-			running=service.isRunning();
-			if(running)
-				btnStart.setBackgroundResource(R.drawable.button_pause);
-			else
-				btnStart.setBackgroundResource(R.drawable.button_play);
+			setRunning(service.isRunning());
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			//il service è scollegato
-			//service.stop();
 		}
 	};
 
@@ -184,8 +180,8 @@ public class CurrentSessionActivity extends Activity{
 	private void setLayout()
 	{
 		setContentView(R.layout.current_session_activity_layout);
-		btnStart=(Button)findViewById(R.id.button_start);
-		btnStop=(Button)findViewById(R.id.button_stop);
+		btnStart=(ImageButton)findViewById(R.id.button_start);
+		btnStop=(ImageButton)findViewById(R.id.button_stop);
 		textHours=(TextView)findViewById(R.id.text_hours);
 		textMinutes=(TextView)findViewById(R.id.text_minutes);
 		textSeconds=(TextView)findViewById(R.id.text_seconds);
@@ -193,8 +189,6 @@ public class CurrentSessionActivity extends Activity{
 		textDate=(TextView)findViewById(R.id.text_date);
 		listFalls=(ListView)findViewById(R.id.list);
 		graphic=(GraphicView)findViewById(R.id.graphic);
-		int rate=10;
-		//graphic.setRate(rate);
 
 		//Eventi
 		btnStart.setOnClickListener(new View.OnClickListener() {
@@ -210,11 +204,10 @@ public class CurrentSessionActivity extends Activity{
 				stopClicked();}});
 	}
 
+	/**Chiamato quando viene premuto il tasto Play*/
 	private void startClicked()
 	{
-		running=true;
-		btnStart.setBackgroundResource(R.drawable.button_pause);
-
+		setRunning(true);
 		Intent serviceIntent = new Intent(actContext,ESPService.class);
 		serviceIntent.putExtra(ID_TAG,sessionId);
 		serviceIntent.putExtra(DURATION_TAG,duration);
@@ -222,34 +215,41 @@ public class CurrentSessionActivity extends Activity{
 		startService(serviceIntent);
 		//mi lego al service
 		bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
-
-		//TODO
-		storeStatusPreference(true);
 	}
 
+	/**
+	 * Imposta lo stato corrente di esecuzione (salvandolo nelle preferenze) 
+	 * cambiando il layout di conseguenza
+	 * @param run Lo stato della sessione (true se in esecuzione)
+	 */
+	private void setRunning(boolean run)
+	{
+		running=run;
+		storeStatusPreference(running);
+		if(run)
+			btnStart.setImageResource(R.drawable.button_pause);
+		else
+			btnStart.setImageResource(R.drawable.button_play);
+	}
+
+	/**Chiamato quando viene premuto il tasto Pause*/
 	private void pauseClicked()
 	{
-		btnStart.setBackgroundResource(R.drawable.button_play);
-
+		setRunning(false);
 		//metto in pausa il service
 		service.pause();
 		//mi slego dal service
 		unbindService(connection);
-		//la durata è salvata alla chiusura del service
-		running=false;
-		storeStatusPreference(false);
 	}
 
+	/**Chiamato quando viene premuto il tasto Stop*/
 	private void stopClicked()
 	{
-		running=false;
-		btnStart.setBackgroundResource(R.drawable.button_play);
-
+		setRunning(false);
 		//fermo il service
 		service.stop();
 		//mi slego dal service
 		unbindService(connection);
-
 		CurrentSessionActivity.this.finish();
 	}
 
