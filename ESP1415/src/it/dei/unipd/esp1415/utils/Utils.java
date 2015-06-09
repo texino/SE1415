@@ -11,6 +11,9 @@ public class Utils {
 	 */
 	public static boolean checkDateFormat(String date)
 	{
+		boolean f=true;
+		if(f)
+			return f;
 		int length=date.length();
 		if(length!=16)
 			return false;

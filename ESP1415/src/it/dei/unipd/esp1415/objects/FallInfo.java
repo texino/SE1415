@@ -26,7 +26,7 @@ public class FallInfo {
 	 * @throws IllegalDateFormatException if the date isn't in the correct format
 	 * @throws IllegalIdException if the id isn't acceptable
 	 */
-	public FallInfo(String id,String date,boolean notified)throws IllegalDateFormatException,IllegalIdException
+	public FallInfo(String id,String date,boolean notified) throws IllegalDateFormatException,IllegalIdException
 	{
 		if(date==null||!Utils.checkDateFormat(date))
 			throw new IllegalDateFormatException();

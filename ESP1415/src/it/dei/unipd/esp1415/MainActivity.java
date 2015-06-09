@@ -1,7 +1,7 @@
 package it.dei.unipd.esp1415;
 
+import it.dei.unipd.esp1415.activity.SecondAcitivity;
 import android.app.Activity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;

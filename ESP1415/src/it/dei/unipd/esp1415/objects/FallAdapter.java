@@ -18,7 +18,7 @@ import com.example.esp1415.R;
 public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 
 	private Activity activity;
-	private FallInfo[] infos;
+	private ArrayList<FallInfo> infos;
 	private int layoutResourceId;
 	
 
@@ -27,7 +27,7 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 	 * @param context The context that creates this adapter 
 	 * @param data The list (in form of array) of the boards to adapt
 	 */
-	public FallAdapter(Context context,FallInfo[] data) 
+	public FallAdapter(Context context,ArrayList<FallInfo> data) 
 	{
 		super(context, R.layout.fall_row, data);//creare un layout per una riga della lista e lo passo 
 		this.layoutResourceId = R.layout.fall_row;
@@ -38,12 +38,12 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 
 	@Override
 	public int getCount() {
-		return infos.length;
+		return infos.size();
 	}
 
 	@Override
 	public FallInfo getItem(int position) {
-		return infos[position];
+		return infos.get(position);
 	}
 
 	@Override
@@ -113,13 +113,13 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 
 	private void populateHolder(Holder holder,final int pos)
 	{
-		final FallInfo fall=infos[pos];
+		final FallInfo fall=infos.get(pos);
 
 		holder.dateTimeFall.setText(fall.getDate());
 		if(fall.isNotified())
-		     holder.notifica.setImageResource(R.drawable.button_delete);
+		     holder.notifica.setImageResource(R.drawable.button_play);
 		else
-			 holder.notifica.setImageResource(R.drawable.button_rename);
+			 holder.notifica.setImageResource(R.drawable.button_pause);
 	}
 	
 
