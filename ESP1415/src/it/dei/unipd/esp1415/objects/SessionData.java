@@ -36,8 +36,9 @@ public class SessionData extends SessionInfo{
 		this.fallList=falls;
 		if(fallList!=null)
 			this.numberFalls=falls.size();
+
 			}
-	
+
 	/**
 	 * Get the list of falls happened in this session
 	 * @return null if there is no fall

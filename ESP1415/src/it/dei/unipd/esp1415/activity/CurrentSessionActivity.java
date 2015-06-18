@@ -1,23 +1,29 @@
 package it.dei.unipd.esp1415.activity;
 
+import it.dei.unipd.esp1415.adapters.FallAdapter;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
+import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
+import it.dei.unipd.esp1415.objects.FallInfo;
 import it.dei.unipd.esp1415.objects.SessionData;
+import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.tasks.ESPService;
 import it.dei.unipd.esp1415.tasks.ESPService.ESPBinder;
 import it.dei.unipd.esp1415.utils.LocalStorage;
-import it.dei.unipd.esp1415.utils.PreferenceStorage;
+import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.GraphicView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import android.R;
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -26,35 +32,42 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.esp1415.R;
-
+@SuppressLint("InflateParams") 
 public class CurrentSessionActivity extends Activity{
 
 	//Views
 	private GraphicView graphic;
-	private Button btnStart,btnStop;
-	private TextView textHours,textMinutes,textSeconds,textName,textDate;
-	private ImageView imgSession;
+	private ImageButton btnStart,btnStop;
+	private TextView textDuration,textName,textDate;
 	private Context actContext;
-	private boolean emptySession;
-
-	String sessionId;
-	boolean running;
-	AlertDialog alertDialog;
+	private ListView listFalls;
+	private String sessionId;
+	private boolean running;
+	private FallAdapter adapter;
 	private long duration;
-
+	private boolean empty;
 	private ESPService service;
-	public final static String TAG="ACTIVITY",ID_TAG="ID",NAME_TAG="NAME",DATE_TAG="DATE",EMPTY_TAG="EMPTY";
+	public final static String TAG="ACTIVITY",ID_TAG="ID",EMPTY_TAG="EMPTY";
 	public final static String DURATION_TAG="DURATION";
+
+	private BroadcastReceiver graphicReceiver=new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			decodeGraphicIntent(intent);}
+	};
+	private BroadcastReceiver fallReceiver=new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			decodeFallIntent(intent);}
+	};
 
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override
@@ -64,11 +77,8 @@ public class CurrentSessionActivity extends Activity{
 			ESPBinder binder = (ESPBinder)iBinder;
 			//prendiamo il service vero e proprio
 			service = binder.getService();
-			setTimeText(service.getDuration());
-			if(service.isRunning())
-				btnStart.setBackgroundResource(R.drawable.button_pause);
-			else
-				btnStart.setBackgroundResource(R.drawable.button_play);
+			textDuration.setText(Utils.convertDuration((int)service.getDuration()));
+			setRunning(service.isRunning());
 		}
 
 		@Override
@@ -80,169 +90,347 @@ public class CurrentSessionActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG,"ON CREATE");
+		setLayout();//Imposta layout ed eventi
 		actContext=this;
-		//prende i dati per popolare il layout
-		getData();
-		//Imposta layout ed eventi
-		setLayout();
-		//Popola layout coi dati
-		populateLayout();
-
-		//inizializza broadcast manager
-		LocalBroadcastManager manager=LocalBroadcastManager.getInstance(this);
-		//receiver per i dati del grafico 
-		manager.registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				decodeGraphicIntent(intent);}},
-				new IntentFilter(ESPService.ACTION_GRAPHIC_BROADCAST));
-		//receiver per i dati del tempo
-		manager.registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				decodeTimeIntent(intent);}},
-				new IntentFilter(ESPService.ACTION_TIME_BROADCAST));
-		//receiver per i dati delle cadute
-		manager.registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				decodeFallIntent(intent);}},
-				new IntentFilter(ESPService.ACTION_FALL_BROADCAST));
+		if(savedInstanceState!=null)//abbiamo già dei dati
+			onRestoreInstanceState(savedInstanceState);
+		else//l'activity è creata da zero
+		{
+			Bundle extras=getIntent().getExtras();
+			empty=extras.getBoolean(EMPTY_TAG);
+			sessionId=extras.getString(ID_TAG);
+		}
+		//facciamo qui il recupero dei dati per evitare casi di incongruenze coi dati visualizzati
+		//e i dati presenti in memoria
+		if(empty)//è una sessione ancora da creare
+			(new CreateSessionDialog(this)).show();
+		else//dobbiamo recuperare i dati
+		{
+			boolean ok=false;
+			SessionData session=null;
+			try {
+				session=LocalStorage.getSessionData(sessionId);
+				ok=true;
+			} catch (IllegalArgumentException e) {
+				Toast.makeText(CurrentSessionActivity.this,R.string.error_arguments,Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+			} catch (IOException e) {
+				Toast.makeText(CurrentSessionActivity.this,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+			} catch (NoSuchSessionException e) {
+				Toast.makeText(CurrentSessionActivity.this,R.string.error_inexistent_session,Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+			}
+			if(!ok){//c'è stato un errore
+				this.finish();
+				return;}
+			duration=session.getDuration();
+			textDuration.setText(Utils.convertDuration((int) duration));
+			textName.setText(session.getName());
+			textDate.setText(session.getDate());
+			ArrayList<FallInfo> falls=session.getFalls();
+			ArrayList<FallInfo> orderedFalls=new ArrayList<FallInfo>();
+			int s=falls.size();
+			for(int i=s-1;i>=0;i--)
+				orderedFalls.add(falls.get(i));
+			adapter = new FallAdapter(this,orderedFalls);
+			listFalls.setAdapter(adapter);
+			//a questo punto abbiamo il layout e i dati impostati
+		}
 	}
 
 	//BUILDING METHODS
 
-	private void getData()
+	private void registerReceivers()
 	{
-		Bundle extras=getIntent().getExtras();
-		emptySession=extras.getBoolean(EMPTY_TAG);
-		duration=getDurationPreference();
-		running=getStatusPreference();
-
+		//inizializza broadcast manager
+		LocalBroadcastManager manager=LocalBroadcastManager.getInstance(this);
+		//receiver per i dati del grafico 
+		manager.registerReceiver(graphicReceiver,new IntentFilter(ESPService.ACTION_GRAPHIC_BROADCAST));
+		//receiver per i dati delle cadute
+		manager.registerReceiver(fallReceiver,new IntentFilter(ESPService.ACTION_FALL_BROADCAST));
 	}
 
-	/**
-	 * Imposta il layout per quest'activity e iniziaizza oggetti ed eventi
-	 */
+	private void unregisterReceivers()
+	{
+		LocalBroadcastManager manager=LocalBroadcastManager.getInstance(this);
+		//receiver per i dati del grafico 
+		manager.unregisterReceiver(graphicReceiver);
+		//receiver per i dati delle cadute
+		manager.unregisterReceiver(fallReceiver);
+	}
+
 	private void setLayout()
 	{
-		setContentView(R.layout.current_session_activity_layout);
-		btnStart=(Button)findViewById(R.id.button_start);
-		btnStop=(Button)findViewById(R.id.button_stop);
-		textHours=(TextView)findViewById(R.id.text_hours);
-		textMinutes=(TextView)findViewById(R.id.text_minutes);
-		textSeconds=(TextView)findViewById(R.id.text_seconds);
+		setContentView(R.layout.activity_current_session_layout);
+		btnStart=(ImageButton)findViewById(R.id.button_start);
+		btnStop=(ImageButton)findViewById(R.id.button_stop);
+		textDuration=(TextView)findViewById(R.id.text_duration);
 		textName=(TextView)findViewById(R.id.text_name);
-		textDate=(TextView)findViewById(R.id.text_date);	
+		textDate=(TextView)findViewById(R.id.text_date);
+		listFalls=(ListView)findViewById(R.id.list);
 		graphic=(GraphicView)findViewById(R.id.graphic);
 
 		//Eventi
 		btnStart.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!running){//il service non c'è quindi lo avvio dandogli sessione e durata
-					Log.d(TAG,"STARTED");
-					Intent serviceIntent = new Intent(actContext,ESPService.class);
-					serviceIntent.putExtra(ID_TAG,sessionId);
-					serviceIntent.putExtra(DURATION_TAG,duration);
-					actContext.startService(serviceIntent);
-					//lego l'activity al service
-					bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
-					storeStatusPreference(true);
-					running=true;
-					btnStart.setBackgroundResource(R.drawable.button_pause);}
-				else{//il service è attivo quindi lo fermo
-					Log.d(TAG,"STOPPED");
-					btnStart.setBackgroundResource(R.drawable.button_play);
-					storeDurationPreference(service.getDuration());
-					storeStatusPreference(false);
-					running=false;
-					service.pause();
-					try {
-						LocalStorage.pauseSession(sessionId,(int)duration);}
-					catch (NoSuchSessionException e) {
-						e.printStackTrace();}}}});
+				if(!running)
+					startClicked();
+				else
+					pauseClicked();}});
 		btnStop.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				btnStart.setBackgroundResource(R.drawable.button_play);
-				//Fermo la sessione e il service e vado alla schermata associata
-				service.stop();
-				PreferenceStorage.storeSimpleData(CurrentSessionActivity.this,"ServiceStatus","false");
-				try {
-					LocalStorage.stopSession(sessionId,duration);}
-				catch (NoSuchSessionException e) {
-
-					e.printStackTrace();}
-				CurrentSessionActivity.this.finish();}});
-	}
-
-	private void populateLayout()
-	{	
-		//impostiamo la durata
-		duration=getDurationPreference();
-		setTimeText(duration);
-
-		Bundle extras=getIntent().getExtras();
-		if(extras.getBoolean(EMPTY_TAG))//è una sessione ancora da creare
-		{	
-			showDialog();
-			return;
-		}
-		//è una sessione già creata
-		//recuperiamo e impostiamo i dati della sessione
-		sessionId=extras.getString(ID_TAG);
-		textName.setText(extras.getString(NAME_TAG));
-		textDate.setText(extras.getString(DATE_TAG));
-		running=getStatusPreference();
-		if(running)
-		{
-			//ci leghiamo al service già esistente dandogli l'id della sessione
-			Intent serviceIntent = new Intent(CurrentSessionActivity.this,ESPService.class);
-			serviceIntent.putExtra(ID_TAG,sessionId);
-			bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
-			btnStart.setBackgroundResource(R.drawable.button_pause);
-		}
+				stopClicked();}});
 	}
 
 	/**
-	 * Mostra un dialog per la creazione della sessione
+	 * Imposta lo stato corrente di esecuzione (salvandolo nelle preferenze) 
+	 * cambiando il layout di conseguenza
+	 * @param run Lo stato della sessione (true se in esecuzione)
 	 */
-	private void showDialog()
+	private void setRunning(boolean run)
 	{
-		LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		ViewGroup vg = (ViewGroup) inflater.inflate(R.layout.session_name_dialog_layout, null);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.dialog_name_title);
-		builder.setView(vg);
-		builder.setOnCancelListener(new OnCancelListener(){
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				//L'utente si rifiuta di inserire il nome quindi torniamo indietro
-				CurrentSessionActivity.this.finish();}});
+		running=run;
+		storeStatusPreference(running);
+		if(run)
+			btnStart.setImageResource(R.drawable.button_pause);
+		else
+			btnStart.setImageResource(R.drawable.button_play);
+	}
 
-		Button ok=(Button)vg.findViewById(R.id.button_ok);
-		final EditText edit=(EditText)vg.findViewById(R.id.edit_name);
+	/**Chiamato quando viene premuto il tasto Play*/
+	private void startClicked()
+	{
+		setRunning(true);
+		Intent serviceIntent = new Intent(actContext,ESPService.class);
+		serviceIntent.putExtra(ID_TAG,sessionId);
+		serviceIntent.putExtra(DURATION_TAG,duration);
+		//Avviamo il service passandogli durata e id sessione
+		startService(serviceIntent);
+		//mi lego al service
+		bindService(serviceIntent,connection,Context.BIND_AUTO_CREATE);
+	}
 
-		ok.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String name=edit.getText().toString();
-				if(name.length()<1)//non è stato inserito un nome
-					Toast.makeText(CurrentSessionActivity.this, R.string.text_insert_name,Toast.LENGTH_SHORT).show();
-				else
-				{
+	/**Chiamato quando viene premuto il tasto Pause*/
+	private void pauseClicked()
+	{
+		setRunning(false);
+		//metto in pausa il service
+		service.pause();
+		//mi slego dal service
+		unbindService(connection);
+	}
+
+	/**Chiamato quando viene premuto il tasto Stop*/
+	private void stopClicked()
+	{
+		setRunning(false);
+		if(service.isRunning())
+		{
+			//mi slego dal service
+			unbindService(connection);
+		}
+		//fermo il service
+		service.stop();
+		Intent i=new Intent(CurrentSessionActivity.this,SessionDataActivity.class);
+		i.putExtra(SessionDataActivity.ID_TAG,sessionId);
+		startActivity(i);
+		CurrentSessionActivity.this.finish();
+	}
+
+	//PREFERENCE METHODS
+
+	private final static String SERVICE_STATUS_TAG="ServiceStatus";
+
+	/**
+	 * Salva il corrente stato della sessione
+	 * @param status Lo stato della sessione (true se in esecuzione)
+	 */
+	private void storeStatusPreference(boolean status)
+	{
+		Log.d(TAG,"Store Service Preference Status : "+status);
+		Editor e=this.getPreferences(MODE_PRIVATE).edit();
+		e.putBoolean(SERVICE_STATUS_TAG,status);
+		e.commit();
+	}
+
+	/**
+	 * Recupera lo stato della sessione salvato
+	 * @return true se la sessione dovrebbe essere in esecuzione
+	 */
+	private boolean getServiceSavedStatus()
+	{
+		boolean b=this.getPreferences(MODE_PRIVATE).getBoolean(SERVICE_STATUS_TAG, false);
+		Log.d(TAG,"Get Service Preference Status : "+b);
+		return b;
+	}
+
+	//INTENT METHODS
+
+	/**
+	 * Interpreta l'intent per l'aggiornamento della lista di cadute
+	 */
+	private void decodeFallIntent(Intent intent)
+	{
+		String fallId=intent.getStringExtra(ESPService.EXTRA_FALL_ID);
+		FallInfo info=null;
+		try {
+			info = LocalStorage.getFallData(sessionId,fallId);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (NoSuchFallException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if(info!=null)
+			adapter.insert(info,0);
+	}
+
+	/**
+	 * Interpreta l'intent per l'aggiornamento del grafico
+	 */
+	private void decodeGraphicIntent(Intent intent)
+	{
+		float x=intent.getFloatExtra(ESPService.EXTRA_X, 0);
+		float y=intent.getFloatExtra(ESPService.EXTRA_Y, 0);
+		float z=intent.getFloatExtra(ESPService.EXTRA_Z, 0);
+		graphic.add(x, y, z);
+		duration = intent.getLongExtra(ESPService.EXTRA_TIME, 0);
+		textDuration.setText(Utils.convertDuration((int)duration));
+	}
+
+	//ACTIVITY METHODS
+
+	@Override
+	public void onSaveInstanceState(Bundle instance)
+	{
+		Log.d(TAG,"SAVING");
+		graphic.saveStatusOnBundle(instance);
+		instance.putString("sessionId",sessionId);
+		instance.putBoolean("running",running);
+		instance.putBoolean("empty",empty);
+		instance.putLong("duration",duration);
+		super.onSaveInstanceState(instance);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle state) {
+		super.onRestoreInstanceState(state);
+		Log.d(TAG,"RESTORING");
+		graphic.restoreStatusFromBundle(state);
+		sessionId=state.getString("sessionId");
+		duration=state.getLong("duration");
+		textDuration.setText(Utils.convertDuration((int)duration));
+		empty=state.getBoolean("empty");
+		running=state.getBoolean("running");
+	}
+
+	//ACTIVITY LIFE
+	public void onRestart()
+	{
+		super.onRestart();
+		Log.d(TAG,"ON RESTART");
+	}
+
+	public void onPause()
+	{
+		Log.d(TAG,"ON PAUSE");
+		//cerchiamo di salvare l'ultimo durata nota
+		if(running)//siamo legati ad un service attivo quindi ci sleghiamo
+			this.unbindService(connection);
+		try {LocalStorage.pauseSession(sessionId,(int)duration);} 
+		catch (NoSuchSessionException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		unregisterReceivers();
+		super.onPause();
+	}
+
+	public void onStop()
+	{
+		super.onStop();
+		Log.d(TAG,"ON STOP");
+	}
+
+	public void onResume()
+	{
+		super.onResume();
+		Log.d(TAG,"ON RESUME");
+		registerReceivers();
+		//visualizziamo lo stato del service
+		running=getServiceSavedStatus();
+		if(running)//il service dovrebbe essere attivo
+			startClicked();
+	}
+
+	public void onStart()
+	{
+		super.onStart();
+		Log.d(TAG,"ON START");
+	}
+
+	public void onDestroy()
+	{
+		Log.d(TAG,"ON DESTROY");
+		//cerchiamo di salvare l'ultimo durata nota
+		if(service!=null){
+			try {LocalStorage.pauseSession(sessionId,(int)service.getDuration());} 
+			catch (NoSuchSessionException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}}
+		super.onDestroy();
+	}
+
+	public class CreateSessionDialog extends Dialog
+	{
+		private Context actContext;
+		private EditText edit;
+
+		protected CreateSessionDialog(Context context) {
+			super(context);
+			actContext=context;
+			setTitle(R.string.dialog_name_title);
+			setContentView(R.layout.dialog_new_session_layout);
+			Button ok=(Button)findViewById(R.id.button_ok);
+			edit=(EditText)findViewById(R.id.edit_name);
+			setTitle(R.string.dialog_name_title);
+			setOnCancelListener(new OnCancelListener(){
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					//L'utente si rifiuta di inserire il nome quindi torniamo indietro
+					CurrentSessionActivity.this.finish();}});
+			ok.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String name=edit.getText().toString();
+					if(name.length()<1)//non è stato inserito un nome
+						Toast.makeText(actContext, R.string.text_insert_name,Toast.LENGTH_SHORT).show();
 					//creiamo la sessione
 					try {
-						SessionData s = LocalStorage.createNewSession(CurrentSessionActivity.this,name);
+						//impostiamo i dati
+						SessionInfo s = LocalStorage.createNewSession(name);
 						textName.setText(s.getName());
 						textDate.setText(s.getDate());
 						sessionId=s.getId();
-						//impostiamo lo stato del service e la durata della sessione
-						storeStatusPreference(false);
-						storeDurationPreference(0);
+						duration=0;
+						empty=false;
 						running=false;
-						alertDialog.dismiss();
+						adapter = new FallAdapter(actContext,(new ArrayList<FallInfo>()));
+						listFalls.setAdapter(adapter);
+						setRunning(false);
+						CreateSessionDialog.this.dismiss();
 					} catch (IllegalArgumentException e) {
 						Toast.makeText(CurrentSessionActivity.this,R.string.error_arguments,Toast.LENGTH_SHORT).show();
 						e.printStackTrace();
@@ -253,108 +441,7 @@ public class CurrentSessionActivity extends Activity{
 						Toast.makeText(CurrentSessionActivity.this,R.string.text_low_memory,Toast.LENGTH_SHORT).show();
 						e.printStackTrace();
 					}
-				}}});
-		alertDialog = builder.create();
-		alertDialog.setCancelable(true);
-		alertDialog.show();
-	}
-
-	//PREFERENCE METHODS
-
-	private final static String SERVICE_STATUS_TAG="ServiceStatus";
-
-	private void storeDurationPreference(long duration)
-	{
-		Editor e=this.getPreferences(MODE_PRIVATE).edit();
-		e.putLong(DURATION_TAG,duration);
-		e.commit();
-	}
-
-	private void storeStatusPreference(boolean status)
-	{
-		Editor e=this.getPreferences(MODE_PRIVATE).edit();
-		e.putBoolean(SERVICE_STATUS_TAG,status);
-		e.commit();
-	}
-
-	private long getDurationPreference()
-	{
-		return this.getPreferences(MODE_PRIVATE).getLong(DURATION_TAG,0);
-	}
-
-	private boolean getStatusPreference()
-	{
-		return this.getPreferences(MODE_PRIVATE).getBoolean(SERVICE_STATUS_TAG, false);
-	}
-
-	//INTENT METHODS
-
-	private void decodeTimeIntent(Intent intent)
-	{
-
-	}
-
-	private void decodeFallIntent(Intent intent)
-	{
-
-	}
-
-	private void decodeGraphicIntent(Intent intent)
-	{
-		//aggiorna UI con i dati dell'intent
-		float x=intent.getFloatExtra(ESPService.EXTRA_X, 0);
-		float y=intent.getFloatExtra(ESPService.EXTRA_Y, 0);
-		float z=intent.getFloatExtra(ESPService.EXTRA_Z, 0);
-		graphic.add(x, y, z);
-		long time = intent.getLongExtra(ESPService.EXTRA_TIME, 0);
-		setTimeText(time);
-	}
-
-	//ACTIVITY METHODS
-
-	@Override
-	public void onSaveInstanceState(Bundle instance)
-	{
-		instance.putString("sec",textSeconds.getText().toString());
-		instance.putString("min",textMinutes.getText().toString());
-		instance.putString("hour",textHours.getText().toString());
-		graphic.saveStatusOnBundle(instance);
-		super.onSaveInstanceState(instance);
-	}
-
-	@Override
-	public void onRestoreInstanceState(Bundle state) {
-		super.onRestoreInstanceState(state);
-		textSeconds.setText(state.getString("sec"));
-		textMinutes.setText(state.getString("min"));
-		textHours.setText(state.getString("hour"));
-		graphic.restoreStatusFromBundle(state);
-	}
-
-	private void setTimeText(long time)
-	{
-		int totalSec=(int)(time/1000);
-		int h=totalSec/3600;
-		int m=(totalSec%3600)/60;
-		int s=(totalSec%3600)%60;
-
-		String t="00";
-		if(h<10)
-			t="0"+h;
-		else
-			t=""+h;
-		textHours.setText(t);
-
-		if(m<10)
-			t="0"+m;
-		else
-			t=""+m;
-		textMinutes.setText(t);
-
-		if(s<10)
-			t="0"+s;
-		else
-			t=""+s;
-		textSeconds.setText(t);
+				}});
+		}
 	}
 }

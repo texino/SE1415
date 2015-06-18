@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="1" >
+
+    <EditText
+        android:id="@+id/renamesession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:hint="@string/hint_dialog_1"
+        android:inputType="text" />
+
+    <ImageView
+        android:id="@+id/delete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_weight="0.2"
+        android:clickable="true"
+        android:onClick="deleteSession"
+        android:contentDescription="@string/picture_descriptor2"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_discard" />
+
+</LinearLayout>
