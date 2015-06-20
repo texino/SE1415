@@ -66,7 +66,7 @@ public class SessionDataActivity extends Activity {
 		durata.setText(Utils.convertDuration(duration));
 		date.setText(dataS);
 		Log.d("ACTIVITY SECOND",""+data.getFalls());
-		FallAdapter ad=new FallAdapter(this,data.getFalls());//inizializzare oggetto
+		FallAdapter ad=new FallAdapter(this,data.getFalls(),data.getId());//inizializzare oggetto
 		lista.setAdapter(ad);
 
 	}

@@ -3,6 +3,7 @@ package it.dei.unipd.esp1415.objects;
 import it.dei.unipd.esp1415.exceptions.IllegalDateFormatException;
 import it.dei.unipd.esp1415.exceptions.IllegalIdException;
 import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
+import it.dei.unipd.esp1415.utils.DataArray;
 
 /**
  * A class for a fall event with:
@@ -13,9 +14,8 @@ import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
  */
 public class FallData extends FallInfo{
 
-	private String sessionName;
 	private int latitude,longitude;
-	private AccelPoint[] data;
+	private DataArray data;
 
 	/**
 	 * Create a new object for a fall data
@@ -32,9 +32,9 @@ public class FallData extends FallInfo{
 	 * @throws IllegalIdException if the id isn't acceptable
 	 * @throws IllegalArgumentException if points is null
 	 */
-	public FallData(String id,String date, boolean notified,int latitude,int longitude,AccelPoint[] points)
+	public FallData(String id,String date, boolean notified,String sessionName,int latitude,int longitude,DataArray points)
 			throws IllegalDateFormatException,IllegalNumberException,IllegalIdException,IllegalArgumentException {
-		super(id,date,notified);
+		super(id,date,notified,sessionName);
 		if(latitude<0||longitude<0)
 			throw new IllegalNumberException();
 		if(points==null)
@@ -43,21 +43,12 @@ public class FallData extends FallInfo{
 		this.longitude=longitude;
 		data=points;
 	}
-
-	/**
-	 * Get the name of the session of this fall event
-	 * @return the name of the session
-	 */
-	public String getSessionName()
-	{
-		return sessionName;
-	}
 	
 	/**
 	 * Get the collected accelerometer data for this fall event
-	 * @return an array of AccelPoint
+	 * @return an object of DataArray
 	 */
-	public AccelPoint[] getAccelDatas()
+	public DataArray getAccelDatas()
 	{
 		return data;
 	}

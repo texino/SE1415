@@ -1,5 +1,7 @@
 package it.dei.unipd.esp1415.adapters;
 
+import it.dei.unipd.esp1415.activity.FallDataActivity;
+import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.objects.FallInfo;
 
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 	private Activity activity;
 	private ArrayList<FallInfo> infos;
 	private int layoutResourceId;
+	private String sessionId;
 	
 
 	/**
@@ -29,13 +33,13 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 	 * @param context The context that creates this adapter 
 	 * @param data The list (in form of array) of the boards to adapt
 	 */
-	public FallAdapter(Context context,ArrayList<FallInfo> data) 
+	public FallAdapter(Context context,ArrayList<FallInfo> data,String sessionId) 
 	{
 		super(context, R.layout.row_fall_info, data);//creare un layout per una riga della lista e lo passo 
 		this.layoutResourceId = R.layout.row_fall_info;
 		infos = data;
 		activity=(Activity)(context);
-		
+		this.sessionId=sessionId;
 	}
 
 	@Override
@@ -86,18 +90,15 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 				clickRow(v);
 			}
 		});
-		
-		setRowLayout(row);
 		return row;
-	}
-
-	private void setRowLayout(View row)
-	{
 	}
 	
 	private void clickRow(View row)
 	{
-		
+		Intent i=new Intent(activity,FallDataActivity.class);
+		i.putExtra(FallDataActivity.SESSION_ID_TAG,sessionId);
+		i.putExtra(FallDataActivity.FALL_ID_TAG,infos.get(((Holder)(row.getTag())).position).getId());
+		activity.startActivity(i);
 	}
 
 	/**
@@ -118,10 +119,11 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 		final FallInfo fall=infos.get(pos);
 
 		holder.dateTimeFall.setText(fall.getDate());
+		holder.position=pos;
 		if(fall.isNotified())
-		     holder.notifica.setImageResource(R.drawable.button_play);
+		     holder.notifica.setImageResource(R.drawable.image_notified_ok);
 		else
-			 holder.notifica.setImageResource(R.drawable.button_pause);
+			 holder.notifica.setImageResource(R.drawable.image_notified_ko);
 	}
 	
 
@@ -129,6 +131,6 @@ public class FallAdapter extends ArrayAdapter<FallInfo> implements Filterable{
 	private static class   Holder {
 		TextView dateTimeFall;
 		ImageView notifica;
-		
+		int position;
 	}
 }

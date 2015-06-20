@@ -56,6 +56,12 @@
             android:textColor="@color/texts_secondary_action_bar_color" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/text_dummy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
+
     <RelativeLayout
         android:id="@+id/layout_buttons"
         android:layout_width="fill_parent"
@@ -65,7 +71,9 @@
         android:layout_marginLeft="@dimen/layout_horizontal_margins"
         android:layout_marginRight="@dimen/layout_horizontal_margins"
         android:layout_marginStart="@dimen/layout_horizontal_margins"
-        android:layout_marginTop="@dimen/layout_vertical_margins" >
+        android:layout_marginTop="@dimen/layout_vertical_margins"
+        android:layout_toLeftOf="@+id/text_dummy"
+        android:layout_toStartOf="@+id/text_dummy" >
 
         <TextView
             android:id="@+id/text_duration"
@@ -117,20 +125,24 @@
     <it.dei.unipd.esp1415.views.GraphicView
         android:id="@+id/graphic"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_graphic_height"
+        android:layout_height="fill_parent"
         android:layout_below="@+id/layout_buttons"
+        android:layout_marginBottom="@dimen/layout_vertical_margins"
         android:layout_marginEnd="@dimen/layout_horizontal_margins"
         android:layout_marginLeft="@dimen/layout_horizontal_margins"
         android:layout_marginRight="@dimen/layout_horizontal_margins"
         android:layout_marginStart="@dimen/layout_horizontal_margins"
-        android:layout_marginTop="@dimen/layout_vertical_margins" />
+        android:layout_marginTop="@dimen/layout_vertical_margins"
+        android:layout_toLeftOf="@+id/text_dummy"
+        android:layout_toStartOf="@+id/text_dummy" />
 
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/graphic"
-        android:layout_marginTop="@dimen/layout_vertical_margins" />
+        android:layout_below="@+id/layout_action_bar"
+        android:layout_toEndOf="@+id/text_dummy"
+        android:layout_toRightOf="@+id/text_dummy" />
 
     <LinearLayout
         android:layout_width="fill_parent"

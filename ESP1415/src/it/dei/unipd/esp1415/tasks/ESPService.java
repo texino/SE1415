@@ -37,6 +37,7 @@ public class ESPService extends Service{
 	//Data
 	private DataArray data;
 	private String sessionId;
+	private int rate=1;
 	//Time
 	private long totalDuration=0;
 	//Service data
@@ -55,19 +56,27 @@ public class ESPService extends Service{
 	@Override
 	public int onStartCommand(Intent intent,int flags,int startId)
 	{
-		//L'activity chiede di avviare il service
-		if(!running)
-		{
-			//Il service non è attivo
-			Log.d(TAG,"STARTED WITH = "+(totalDuration/1000)+" seconds");
-			totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
-			prevDataTime=System.currentTimeMillis();
-			sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-			sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-			sensorManager.registerListener(listener,sensor,1);
-		}
-		running=true;
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
+		if(running)//è già in corso
+			return super.onStartCommand(intent, flags, startId);
+		//è da avviare
+		Log.d(TAG,"STARTED WITH = "+(totalDuration/1000)+" seconds");
+		String r=PreferenceStorage.getSimpleData(ESPService.this.getBaseContext(),PreferenceStorage.ACCEL_RATIO);
+		int rate;
+		if(r.equals(""))
+		{
+			rate=GlobalConstants.MIN_RATIO;
+			PreferenceStorage.storeSimpleData(ESPService.this,PreferenceStorage.ACCEL_RATIO,""+rate);
+		}
+		else
+			rate=Integer.parseInt(r);
+		//L'activity chiede di avviare il service
+		totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
+		prevDataTime=System.currentTimeMillis();
+		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sensorManager.registerListener(listener,sensor,1);
+		running=true;
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -75,6 +84,8 @@ public class ESPService extends Service{
 	public IBinder onBind(Intent intent) {
 		//L'activity cerca di legarsi a questo service
 		sessionId=intent.getExtras().getString(CurrentSessionActivity.ID_TAG);
+		if(!running)
+			totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
 		return binder;
 	}
 
@@ -167,16 +178,6 @@ public class ESPService extends Service{
 
 		public ESPEventListener()
 		{
-			//String r=PreferenceStorage.getSimpleData(ESPService.this,PreferenceStorage.ACCEL_RATIO);
-			String r="10";
-			int rate;
-			if(r.equals(""))
-			{
-				rate=GlobalConstants.MIN_RATIO;
-				PreferenceStorage.storeSimpleData(ESPService.this,PreferenceStorage.ACCEL_RATIO,""+rate);
-			}
-			else
-				rate=Integer.parseInt(r);
 			data=new DataArray(rate);
 			dataThreshold=(1000f/rate);
 			prevDataTime=System.currentTimeMillis();
@@ -199,7 +200,7 @@ public class ESPService extends Service{
 				float x=event.values[0],y=event.values[1],z=event.values[2];
 				data.add(x,y,z);
 				sendBroadcastMessage(totalDuration,x,y,z);
-
+				System.out.println("ACCELL DATA X:"+x+" Y:"+y+ "Z:"+z);
 				(new ElaborateTask(ESPService.this,data,sessionId)).execute(null,null,null);
 			}
 		}

@@ -2,6 +2,7 @@ package it.dei.unipd.esp1415.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
  * A class to manage the local storage for this application
@@ -25,8 +26,8 @@ public class PreferenceStorage {
 	 */
 	public static void storeSimpleData(Context ctx,String tag,String value)
 	{
-		SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,
-				Context.MODE_PRIVATE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		//SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(tag, value);
 		editor.commit();
@@ -40,9 +41,10 @@ public class PreferenceStorage {
 	 */
 	public static String getSimpleData(Context ctx,String tag)
 	{
-		SharedPreferences sp=ctx.getSharedPreferences(preferencesName,
-				Context.MODE_PRIVATE);
-		String s=sp.getString(tag,"");
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		//SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
+		//SharedPreferences sp=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
+		String s=prefs.getString(tag,"");
 		return s;
 	}
 	

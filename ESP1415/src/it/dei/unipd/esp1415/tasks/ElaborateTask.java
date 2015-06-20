@@ -10,7 +10,6 @@ import it.dei.unipd.esp1415.exceptions.IllegalIdException;
 import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
-import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.utils.DataArray;
 import it.dei.unipd.esp1415.utils.LocalStorage;
@@ -47,29 +46,24 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 	@Override
 	protected Void doInBackground(Void... params) {
 		int prevIndex=index-1;
+		if(index==0)
+			prevIndex=dZ.length-1;
 		int middleIndex=index+dZ.length/2;
 		if(middleIndex>=dZ.length)
 			middleIndex=middleIndex-dZ.length;
-		if(index==0)
-			prevIndex=dZ.length-1;
 		//if((dZ[middleIndex]-dZ[index]>10)&&(dZ[middleIndex]-dZ[prevIndex]>10))
-		if((dZ[index]-dZ[prevIndex])>5)
+		if((dY[index]-dY[prevIndex])>5)
 		{
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
 			String date=dateFormat.format(new Date());
-			AccelPoint[] points=new AccelPoint[dX.length];
-			int px=0;
+			DataArray datas=new DataArray(dX.length);
 			for(int i=index;i<dX.length;i++)
-			{
-				points[px]=new AccelPoint(dX[i],dY[i],dZ[i]);
-				px++;}
+				datas.add(dX[i],dY[i],dZ[i]);
 			for(int i=0;i<index;i++)
-			{
-				points[px]=new AccelPoint(dX[i],dY[i],dZ[i]);
-				px++;}
+				datas.add(dX[i],dY[i],dZ[i]);
 			FallData data;
 			try {
-				data = new FallData(""+System.currentTimeMillis(),date,true,200,200,points);
+				data = new FallData(""+System.currentTimeMillis(),date,true,"",200,200,datas);
 				LocalStorage.storeFallData(sessionId,data);
 				sendBroadcastMessage(data.getId());
 			} catch (IllegalArgumentException e) {
@@ -91,7 +85,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 		}
 		return null;
 	}
-	
+
 	private void sendBroadcastMessage(String id) {
 		Log.d(TAG,"FALL ID : "+id);
 		Intent intent = new Intent(ESPService.ACTION_FALL_BROADCAST);

@@ -11,9 +11,10 @@
     <string name="nDate">Data:</string>
     <string name="datetimefall">indica ora e data della caduta</string>
     <string name="durata_session">00:00</string>
-    <string name="default_number">00</string>
+    <string name="default_duration">00:00:00</string>
     <string name="number_separator">:</string>
     <string name="description_image">Immagine della sessione</string>
+    <string name="description_button">Pulsante con immagine</string>
     <string name="dummy_text">Testo</string>
     <string name="dialog_name_title">Insert a name</string>
     <string name="text_insert_name">Insert a name</string>
