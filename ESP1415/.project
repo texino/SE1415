@@ -3,6 +3,8 @@
 	<name>ESP1415</name>
 	<comment></comment>
 	<projects>
+		<project>android-support-v7-appcompat</project>
+		<project>appcompat_v7</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

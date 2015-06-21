@@ -20,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
 	

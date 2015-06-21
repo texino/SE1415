@@ -16,7 +16,8 @@ import it.dei.unipd.esp1415.views.GraphicView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import android.R;
+import com.example.esp1415.R;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;

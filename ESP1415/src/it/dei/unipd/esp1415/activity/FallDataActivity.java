@@ -7,9 +7,7 @@ import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.views.DataGraphicView;
 
 import java.io.IOException;
-//import com.example.esp1415.R;
-
-import android.R;
+import com.example.esp1415.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
