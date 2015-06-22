@@ -10,7 +10,7 @@
     
     <PreferenceCategory android:title="@string/setting_category3" >
         
-        <SwitchPreference
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="alarm key"
             android:summary="@string/summary_alarm"
