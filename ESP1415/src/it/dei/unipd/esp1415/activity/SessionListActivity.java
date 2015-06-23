@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.example.esp1415.R;
 
@@ -42,10 +43,10 @@ public class SessionListActivity extends ActionBarActivity {
 					Intent i=new Intent(SessionListActivity.this,CurrentSessionActivity.class);
 					i.putExtra(CurrentSessionActivity.EMPTY_TAG,true);
 					startActivity(i);
-					fabButton.hideFloatingActionButton();
+					//FIXME fabButton.hideFloatingActionButton();
 				}
 				else {
-					fabButton.showFloatingActionButton();
+					//FIXME fabButton.showFloatingActionButton();
 				}
 			}
 		});
@@ -75,10 +76,11 @@ public class SessionListActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
   
-    //FIXME metodo che viene eseguito al click del tasto elimina
+    //FIXME
     public void deleteSession(View v){
-    	Log.i("OnClick", "delete button pressed from dialog");
-    	/*DeleteDialog deleteDialog = new DeleteDialog();
-    	deleteDialog.show(getSupportFragmentManager(),"delete");*/
+    	//TOCLEAN Log.i("delete", "delete button pressed from dialog");
+    }
+    public static void renameSession(String id, EditText newName){
+    	//TOCLEAN Log.i("rename", "rename button pressed from dialog");
     }
 }

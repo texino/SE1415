@@ -36,9 +36,9 @@ public class MyListFragment extends ListFragment {
 		try {
 			items = LocalStorage.getSessionInfos();
 		} catch (IOException e) {
-			Log.i("ERROR", "Error getting session list - LocalStorage");
-		}
-		// initialize and set the list adapter
+			Log.i("ERROR",
+					"errore nella lettura/scrittura dei file - LocalStorage");
+		}// initialize and set the list adapter
 		setListAdapter(new CustomArrayAdapter(getActivity(), items));
 	}
     
@@ -98,11 +98,7 @@ public class MyListFragment extends ListFragment {
     }
     
     protected boolean onLongListItemClick(View v, int pos, long id) {
-        Log.i(TAG, "onLongListItemClick id=" + id);
-        //FIXME non trova il riferimento alla textview (null pointer exception)
-        //EditText text = (EditText) getView().findViewById(R.id.renamesession);
     	SessionInfo item = items.get(pos);
-    	//text.setText(item.getName());
     	//create the dialog
     	RenameDeleteDialog dialog = new RenameDeleteDialog(item.getId());
         //set session clicked name to the dialog title
