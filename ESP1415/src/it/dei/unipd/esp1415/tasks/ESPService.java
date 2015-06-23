@@ -16,7 +16,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -37,20 +41,36 @@ public class ESPService extends Service{
 	//Data
 	private DataArray data;
 	private String sessionId;
-	private int rate=1;
+	private int rate;
 	//Time
 	private long totalDuration=0;
 	//Service data
 	private IBinder binder=new ESPBinder();
-	private boolean running=false;
+	private boolean running=false,startedElaborate=false;
+	private double actualLat,actualLong;
 	//Sensor data
 	private SensorManager sensorManager;
+	private LocationManager locationManager;
 	private Sensor sensor;
-	private ESPEventListener listener=new ESPEventListener();
+	private ESPEventListener listener;
+	private final LocationListener locationListener = new LocationListener() {
+		@Override
+		public void onLocationChanged(final Location location) {
+			//your code here
+			actualLat=location.getLatitude();
+			actualLong=location.getLongitude();
+		}
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {}
+		@Override
+		public void onProviderEnabled(String provider) {}
+		@Override
+		public void onProviderDisabled(String provider) {}
+	};
 	//Classes
 	public class ESPBinder extends Binder{
+		/**Restituisce il riferimento al service associato*/
 		public ESPService getService(){
-			// Return this instance of LocalService so clients can call public methods
 			return ESPService.this;}}
 
 	@Override
@@ -62,7 +82,6 @@ public class ESPService extends Service{
 		//è da avviare
 		Log.d(TAG,"STARTED WITH = "+(totalDuration/1000)+" seconds");
 		String r=PreferenceStorage.getSimpleData(ESPService.this.getBaseContext(),PreferenceStorage.ACCEL_RATIO);
-		int rate;
 		if(r.equals(""))
 		{
 			rate=GlobalConstants.MIN_RATIO;
@@ -70,10 +89,16 @@ public class ESPService extends Service{
 		}
 		else
 			rate=Integer.parseInt(r);
+		listener=new ESPEventListener();
 		//L'activity chiede di avviare il service
 		totalDuration=intent.getExtras().getLong(CurrentSessionActivity.DURATION_TAG);
 		prevDataTime=System.currentTimeMillis();
 		sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,
+				1,locationListener);
+		//actualLat=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+		//actualLong=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
 		sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		sensorManager.registerListener(listener,sensor,1);
 		running=true;
@@ -122,7 +147,11 @@ public class ESPService extends Service{
 	{
 		Log.d(TAG,"STOPPED:    STORING= "+(totalDuration/1000)+" seconds");
 		running=false;
-		sensorManager.unregisterListener(listener,sensor);
+		if(sensorManager!=null)
+		{
+			sensorManager.unregisterListener(listener,sensor);
+			locationManager.removeUpdates(locationListener);
+		}
 		try {LocalStorage.stopSession(sessionId,(int)totalDuration);} 
 		catch (NoSuchSessionException e) {e.printStackTrace();} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -141,7 +170,11 @@ public class ESPService extends Service{
 	{
 		Log.d(TAG,"PAUSED:    STORING= "+(totalDuration/1000)+" seconds");
 		running=false;
-		sensorManager.unregisterListener(listener,sensor);
+		if(sensorManager!=null)
+		{
+			sensorManager.unregisterListener(listener,sensor);
+			locationManager.removeUpdates(locationListener);
+		}
 		try {LocalStorage.pauseSession(sessionId,(int) totalDuration);} 
 		catch (NoSuchSessionException e) {
 			e.printStackTrace();
@@ -200,8 +233,11 @@ public class ESPService extends Service{
 				float x=event.values[0],y=event.values[1],z=event.values[2];
 				data.add(x,y,z);
 				sendBroadcastMessage(totalDuration,x,y,z);
-				System.out.println("ACCELL DATA X:"+x+" Y:"+y+ "Z:"+z);
-				(new ElaborateTask(ESPService.this,data,sessionId)).execute(null,null,null);
+				System.out.println("ESP SERVICE DATA: "+data.getIndex());
+				if(data.getIndex()==0)
+					startedElaborate=true;
+				if(startedElaborate)
+					(new ElaborateTask(ESPService.this,data,sessionId,actualLat,actualLong)).execute(null,null,null);
 			}
 		}
 

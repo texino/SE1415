@@ -14,7 +14,7 @@ import it.dei.unipd.esp1415.utils.DataArray;
  */
 public class FallData extends FallInfo{
 
-	private int latitude,longitude;
+	private double latitude,longitude;
 	private DataArray data;
 
 	/**
@@ -25,22 +25,22 @@ public class FallData extends FallInfo{
 	 * (It must be in the format "gg/mm/aaaa-hh:mm")
 	 * @param notified The notified state of the fall <br>
 	 * (true if it has been notified)
-	 * @param latitude The latitude in where happened the fall
-	 * @param longitude The longitude in where happened the fall
+	 * @param longit The latitude in where happened the fall
+	 * @param latit The longitude in where happened the fall
 	 * @throws IllegalDateFormatException if the date isn't in the correct format
 	 * @throws IllegalNumberException if latitude or longitude are negative
 	 * @throws IllegalIdException if the id isn't acceptable
 	 * @throws IllegalArgumentException if points is null
 	 */
-	public FallData(String id,String date, boolean notified,String sessionName,int latitude,int longitude,DataArray points)
+	public FallData(String id,String date, boolean notified,String sessionName,double longit,double latit,DataArray points)
 			throws IllegalDateFormatException,IllegalNumberException,IllegalIdException,IllegalArgumentException {
 		super(id,date,notified,sessionName);
-		if(latitude<0||longitude<0)
+		if(longit<0||latit<0)
 			throw new IllegalNumberException();
 		if(points==null)
 			throw new IllegalArgumentException("Accelerometer data haven't been passed successfully");
-		this.latitude=latitude;
-		this.longitude=longitude;
+		this.latitude=longit;
+		this.longitude=latit;
 		data=points;
 	}
 	
@@ -57,7 +57,7 @@ public class FallData extends FallInfo{
 	 * Get the latitude for this fall
 	 * @return the latitude for this fall
 	 */
-	public int getLatitude()
+	public double getLatitude()
 	{
 		return latitude;
 	}
@@ -66,7 +66,7 @@ public class FallData extends FallInfo{
 	 * Get the longitude for this fall
 	 * @return the longitude for this fall
 	 */
-	public int getLongitude()
+	public double getLongitude()
 	{
 		return longitude;
 	}

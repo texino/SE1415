@@ -22,25 +22,22 @@ import android.util.Log;
 public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 
 	private static final String TAG = "ELABORATE TASK";
-	float[] dX,dY,dZ;
-	int index;
-	String sessionId;
-	Context context;
-	public ElaborateTask (float[] dX,float[] dY,float[] dZ)
-	{
-		this.dX=dX;
-		this.dY=dY;
-		this.dZ=dZ;
-	}
+	private float[] dX,dY,dZ;
+	private int index;
+	private double actualLat,actualLong;
+	private String sessionId;
+	private Context context;
 
-	public ElaborateTask (Context context,DataArray data,String sessionId)
+	public ElaborateTask (Context context,DataArray data,String sessionId,double latitude,double longitude)
 	{
 		this.dX=data.getXData();
 		this.dY=data.getYData();
-		this.dZ=data.getYData();
+		this.dZ=data.getZData();
 		this.index=data.getIndex();
 		this.sessionId=sessionId;
 		this.context=context;
+		this.actualLat=latitude;
+		this.actualLong=longitude;
 	}
 
 	@Override
@@ -51,8 +48,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 		int middleIndex=index+dZ.length/2;
 		if(middleIndex>=dZ.length)
 			middleIndex=middleIndex-dZ.length;
-		//if((dZ[middleIndex]-dZ[index]>10)&&(dZ[middleIndex]-dZ[prevIndex]>10))
-		if((dY[index]-dY[prevIndex])>5)
+		if((dZ[prevIndex]-dZ[index])>9)
 		{
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
 			String date=dateFormat.format(new Date());
@@ -63,7 +59,7 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 				datas.add(dX[i],dY[i],dZ[i]);
 			FallData data;
 			try {
-				data = new FallData(""+System.currentTimeMillis(),date,true,"",200,200,datas);
+				data = new FallData(""+System.currentTimeMillis(),date,true,"",actualLong,actualLat,datas);
 				LocalStorage.storeFallData(sessionId,data);
 				sendBroadcastMessage(data.getId());
 			} catch (IllegalArgumentException e) {

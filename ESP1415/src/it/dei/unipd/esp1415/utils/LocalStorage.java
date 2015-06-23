@@ -7,7 +7,6 @@ import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
-import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.objects.FallInfo;
 import it.dei.unipd.esp1415.objects.SessionData;
@@ -238,8 +237,8 @@ public class LocalStorage {
 		int rate=Integer.parseInt(bufferedReader.readLine());
 		String data=bufferedReader.readLine();
 		boolean notificato=Boolean.parseBoolean(bufferedReader.readLine());
-		int longit=Integer.parseInt(bufferedReader.readLine());
-		int lat=Integer.parseInt(bufferedReader.readLine());
+		double longit=Double.parseDouble(bufferedReader.readLine());
+		double lat=Double.parseDouble(bufferedReader.readLine());
 
 		DataArray points=new DataArray(rate);
 		String line;

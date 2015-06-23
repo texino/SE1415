@@ -68,6 +68,5 @@ public class SessionDataActivity extends Activity {
 		Log.d("ACTIVITY SECOND",""+data.getFalls());
 		FallAdapter ad=new FallAdapter(this,data.getFalls(),data.getId());//inizializzare oggetto
 		lista.setAdapter(ad);
-
 	}
 }
