@@ -18,6 +18,9 @@ import com.example.esp1415.R;
 
 public class SessionDataActivity extends Activity {
 	public static final String ID_TAG="sessionId";
+	public static final String NAME_TAG="name";
+	public static final String DURATION_TAG="duration";
+	public static final String DATE_TAG="date";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

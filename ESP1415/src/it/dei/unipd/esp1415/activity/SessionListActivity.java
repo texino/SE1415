@@ -42,6 +42,10 @@ public class SessionListActivity extends ActionBarActivity {
 					Intent i=new Intent(SessionListActivity.this,CurrentSessionActivity.class);
 					i.putExtra(CurrentSessionActivity.EMPTY_TAG,true);
 					startActivity(i);
+					fabButton.hideFloatingActionButton();
+				}
+				else {
+					fabButton.showFloatingActionButton();
 				}
 			}
 		});

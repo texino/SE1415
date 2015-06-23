@@ -26,6 +26,7 @@ public class MyListFragment extends ListFragment {
 	
 	private List<SessionInfo> items;
 	private String TAG = "OnClick"; //TOCLEAN
+	//EditText text = (EditText) getView().findViewById(R.id.renamesession);
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,14 +38,6 @@ public class MyListFragment extends ListFragment {
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
-		//create a session list to test fragment
-		int i;
-		/*for(i=1; i<100; i++){
-        	try{
-        		items.add(new SessionInfo(""+i,"Prova"+i,Utils.getDateHour(),i,i, true));
-        	}
-        	catch(Exception e){}
-		}*/
 		// initialize and set the list adapter
 		setListAdapter(new CustomArrayAdapter(getActivity(), items));
 	}
@@ -82,16 +75,19 @@ public class MyListFragment extends ListFragment {
         getListView().setDivider(null);
     }
  
-    //
+    //onListItemClick implemetation
     protected void onListItemClick(View v, int pos, long id) {
-        Log.i(TAG, "onListItemClick id=" + id);
         SessionInfo info=items.get(pos);
         Intent i;
+        //check if session pressed is running
         if(info.getStatus())
         {
         	i=new Intent(this.getActivity(),CurrentSessionActivity.class);
         	i.putExtra(CurrentSessionActivity.EMPTY_TAG, false);
         	i.putExtra(CurrentSessionActivity.ID_TAG,info.getId());
+        	i.putExtra(SessionDataActivity.NAME_TAG,info.getName());
+        	i.putExtra(SessionDataActivity.DURATION_TAG,info.getDuration());
+        	i.putExtra(SessionDataActivity.DATE_TAG,info.getDate());
         }
         else
         {
@@ -99,8 +95,6 @@ public class MyListFragment extends ListFragment {
         	i.putExtra(SessionDataActivity.ID_TAG,info.getId());
         }
         startActivity(i);
-        //TODO intent that launch activity 2 and add extra info (n' session pressed)
-        //if the session is running then display activity 3
     }
     
     protected boolean onLongListItemClick(View v, int pos, long id) {
@@ -118,30 +112,6 @@ public class MyListFragment extends ListFragment {
         //returning true means that Android stops event propagation
     	return true;
     }
-    //TOCLEAN
-    /*@Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        
-		if (!clicked) {
-			ImageView rename = (ImageView) v.findViewById(R.id.rename);
-			rename.setVisibility(View.VISIBLE);
-			ImageView delete = (ImageView) v.findViewById(R.id.delete);
-			delete.setVisibility(View.VISIBLE);
-			clicked = true;
-		}
-		else {
-			ImageView rename = (ImageView) v.findViewById(R.id.rename);
-			rename.setVisibility(View.INVISIBLE);
-			ImageView delete = (ImageView) v.findViewById(R.id.delete);
-			delete.setVisibility(View.INVISIBLE);
-			clicked = false;
-		}
-    	// retrieve theListView item
-        SessionInfo item = items.get(position);
-        
-        // do something
-        Toast.makeText(getActivity(), item.getName(), Toast.LENGTH_SHORT).show();
-   }*/
     @Override
 	public void onResume() {
 		super.onResume();
