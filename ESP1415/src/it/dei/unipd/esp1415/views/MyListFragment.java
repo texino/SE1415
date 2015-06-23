@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.esp1415.R;
 
 public class MyListFragment extends ListFragment {
 	
@@ -96,11 +97,6 @@ public class MyListFragment extends ListFragment {
         {
         	i=new Intent(this.getActivity(),SessionDataActivity.class);
         	i.putExtra(SessionDataActivity.ID_TAG,info.getId());
-        	i.putExtra(SessionDataActivity.NAME_TAG,info.getName());
-        	i.putExtra(SessionDataActivity.DURATION_TAG,info.getDuration());
-        	i.putExtra(SessionDataActivity.DATE_TAG,info.getDate());
-        	
-        
         }
         startActivity(i);
         //TODO intent that launch activity 2 and add extra info (n' session pressed)

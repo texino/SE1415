@@ -1,5 +1,10 @@
 package it.dei.unipd.esp1415.activity;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import com.example.esp1415.R;
+
 import it.dei.unipd.esp1415.adapters.FallAdapter;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
@@ -12,10 +17,6 @@ import it.dei.unipd.esp1415.tasks.ESPService.ESPBinder;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.GraphicView;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -38,8 +39,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.esp1415.R;
 
 @SuppressLint("InflateParams") 
 public class CurrentSessionActivity extends Activity{

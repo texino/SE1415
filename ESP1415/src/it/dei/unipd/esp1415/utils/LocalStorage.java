@@ -396,7 +396,7 @@ public class LocalStorage {
 	 */
 	private static void storeImageForSession(String sessionId) throws IllegalArgumentException,NoSuchSessionException,IOException, LowSpaceException
 	{
-		//String todo;
+		String todo;
 		//TODO pensare ad un logaritmo
 		if((sessionId==null))
 			throw new IllegalArgumentException();
