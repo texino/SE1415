@@ -142,4 +142,16 @@ public class MyListFragment extends ListFragment {
         // do something
         Toast.makeText(getActivity(), item.getName(), Toast.LENGTH_SHORT).show();
    }*/
+    @Override
+	public void onResume() {
+		super.onResume();
+		// get the list of session saved in the storage
+		try {
+			items = LocalStorage.getSessionInfos();
+		} catch (IOException e) {
+			Log.i("ERROR", "Error getting session list - LocalStorage");
+		}
+		// initialize and set the list adapter
+		setListAdapter(new CustomArrayAdapter(getActivity(), items));
+	}
 }
