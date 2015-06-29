@@ -45,7 +45,7 @@ public class MyListFragment extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
+		
 		//setting up onClick listeners
 		
 		//get the ListView witch handle the click and long press Android events
@@ -108,9 +108,9 @@ public class MyListFragment extends ListFragment {
         //returning true means that Android stops event propagation
     	return true;
     }
-    @Override
+
+	@Override
 	public void onResume() {
-		super.onResume();
 		// get the list of session saved in the storage
 		try {
 			items = LocalStorage.getSessionInfos();
@@ -119,5 +119,6 @@ public class MyListFragment extends ListFragment {
 		}
 		// initialize and set the list adapter
 		setListAdapter(new CustomArrayAdapter(getActivity(), items));
+		super.onResume();
 	}
 }

@@ -15,7 +15,7 @@ import android.widget.EditText;
 import com.example.esp1415.R;
 
 /**
- * SessionList class
+ * SessionListActivity class
  * First activity to be display that show and manage a list of sessions
  */
 public class SessionListActivity extends ActionBarActivity {
