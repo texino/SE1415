@@ -59,7 +59,7 @@ public class RenameDeleteDialog extends DialogFragment {
 												"Error getting session list - LocalStorage");
 									} catch (NoSuchSessionException e) {
 										Log.i("ERROR",
-												"Se la sessione non esiste - LocalStorage");
+												"La sessione non esiste - LocalStorage");
 									} catch (IllegalArgumentException e) {
 										Log.i("ERROR",
 												"i parametri non sono coerenti - LocalStorage");

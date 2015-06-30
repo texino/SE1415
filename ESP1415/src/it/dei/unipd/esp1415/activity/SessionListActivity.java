@@ -1,5 +1,9 @@
 package it.dei.unipd.esp1415.activity;
 
+import java.io.IOException;
+
+import it.dei.unipd.esp1415.adapters.SessionAdapter;
+import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.views.FloatingActionButton;
 import android.content.Intent;
 import android.graphics.Color;
@@ -74,6 +78,11 @@ public class SessionListActivity extends ActionBarActivity {
         	return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+	public void onResume() {
+    	Log.i("RESUME", "onResume performed");
+		super.onResume();
     }
   
     //FIXME

@@ -115,6 +115,7 @@ public class SessionListFragment extends ListFragment {
     @Override
 	public void onResume() {
 		super.onResume();
+		Log.i("RESUME-FRAGMENT", "onResume performed");
 		// get the list of session saved in the storage
 		try {
 			items = LocalStorage.getSessionInfos();
