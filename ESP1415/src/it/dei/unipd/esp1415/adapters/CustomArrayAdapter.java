@@ -1,6 +1,7 @@
 package it.dei.unipd.esp1415.adapters;
 
 import it.dei.unipd.esp1415.objects.SessionInfo;
+import it.dei.unipd.esp1415.utils.Utils;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class CustomArrayAdapter extends ArrayAdapter<SessionInfo> {
         SessionInfo item = getItem(position);
         //viewHolder.picture.setImageDrawable(item.getPicture());
         viewHolder.name.setText(item.getName());
-        viewHolder.duration.setText(""+item.getDuration());
+        viewHolder.duration.setText(""+Utils.convertDuration(item.getDuration()));
         viewHolder.date.setText(item.getDate());
         viewHolder.falls.setText("Cadute: "+item.getNumberOfFalls());
         
