@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_weight="0.4"
+        android:layout_weight="0.2"
         android:clickable="true"
         android:contentDescription="@string/picture_descriptor2"
         android:onClick="deleteSession"
@@ -23,7 +23,7 @@
         android:id="@+id/renamesession"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
+        android:layout_weight="0.8"
         android:hint="@string/hint_dialog_1"
         android:inputType="text" />
 

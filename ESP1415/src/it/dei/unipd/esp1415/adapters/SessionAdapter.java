@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import com.example.esp1415.R;
 
-public class CustomArrayAdapter extends ArrayAdapter<SessionInfo> {
+public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 	
-	public CustomArrayAdapter(Context context, List<SessionInfo> items) {
+	public SessionAdapter(Context context, List<SessionInfo> items) {
         super(context, R.layout.single_session_layout, items);
     }
 	

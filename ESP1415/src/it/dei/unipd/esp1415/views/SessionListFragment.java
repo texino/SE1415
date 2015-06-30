@@ -2,7 +2,7 @@ package it.dei.unipd.esp1415.views;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.activity.SessionDataActivity;
-import it.dei.unipd.esp1415.adapters.CustomArrayAdapter;
+import it.dei.unipd.esp1415.adapters.SessionAdapter;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.Utils;
@@ -22,7 +22,7 @@ import android.widget.ListView;
 
 import com.example.esp1415.R;
 
-public class MyListFragment extends ListFragment {
+public class SessionListFragment extends ListFragment {
 	
 	private List<SessionInfo> items;
 	private String TAG = "OnClick"; //TOCLEAN
@@ -39,7 +39,7 @@ public class MyListFragment extends ListFragment {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
 		// initialize and set the list adapter
-		setListAdapter(new CustomArrayAdapter(getActivity(), items));
+		setListAdapter(new SessionAdapter(getActivity(), items));
 	}
     
 	@Override
@@ -122,6 +122,6 @@ public class MyListFragment extends ListFragment {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
 		// initialize and set the list adapter
-		setListAdapter(new CustomArrayAdapter(getActivity(), items));
+		setListAdapter(new SessionAdapter(getActivity(), items));
 	}
 }
