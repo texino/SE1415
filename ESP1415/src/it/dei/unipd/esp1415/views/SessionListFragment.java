@@ -5,8 +5,6 @@ import it.dei.unipd.esp1415.activity.SessionDataActivity;
 import it.dei.unipd.esp1415.adapters.SessionAdapter;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
-import it.dei.unipd.esp1415.utils.Utils;
-import it.dei.unipd.esp1415.views.RenameDeleteDialog;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,18 +15,15 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-
-import com.example.esp1415.R;
 
 /**
  * SessionListFragment class: Displays the list of sessions inside a fragment
  */
 public class SessionListFragment extends ListFragment {
 
-	public static SessionAdapter adapter;
-	public static List<SessionInfo> items;
+	private SessionAdapter adapter;
+	private List<SessionInfo> items;
 	public static RenameDeleteDialog dialog;
 
 	@Override
@@ -110,7 +105,7 @@ public class SessionListFragment extends ListFragment {
 		return true;
 	}
 
-	// override di onResume in cui aggiorniamo i dati nel fragment
+	// method that update the fragment during onResume state
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -125,7 +120,7 @@ public class SessionListFragment extends ListFragment {
 		setListAdapter(new SessionAdapter(getActivity(), items));
 	}
 
-	// metodo che svolge l'aggiornamento del fragment mentre è invisibile
+	// method that update fragment while it is invisible
 	@Override
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
