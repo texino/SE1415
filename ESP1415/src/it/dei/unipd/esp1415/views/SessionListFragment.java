@@ -23,12 +23,12 @@ import android.widget.ListView;
 import com.example.esp1415.R;
 
 /**
- * SessionListFragment class Displays the list of sessions inside a fragment
+ * SessionListFragment class: Displays the list of sessions inside a fragment
  */
 public class SessionListFragment extends ListFragment {
 
-	private SessionAdapter adapter;
-	private List<SessionInfo> items;
+	public static SessionAdapter adapter;
+	public static List<SessionInfo> items;
 	public static RenameDeleteDialog dialog;
 
 	@Override
@@ -110,6 +110,7 @@ public class SessionListFragment extends ListFragment {
 		return true;
 	}
 
+	// override di onResume in cui aggiorniamo i dati nel fragment
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -122,5 +123,22 @@ public class SessionListFragment extends ListFragment {
 		}
 		// initialize and set the list adapter
 		setListAdapter(new SessionAdapter(getActivity(), items));
+	}
+
+	// metodo che svolge l'aggiornamento del fragment mentre è invisibile
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (hidden) {
+			Log.i("HIDDEN-FRAGMENT", "HIDDEN!! performed");
+			// get the list of session saved in the storage
+			try {
+				items = LocalStorage.getSessionInfos();
+			} catch (IOException e) {
+				Log.i("ERROR", "Error getting session list - LocalStorage");
+			}
+			// initialize and set the list adapter
+			setListAdapter(new SessionAdapter(getActivity(), items));
+		}
 	}
 }

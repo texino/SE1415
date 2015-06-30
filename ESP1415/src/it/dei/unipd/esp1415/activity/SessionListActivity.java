@@ -14,7 +14,7 @@ import android.view.View;
 import com.example.esp1415.R;
 
 /**
- * SessionListActivity class First activity to be display that show and manage a
+ * SessionListActivity class: First activity to be display that show and manage a
  * list of sessions
  */
 public class SessionListActivity extends ActionBarActivity {

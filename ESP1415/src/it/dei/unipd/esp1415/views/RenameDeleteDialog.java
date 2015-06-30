@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,9 @@ import android.widget.Toast;
 
 import com.example.esp1415.R;
 
+/**
+ * RenameDeleteDialog class: create a dialog to perform rename and delete of a session
+ */
 public class RenameDeleteDialog extends DialogFragment {
 
 	private String sessionId;
@@ -62,17 +66,19 @@ public class RenameDeleteDialog extends DialogFragment {
 					Log.i("ERROR",
 							"i parametri non sono coerenti - LocalStorage");
 				}
+				// aggiorno il fragment
+				refreshfragment();
+				// toast con conferma dell'eliminazione
 				Toast.makeText(context,
 						"Sessione " + sessionName + " cancellata",
 						Toast.LENGTH_SHORT).show();
-				SessionListFragment.dialog.dismiss();
-				//TODO aggiornare la lista del fragment
+
 			}
 		});
 		// insert current session name in dialog's editText
-		final EditText newName = (EditText) layout
+		final EditText editText = (EditText) layout
 				.findViewById(R.id.renamesession);
-		newName.setText(sessionName);
+		editText.setText(sessionName);
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
 		builder.setView(layout)
@@ -82,15 +88,16 @@ public class RenameDeleteDialog extends DialogFragment {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 
+								String newName = editText.getText().toString();
 								// if newname is an empty string, dismiss dialog
-								if (newName.getText().toString().equals(""))
+								if (newName.equals(""))
 									Toast.makeText(context, "Retry",
 											Toast.LENGTH_SHORT).show();
 								else {
 									// scrive il nuovo nome
 									try {
 										LocalStorage.renameSession(sessionId,
-												newName.getText().toString());
+												newName);
 										// SessionListFragment.listrefresh();
 									} catch (IOException e) {
 										Log.i("ERROR",
@@ -102,10 +109,12 @@ public class RenameDeleteDialog extends DialogFragment {
 										Log.i("ERROR",
 												"i parametri non sono coerenti - LocalStorage");
 									}
+								
+								// aggiorno il fragment
+								refreshfragment();
+								Toast.makeText(context, "Session renamed",
+										Toast.LENGTH_SHORT).show();
 								}
-								//TODO aggiornare la lista del fragment
-								//non funziona
-								// SessionListFragment.adapter.notifyDataSetChanged();
 							}
 						})
 				.setNegativeButton(R.string.annulla,
@@ -118,7 +127,13 @@ public class RenameDeleteDialog extends DialogFragment {
 
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void refreshfragment() {
+		// aggiorno il fragment nascondendolo
+		Fragment fragment = getFragmentManager().findFragmentById(
+				R.id.myfragment);
+		getFragmentManager().beginTransaction().hide(fragment).commit();
+		// mostro il fragment aggiornato
+		SessionListFragment.dialog.dismiss();
+		getFragmentManager().beginTransaction().show(fragment).commit();
 	}
 }
