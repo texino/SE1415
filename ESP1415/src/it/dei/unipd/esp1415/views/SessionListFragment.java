@@ -22,12 +22,15 @@ import android.widget.ListView;
 
 import com.example.esp1415.R;
 
+/**
+ * SessionListFragment class Displays the list of sessions inside a fragment
+ */
 public class SessionListFragment extends ListFragment {
-	
+
+	private SessionAdapter adapter;
 	private List<SessionInfo> items;
-	private String TAG = "OnClick"; //TOCLEAN
-	//EditText text = (EditText) getView().findViewById(R.id.renamesession);
-	
+	public static RenameDeleteDialog dialog;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,80 +42,75 @@ public class SessionListFragment extends ListFragment {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
 		// initialize and set the list adapter
-		setListAdapter(new SessionAdapter(getActivity(), items));
+		adapter = new SessionAdapter(getActivity(), items);
+		setListAdapter(adapter);
 	}
-    
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		//setting up onClick listeners
-		
-		//get the ListView witch handle the click and long press Android events
+		// setting up onClick listeners
+
+		// get the ListView witch handle the click and long press Android events
 		ListView lv = getListView();
-		
-		//setting up single click
+
+		// setting up single click
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-		    @Override
-		    public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-		        onListItemClick(v,pos,id);
-		    }
+			@Override
+			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
+				onListItemClick(v, pos, id);
+			}
 		});
-		
-		//setting up long click
+
+		// setting up long click
 		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-		    @Override
-		    public boolean onItemLongClick(AdapterView<?> av, View v, int pos, long id) {
-		    	return onLongListItemClick(v,pos,id);
-		    }
+			@Override
+			public boolean onItemLongClick(AdapterView<?> av, View v, int pos,
+					long id) {
+				return onLongListItemClick(v, pos, id);
+			}
 		});
 	}
-	
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // remove the dividers from the ListView of the ListFragment
-        getListView().setDivider(null);
-    }
- 
-    //onListItemClick implemetation
-    protected void onListItemClick(View v, int pos, long id) {
-        SessionInfo info=items.get(pos);
-        Intent i;
-        //check if session pressed is running
-        if(info.getStatus())
-        {
-        	i=new Intent(this.getActivity(),CurrentSessionActivity.class);
-        	i.putExtra(CurrentSessionActivity.EMPTY_TAG, false);
-        	i.putExtra(CurrentSessionActivity.ID_TAG,info.getId());
-        }
-        else
-        {
-        	i=new Intent(this.getActivity(),SessionDataActivity.class);
-        	i.putExtra(SessionDataActivity.ID_TAG,info.getId());
-        	i.putExtra(SessionDataActivity.NAME_TAG,info.getName());
-        	i.putExtra(SessionDataActivity.DURATION_TAG,info.getDuration());
-        	i.putExtra(SessionDataActivity.DATE_TAG,info.getDate());
-        }
-        startActivity(i);
-    }
-    
-    protected boolean onLongListItemClick(View v, int pos, long id) {
-        Log.i(TAG, "onLongListItemClick id=" + id);
-        //FIXME non trova il riferimento alla textview (null pointer exception)
-        //EditText text = (EditText) getView().findViewById(R.id.renamesession);
-    	SessionInfo item = items.get(pos);
-    	//text.setText(item.getName());
-    	//create the dialog
-    	RenameDeleteDialog dialog = new RenameDeleteDialog(item.getId());
-        //set session clicked name to the dialog title
-    	dialog.setTitle("Session: " + item.getName());
-    	//show the dialog
-    	dialog.show(getFragmentManager(),"dialog");
-        //returning true means that Android stops event propagation
-    	return true;
-    }
-    @Override
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		// remove the dividers from the ListView of the ListFragment
+		getListView().setDivider(null);
+	}
+
+	// onListItemClick implemetation
+	protected void onListItemClick(View v, int pos, long id) {
+		SessionInfo info = items.get(pos);
+		Intent i;
+		// check if session pressed is running
+		if (info.getStatus()) {
+			i = new Intent(this.getActivity(), CurrentSessionActivity.class);
+			i.putExtra(CurrentSessionActivity.EMPTY_TAG, false);
+			i.putExtra(CurrentSessionActivity.ID_TAG, info.getId());
+		} else {
+			i = new Intent(this.getActivity(), SessionDataActivity.class);
+			i.putExtra(SessionDataActivity.ID_TAG, info.getId());
+			i.putExtra(SessionDataActivity.NAME_TAG, info.getName());
+			i.putExtra(SessionDataActivity.DURATION_TAG, info.getDuration());
+			i.putExtra(SessionDataActivity.DATE_TAG, info.getDate());
+		}
+		startActivity(i);
+	}
+
+	protected boolean onLongListItemClick(View v, int pos, long id) {
+		SessionInfo item = items.get(pos);
+		// create the dialog
+		dialog = new RenameDeleteDialog(item.getId(), item.getName(),
+				item.getName());
+		// show the dialog
+		dialog.show(getFragmentManager(), "dialog");
+		// returning true means that Android stops event propagation
+		return true;
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		Log.i("RESUME-FRAGMENT", "onResume performed");

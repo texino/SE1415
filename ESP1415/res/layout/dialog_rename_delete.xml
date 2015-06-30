@@ -6,14 +6,13 @@
     android:weightSum="1" >
 
     <ImageView
-        android:id="@+id/delete"
+        android:id="@+id/dialog_garbage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_weight="0.2"
         android:clickable="true"
         android:contentDescription="@string/picture_descriptor2"
-        android:onClick="deleteSession"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:scaleType="center"
