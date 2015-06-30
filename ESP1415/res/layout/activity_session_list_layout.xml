@@ -9,12 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="it.dei.unipd.esp1415.SessionList" >
     
-    <!-- <Button
-        android:id="@+id/Button01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bottone" /> -->
-
     <fragment android:name="it.dei.unipd.esp1415.views.SessionListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
