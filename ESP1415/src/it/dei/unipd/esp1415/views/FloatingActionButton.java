@@ -65,13 +65,13 @@ public class FloatingActionButton extends View {
         (getHeight() - mBitmap.getHeight()) / 2, mDrawablePaint);
   }
  
-  @Override
+  /*@Override
   public boolean onTouchEvent(MotionEvent event) {
-    /*if (event.getAction() == MotionEvent.ACTION_UP) {
+    if (event.getAction() == MotionEvent.ACTION_UP) {
       setAlpha(1.0f);
     } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
       setAlpha(0.6f);
-    }*/
+    }
     super.onTouchEvent(event);
     return !mHidden;
 //  return super.onTouchEvent(event);
@@ -79,29 +79,29 @@ public class FloatingActionButton extends View {
  
   public void hideFloatingActionButton() {
     if (!mHidden) {
-      /*ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", 1, 0);
+      ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", 1, 0);
       ObjectAnimator scaleY = ObjectAnimator.ofFloat(this, "scaleY", 1, 0);
       AnimatorSet animSetXY = new AnimatorSet();
       animSetXY.playTogether(scaleX, scaleY);
       animSetXY.setInterpolator(accelerateInterpolator);
       animSetXY.setDuration(100);
-      animSetXY.start();*/
+      animSetXY.start();
       mHidden = true;
     }
   }
  
   public void showFloatingActionButton() {
     if (mHidden) {
-      /*ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", 0, 1);
+      ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", 0, 1);
       ObjectAnimator scaleY = ObjectAnimator.ofFloat(this, "scaleY", 0, 1);
       AnimatorSet animSetXY = new AnimatorSet();
       animSetXY.playTogether(scaleX, scaleY);
       animSetXY.setInterpolator(overshootInterpolator);
       animSetXY.setDuration(200);
-      animSetXY.start();*/
+      animSetXY.start();
       mHidden = false;
     }
-  }
+  }*/
  
   public boolean isHidden() {
     return mHidden;

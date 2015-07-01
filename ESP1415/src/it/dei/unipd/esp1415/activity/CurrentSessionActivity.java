@@ -1,10 +1,5 @@
 package it.dei.unipd.esp1415.activity;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.example.esp1415.R;
-
 import it.dei.unipd.esp1415.adapters.FallAdapter;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
@@ -15,8 +10,13 @@ import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.tasks.ESPService;
 import it.dei.unipd.esp1415.tasks.ESPService.ESPBinder;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.GraphicView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -39,6 +39,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.esp1415.R;
+
 @SuppressLint("InflateParams") 
 public class CurrentSessionActivity extends Activity{
 
@@ -47,6 +49,7 @@ public class CurrentSessionActivity extends Activity{
 	private ImageButton btnStart,btnStop;
 	private TextView textDuration,textName,textDate;
 	private Context actContext;
+	private Context firstContext;
 	private ListView listFalls;
 	private String sessionId,sessionDialogName;
 	private boolean running;
@@ -125,6 +128,7 @@ public class CurrentSessionActivity extends Activity{
 		private void startClicked()
 		{
 			setRunning(true);
+			PreferenceStorage.storeSimpleData(firstContext, "isSessionRunning", "true");
 			Intent serviceIntent = new Intent(actContext,ESPService.class);
 			serviceIntent.putExtra(ID_TAG,sessionId);
 			serviceIntent.putExtra(DURATION_TAG,duration);
@@ -147,6 +151,7 @@ public class CurrentSessionActivity extends Activity{
 		private void stopClicked()
 		{
 			pauseClicked();
+			PreferenceStorage.storeSimpleData(firstContext, "isSessionRunning", "false");
 			//fermo il service
 			service.stop();
 			Intent i=new Intent(CurrentSessionActivity.this,SessionDataActivity.class);
@@ -233,6 +238,8 @@ public class CurrentSessionActivity extends Activity{
 			super.onCreate(savedInstanceState);
 			Log.d(TAG,"ON CREATE");
 			actContext=this;
+			// maniglia al context della prima activity
+			firstContext = SessionListActivity.context;
 			setLayout();//Imposta layout ed eventi
 			if(savedInstanceState==null)//l'activity viene creata da zero
 			{
