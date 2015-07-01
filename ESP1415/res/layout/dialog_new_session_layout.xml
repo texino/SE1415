@@ -21,6 +21,6 @@
         android:layout_below="@+id/edit_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="Button" />
+        android:text="@string/button_ok" />
 
 </RelativeLayout>
