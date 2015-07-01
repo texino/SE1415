@@ -35,7 +35,7 @@ public class SessionListActivity extends ActionBarActivity {
 				.withButtonColor(Color.WHITE)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
-		// set the onClick Listener to FAB button
+		// set the onClick listener to FAB button
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

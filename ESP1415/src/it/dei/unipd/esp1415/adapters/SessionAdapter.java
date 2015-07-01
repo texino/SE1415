@@ -14,12 +14,17 @@ import android.widget.TextView;
 
 import com.example.esp1415.R;
 
+/**
+ * SessionAdapter class: Adapter provides access to the data session items. 
+ * The Adapter is also responsible for making a View for each item in the data set.
+ */
 public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 	
 	public SessionAdapter(Context context, List<SessionInfo> items) {
         super(context, R.layout.single_session_layout, items);
     }
 	
+	// Get a View that displays the data at the specified position in the data set.
 	@Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;

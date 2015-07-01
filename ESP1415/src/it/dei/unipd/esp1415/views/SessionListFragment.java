@@ -75,7 +75,7 @@ public class SessionListFragment extends ListFragment {
 		getListView().setDivider(null);
 	}
 
-	// onListItemClick implemetation
+	// onListItemClick implementation
 	protected void onListItemClick(View v, int pos, long id) {
 		SessionInfo info = items.get(pos);
 		Intent i;
@@ -125,7 +125,6 @@ public class SessionListFragment extends ListFragment {
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (hidden) {
-			Log.i("HIDDEN-FRAGMENT", "HIDDEN!! performed");
 			// get the list of session saved in the storage
 			try {
 				items = LocalStorage.getSessionInfos();

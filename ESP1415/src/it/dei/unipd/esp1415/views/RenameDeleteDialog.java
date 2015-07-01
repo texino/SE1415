@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.example.esp1415.R;
 
 /**
- * RenameDeleteDialog class: create a dialog to perform rename and delete of a session
+ * RenameDeleteDialog class: create a dialog to rename and delete a session
  */
 public class RenameDeleteDialog extends DialogFragment {
 
@@ -51,8 +51,7 @@ public class RenameDeleteDialog extends DialogFragment {
 		final View layout = inflater.inflate((R.layout.dialog_rename_delete),
 				null);
 		builder.setTitle(title);
-		ImageView garbage = (ImageView) layout
-				.findViewById(R.id.dialog_garbage);
+		ImageView garbage = (ImageView) layout.findViewById(R.id.dialog_garbage);
 		// set garbage button listener and onClick
 		garbage.setOnClickListener(new OnClickListener() {
 
@@ -71,7 +70,7 @@ public class RenameDeleteDialog extends DialogFragment {
 				refreshfragment();
 				// toast to confirm deletion
 				Toast.makeText(context,
-						"Sessione " + sessionName + " cancellata",
+						"Session " + sessionName + " delete",
 						Toast.LENGTH_SHORT).show();
 
 			}
@@ -97,7 +96,6 @@ public class RenameDeleteDialog extends DialogFragment {
 									try {
 										LocalStorage.renameSession(sessionId,
 												newName);
-										// SessionListFragment.listrefresh();
 									} catch (IOException e) {
 										Log.i("ERROR",
 												"Error getting session list - LocalStorage");
@@ -132,7 +130,7 @@ public class RenameDeleteDialog extends DialogFragment {
 		Fragment fragment = getFragmentManager().findFragmentById(
 				R.id.listfragment);
 		getFragmentManager().beginTransaction().hide(fragment).commit();
-		// show fragment updated
+		// show fragment updated and dismiss dialog
 		SessionListFragment.dialog.dismiss();
 		getFragmentManager().beginTransaction().show(fragment).commit();
 	}
