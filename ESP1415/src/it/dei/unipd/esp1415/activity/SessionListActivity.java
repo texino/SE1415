@@ -40,7 +40,7 @@ public class SessionListActivity extends ActionBarActivity {
 			isSessionRunning = false;
 		else
 			isSessionRunning = java.lang.Boolean.parseBoolean(value);
-		// set FAB button
+		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
 				.withDrawable(
 						getResources().getDrawable(
