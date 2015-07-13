@@ -1,4 +1,6 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <PreferenceCategory android:title="@string/setting_category1" >
         
@@ -10,7 +12,7 @@
     
     <PreferenceCategory android:title="@string/setting_category3" >
         
-        <SwitchPreference
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="alarm key"
             android:summary="@string/summary_alarm"
@@ -18,7 +20,8 @@
         
         <PreferenceScreen
             android:key="alarmtime_key"
-            android:title="@string/alarmtime_title" >
+            android:title="@string/alarmtime_title"
+            android:enabled="false" >
         </PreferenceScreen>
         
         <!-- <DialogPreference
@@ -32,12 +35,14 @@
             android:defaultValue="content://settings/system/notification_sound"
             android:key="ringtone key"
             android:ringtoneType="notification|alarm"
-            android:title="@string/ringtone_title" />
+            android:title="@string/ringtone_title"
+            android:enabled="false"  />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="vibration key"
-            android:title="@string/vibration_title" />
+            android:title="@string/vibration_title"
+            android:enabled="false" />
     </PreferenceCategory>
     
     <!-- <EditTextPreference
