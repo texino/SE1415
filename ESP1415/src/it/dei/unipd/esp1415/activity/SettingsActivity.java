@@ -109,23 +109,11 @@ public class SettingsActivity extends PreferenceActivity {
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			// This string contains the changed preference's value.
 			String stringValue = value.toString();
-			/*
-			 * //If the preference is the editable 'Display Name'. if
-			 * (preference instanceof EditTextPreference) { if
-			 * (stringValue.equalsIgnoreCase("User") || stringValue.equals(""))
-			 * {
-			 * preference.setSummary("Define a personal username for the app");
-			 * EditTextPreference editTextPreference = (EditTextPreference)
-			 * preference; editTextPreference.setText("User"); } else {
-			 * preference.setSummary(stringValue); } } else
-			 */if (preference instanceof RingtonePreference) {
-				// If the preference is the ringtone: for ringtone preferences,
-				// look up the correct display value using RingtoneManager.
-				if (TextUtils.isEmpty(stringValue)) {
-					// Empty values correspond to 'silent' (no ringtone).
+			if (preference instanceof RingtonePreference) {
+				// Null or 0 values correspond to 'silent' (no ringtone).
+				if (TextUtils.isEmpty(stringValue))
 					preference.setSummary("Silent");
-
-				} else {
+				else {
 					Ringtone ringtone = RingtoneManager.getRingtone(
 							preference.getContext(), Uri.parse(stringValue));
 
@@ -217,38 +205,3 @@ public class SettingsActivity extends PreferenceActivity {
 	}
 
 }
-
-/*
- * //This fragment shows app preferences public class PrefsFragment extends
- * PreferenceFragment implements OnSharedPreferenceChangeListener {
- * 
- * @Override public void onCreate(Bundle savedInstanceState) {
- * 
- * super.onCreate(savedInstanceState);
- * addPreferencesFromResource(R.layout.activity_settings);
- * 
- * // Bind the summaries of EditText/List/Dialog/Ringtone preferences // to
- * their stored values.
- * bindPreferenceSummaryToValue(findPreference("pref_key_ringtone"));
- * bindPreferenceSummaryToValue(findPreference("pref_username"));
- * 
- * }
- * 
- * //For proper lifecycle management in the activity we register //and
- * unregister SharedPreferences.OnSharedPreferenceChangeListener //in methods
- * onResume() and onPause()
- * 
- * @Override public void onResume() { super.onResume(); // Set up a listener
- * whenever a key changes getPreferenceScreen().getSharedPreferences()
- * .registerOnSharedPreferenceChangeListener(this); }
- * 
- * @Override public void onPause() { super.onPause(); // Unregister the listener
- * whenever a key changes getPreferenceScreen().getSharedPreferences()
- * .unregisterOnSharedPreferenceChangeListener(this); }
- * 
- * //This method update the summary information on settings change public void
- * onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key) {
- * //vibration doesn't need summary
- * if(key.equals("pref_key_ringtone_vibration")){} else{
- * bindPreferenceSummaryToValue(findPreference(key)); } } }
- */
