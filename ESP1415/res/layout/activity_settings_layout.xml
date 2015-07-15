@@ -3,9 +3,22 @@
     android:layout_height="match_parent" >
 
     <PreferenceCategory android:title="@string/setting_category1" >
+        <PreferenceScreen
+            android:key="samplerate_key"
+            android:title="@string/samplerate_title" >
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:key="maxduration_key"
+            android:title="@string/maxduration_title" >
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/setting_category2" >
+        <PreferenceScreen
+            android:key="notifylist_key"
+            android:title="@string/notifylist_title"
+            android:summary="@string/notifylist_summary" >
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/setting_category3" >

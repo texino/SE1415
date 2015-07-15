@@ -46,5 +46,9 @@
     <string name="summary_alarm">Remember me to do a new daily session</string>
     <string name="dialog_title1">Choose a hour</string>
     <string name="alarmtime_title">Time to alarm</string>
+    <string name="notifylist_title">Notifier List</string>
+    <string name="maxduration_title">Max duration of session</string>
+    <string name="notifylist_summary">Manage the list of people to notify by email</string>
+    <string name="samplerate_title">Session sample rate</string>
 
 </resources>
