@@ -31,8 +31,8 @@
     <string name="picture_descriptor3">Details\'s button</string>
     <string name="delete_dialog">Eliminare la sessione?</string>
     <string name="conferma">OK</string>
-    <string name="annulla">Cancels</string>
-    <string name="rinomina">Rename</string>
+    <string name="cancel">Cancel</string>
+    <string name="rename">Rename</string>
     <string name="dialog_title">Session</string>
     <string name="elimina">Elimina</string>
     <string name="session_list">Session List</string>
@@ -43,7 +43,7 @@
     <string name="vibration_title">Vibrate</string>
     <string name="ringtone_title">Ringtone</string>
     <string name="alarm_title">Alarm</string>
-    <string name="summary_alarm">Remember you to do a new daily session</string>
+    <string name="summary_alarm">Remember me to do a new daily session</string>
     <string name="dialog_title1">Choose a hour</string>
     <string name="alarmtime_title">Time to alarm</string>
 

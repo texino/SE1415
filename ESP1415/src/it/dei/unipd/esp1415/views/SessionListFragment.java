@@ -24,7 +24,7 @@ public class SessionListFragment extends ListFragment {
 
 	private SessionAdapter adapter;
 	private List<SessionInfo> items;
-	public static RenameDeleteDialog dialog;
+	protected static RenameDeleteDialog dialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class SessionListFragment extends ListFragment {
 		getListView().setDivider(null);
 	}
 
-	// onListItemClick implementation
+	// single click implementation
 	protected void onListItemClick(View v, int pos, long id) {
 		SessionInfo info = items.get(pos);
 		Intent i;
@@ -94,6 +94,7 @@ public class SessionListFragment extends ListFragment {
 		startActivity(i);
 	}
 
+	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		SessionInfo item = items.get(pos);
 		// create the dialog

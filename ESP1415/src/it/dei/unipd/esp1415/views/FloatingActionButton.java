@@ -70,10 +70,6 @@ public class FloatingActionButton extends View {
 				(getHeight() - mBitmap.getHeight()) / 2, mDrawablePaint);
 	}
 
-	public boolean isHidden() {
-		return mHidden;
-	}
-
 	static public class Builder {
 		private FrameLayout.LayoutParams params;
 		private final Activity activity;

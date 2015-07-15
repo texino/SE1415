@@ -31,9 +31,9 @@ public class SessionListActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		// set the activity layout
 		setContentView(R.layout.activity_session_list_layout);
-		//activity context
+		// activity context
 		context = this;
-		//check if a session is running
+		// check if a session is running
 		String value = PreferenceStorage.getSimpleData(context,
 				"isSessionRunning");
 		if (value.equals(""))
@@ -48,14 +48,13 @@ public class SessionListActivity extends ActionBarActivity {
 				.withButtonColor(Color.WHITE)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
-		//hide the fab button if a session is running
-		if (isSessionRunning) {
+		// hide the fab button if a session is running
+		if (isSessionRunning)
 			fabButton.setVisibility(View.GONE);
-		} else {
+		else
 			fabButton.setVisibility(View.VISIBLE);
-		}
 
-		// set the onClick listener to FAB button
+		// set the listener to FAB button to go to third activity
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -99,11 +98,10 @@ public class SessionListActivity extends ActionBarActivity {
 			isSessionRunning = false;
 		else
 			isSessionRunning = java.lang.Boolean.parseBoolean(value);
-		if (isSessionRunning) {
+		if (isSessionRunning)
 			fabButton.setVisibility(View.GONE);
-		} else {
+		else
 			fabButton.setVisibility(View.VISIBLE);
 
-		}
 	}
 }
