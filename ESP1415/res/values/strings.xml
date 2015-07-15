@@ -36,19 +36,20 @@
     <string name="dialog_title">Session</string>
     <string name="elimina">Elimina</string>
     <string name="session_list">Session List</string>
-    <string name="hint_dialog_1">New name session</string> <!-- Settings strings -->
+    <string name="hint_dialog_1">New name session</string> 
+    <!-- Settings strings -->
     <string name="setting_category1">Session data</string>
-    <string name="setting_category2">Mail notification</string>
+    <string name="setting_category2">Email notification</string>
     <string name="setting_category3">Notification</string>
     <string name="vibration_title">Vibrate</string>
     <string name="ringtone_title">Ringtone</string>
-    <string name="alarm_title">Alarm</string>
+    <string name="alarm_title">Daily notification</string>
     <string name="summary_alarm">Remember me to do a new daily session</string>
-    <string name="dialog_title1">Choose a hour</string>
     <string name="alarmtime_title">Time to alarm</string>
     <string name="notifylist_title">Notifier List</string>
-    <string name="maxduration_title">Max duration of session</string>
+    <string name="maxduration_title">Max duration</string>
     <string name="notifylist_summary">Manage the list of people to notify by email</string>
-    <string name="samplerate_title">Session sample rate</string>
+    <string name="samplerate_title">Sample rate</string>
+    <string name="message_24h">Maybe is too much, retry!</string>
 
 </resources>

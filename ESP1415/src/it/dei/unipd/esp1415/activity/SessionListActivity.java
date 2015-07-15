@@ -91,7 +91,7 @@ public class SessionListActivity extends ActionBarActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.i("RESUME", "onResume performed from SessionListActivity");
+		//TOCLEAN Log.i("RESUME", "onResume performed from SessionListActivity");
 		String value = PreferenceStorage.getSimpleData(context,
 				"isSessionRunning");
 		if (value.equals(""))

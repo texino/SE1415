@@ -7,10 +7,11 @@
             android:key="samplerate_key"
             android:title="@string/samplerate_title" >
         </PreferenceScreen>
-        <PreferenceScreen
+        <EditTextPreference
             android:key="maxduration_key"
-            android:title="@string/maxduration_title" >
-        </PreferenceScreen>
+            android:title="@string/maxduration_title"
+            android:inputType="number" >
+        </EditTextPreference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/setting_category2" >
