@@ -41,7 +41,11 @@ public class SettingsActivity extends PreferenceActivity {
 	//settings variables
 	private String alarmSummary;
 	private TimePickerDialog timePickerDialog;
-	private static Context context;
+	public static Context context;
+	//preferences keys stored
+	protected static String durationKey = "DURATION";
+	protected static String hourKey = "HOUR";
+	protected static String minutesKey = "MINUTES";
 
 	// listener for the choice of alarm time
 	private OnTimeSetListener mOnTimeSetListener = new OnTimeSetListener() {
@@ -52,10 +56,10 @@ public class SettingsActivity extends PreferenceActivity {
 			hour = hourOfDay;
 			minutes = minutesOfDay;
 			// saving values
-			PreferenceStorage.storeSimpleData(context, "HOUR", "" + hour);
-			PreferenceStorage.storeSimpleData(context, "MINUTES", "" + minutes);
+			PreferenceStorage.storeSimpleData(context, hourKey, "" + hour);
+			PreferenceStorage.storeSimpleData(context, minutesKey, "" + minutes);
 			// update summary
-			bindPreferenceSummaryToValue(findPreference("alarmtime_key"));
+			bindPreferenceSummaryToValue(findPreference("alarmtimekey"));
 			// set the alarm
 			setAlarm();
 		}
@@ -124,14 +128,14 @@ public class SettingsActivity extends PreferenceActivity {
 		context = this;
 
 		// Bind the summaries preferences to their stored values by keys
-		bindPreferenceSummaryToValue(findPreference("ringtone key"));
-		bindPreferenceSummaryToValue(findPreference("alarmtime_key"));
-		// TODO bindPreferenceSummaryToValue(findPreference("samplerate_key"));
-		bindPreferenceSummaryToValue(findPreference("maxduration_key"));
+		bindPreferenceSummaryToValue(findPreference("ringtonekey"));
+		bindPreferenceSummaryToValue(findPreference("alarmtimekey"));
+		// TODO bindPreferenceSummaryToValue(findPreference("sampleratekey"));
+		bindPreferenceSummaryToValue(findPreference("maxdurationkey"));
 
 		// timePickerDialog setting and listener 
 		//**hour and minutes are initialized by checking settings summaries**
-		final Preference selectTimePref = (Preference) findPreference("alarmtime_key");
+		final Preference selectTimePref = (Preference) findPreference("alarmtimekey");
 		timePickerDialog = new TimePickerDialog(this, mOnTimeSetListener, hour,
 				minutes, true);
 		//TOCLEAN ?
@@ -145,13 +149,13 @@ public class SettingsActivity extends PreferenceActivity {
 				});
 
 		// handler to preference's object
-		final Preference ringtone = (Preference) findPreference("ringtone key");
-		final Preference vibration = (Preference) findPreference("vibration key");
-		CheckBoxPreference checkboxPref = (CheckBoxPreference) findPreference("alarm key");
+		final Preference ringtonePref = (Preference) findPreference("ringtonekey");
+		final Preference vibrationPref = (Preference) findPreference("vibrationkey");
+		CheckBoxPreference checkboxPref = (CheckBoxPreference) findPreference("alarmkey");
 		// if checkbox is checked show notification preference screens
 		if (checkboxPref.isChecked()) {
-			ringtone.setEnabled(true);
-			vibration.setEnabled(true);
+			ringtonePref.setEnabled(true);
+			vibrationPref.setEnabled(true);
 			selectTimePref.setEnabled(true);
 			// set the alarm TODO è corretto inviare più allarmi?
 			setAlarm();
@@ -164,8 +168,8 @@ public class SettingsActivity extends PreferenceActivity {
 						String stringValue = newValue.toString();
 						boolean value = Boolean.parseBoolean(stringValue);
 						// show or hide preferences
-						ringtone.setEnabled(value);
-						vibration.setEnabled(value);
+						ringtonePref.setEnabled(value);
+						vibrationPref.setEnabled(value);
 						selectTimePref.setEnabled(value);
 						// if unchecked dismiss alarm
 						if (value)
@@ -181,12 +185,12 @@ public class SettingsActivity extends PreferenceActivity {
 	// also immediately updated upon calling this method.
 	private void bindPreferenceSummaryToValue(Preference preference) {
 		// if the preference is about alarm time
-		if (preference.getKey().equalsIgnoreCase("alarmtime_key")) {
+		if (preference.getKey().equalsIgnoreCase("alarmtimekey")) {
 			// get stored values
 			String stringHour = PreferenceStorage
-					.getSimpleData(context, "HOUR");
+					.getSimpleData(context, hourKey);
 			String stringMinutes = PreferenceStorage.getSimpleData(context,
-					"MINUTES");
+					minutesKey);
 			// if settings are started for the first time fix TimePickerDialog
 			// to 12:00
 			if ((stringHour.equals(""))||(stringMinutes.equals(""))){
@@ -252,11 +256,11 @@ public class SettingsActivity extends PreferenceActivity {
 			} else if (preference instanceof EditTextPreference) {
 				// get stored values
 				String stringDuration = PreferenceStorage.getSimpleData(
-						context, "DURATION");
+						context, durationKey);
 				if (stringDuration.equalsIgnoreCase("")) {
 					stringDuration = "1";
 					((EditTextPreference) preference).setText(stringDuration); //FIXME?
-					PreferenceStorage.storeSimpleData(context, "DURATION",
+					PreferenceStorage.storeSimpleData(context, durationKey,
 							stringDuration);
 					preference.setSummary(stringDuration + " h");
 				} else {
@@ -281,10 +285,10 @@ public class SettingsActivity extends PreferenceActivity {
 								Toast.LENGTH_SHORT).show();
 						return false;
 					}
-					PreferenceStorage.storeSimpleData(context, "DURATION", ""
+					PreferenceStorage.storeSimpleData(context, durationKey, ""
 							+ duration);
 					// TODO settare l'edittext da 0024 a 24 es
-					// ((EditTextPreference) preference).setText("" + duration);
+					((EditTextPreference) preference).setText("" + duration);
 					preference.setSummary(duration + " h");
 				}
 

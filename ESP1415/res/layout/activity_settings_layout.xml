@@ -4,11 +4,11 @@
 
     <PreferenceCategory android:title="@string/setting_category1" >
         <PreferenceScreen
-            android:key="samplerate_key"
+            android:key="sampleratekey"
             android:title="@string/samplerate_title" >
         </PreferenceScreen>
         <EditTextPreference
-            android:key="maxduration_key"
+            android:key="maxdurationkey"
             android:title="@string/maxduration_title"
             android:inputType="number" >
         </EditTextPreference>
@@ -16,7 +16,7 @@
 
     <PreferenceCategory android:title="@string/setting_category2" >
         <PreferenceScreen
-            android:key="notifylist_key"
+            android:key="notifylistkey"
             android:title="@string/notifylist_title"
             android:summary="@string/notifylist_summary" >
         </PreferenceScreen>
@@ -26,27 +26,27 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="alarm key"
+            android:key="alarmkey"
             android:summary="@string/summary_alarm"
             android:title="@string/alarm_title" />
 
         <PreferenceScreen
             android:enabled="false"
-            android:key="alarmtime_key"
+            android:key="alarmtimekey"
             android:title="@string/alarmtime_title" >
         </PreferenceScreen>
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:enabled="false"
-            android:key="ringtone key"
+            android:key="ringtonekey"
             android:ringtoneType="notification|alarm"
             android:title="@string/ringtone_title" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:enabled="false"
-            android:key="vibration key"
+            android:key="vibrationkey"
             android:title="@string/vibration_title" />
     </PreferenceCategory>
 
