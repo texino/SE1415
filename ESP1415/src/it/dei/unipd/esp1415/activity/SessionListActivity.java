@@ -27,7 +27,7 @@ public class SessionListActivity extends ActionBarActivity {
 
 	private static FloatingActionButton fabButton;
 	protected static Context context;
-	private boolean isSessionRunning;
+	protected static boolean isSessionRunning;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
