@@ -2,12 +2,13 @@ package it.dei.unipd.esp1415.activity;
 
 import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.views.FloatingActionButton;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +23,10 @@ import com.example.esp1415.R;
 public class SessionListActivity extends ActionBarActivity {
 
 	private static FloatingActionButton fabButton;
-	protected static Context context;
+	public static Context context; //TODO LASCIARE PUBLIC?
 	private boolean isSessionRunning;
+	//TOCLEAN private static int mId = 1;
+	//private NotificationCompat.Builder mBuilder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,4 +107,21 @@ public class SessionListActivity extends ActionBarActivity {
 			fabButton.setVisibility(View.VISIBLE);
 
 	}
+	/*//getSystemService needs no static property
+	public void myNotify(NotificationCompat.Builder mBuilder){
+		NotificationManager mNotificationManager =
+		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+	// mId allows you to update the notification later on.
+	mNotificationManager.notify(mId, mBuilder.build());
+	}
+	TOCLEAN
+	// this method create a new notification reminder
+	public static void reminder(){
+		NotificationCompat.Builder mBuilder =
+	        new NotificationCompat.Builder(context)
+	        .setSmallIcon(R.drawable.button_play)
+	        .setContentTitle("ToDoSession Reminder")
+	        .setContentText("Remember to do a new daily session");
+		myNotify(mBuilder);
+	}*/
 }
