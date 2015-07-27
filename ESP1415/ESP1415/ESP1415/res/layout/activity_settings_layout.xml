@@ -1,0 +1,80 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/setting_category1" >
+        
+    </PreferenceCategory>    
+    
+    <PreferenceCategory android:title="@string/setting_category2" >
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/setting_category3" >
+        
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="alarm key"
+            android:summary="@string/summary_alarm"
+            android:title="@string/alarm_title" />
+        
+        <PreferenceScreen
+            android:key="alarmtime_key"
+            android:title="@string/alarmtime_title" >
+        </PreferenceScreen>
+        
+        <!-- <DialogPreference
+            android:key="dialog_pref_key"
+            android:dialogTitle="@string/dialog_title1"
+            android:negativeButtonText="@string/annulla"
+            android:positiveButtonText="@string/conferma"
+            android:dialogLayout="@layout/rename_delete_dialog" /> -->
+        
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="ringtone key"
+            android:ringtoneType="notification|alarm"
+            android:title="@string/ringtone_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="vibration key"
+            android:title="@string/vibration_title" />
+    </PreferenceCategory>
+    
+    <!-- <EditTextPreference
+        android:defaultValue="@string/pref_default_name"
+        android:inputType="textCapWords"
+        android:key="pref_username"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/pref_summary_username"
+        android:title="@string/pref_title_display_name" />
+
+    <PreferenceCategory android:title="@string/setting_category1" >
+
+        
+             <CheckBoxPreference
+            android:key="pref_key_dnd"
+            android:summary="@string/pref_summary_dnd"
+            android:title="@string/pref_title_dnd"
+            android:defaultValue="false"/>
+       
+
+        <PreferenceScreen
+            android:key="pref_key_dnd"
+            android:summary="@string/pref_summary_dnd"
+            android:title="@string/pref_title_dnd" >
+        </PreferenceScreen>
+
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="pref_key_ringtone"
+            android:ringtoneType="notification|alarm"
+            android:title="@string/pref_title_ringtone_type" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_key_ringtone_vibration"
+            android:title="@string/pref_title_ringtone_vibration" />
+    </PreferenceCategory> -->
+</PreferenceScreen>
