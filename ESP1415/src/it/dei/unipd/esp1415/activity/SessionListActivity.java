@@ -26,7 +26,7 @@ import com.example.esp1415.R;
 public class SessionListActivity extends ActionBarActivity {
 
 	private static FloatingActionButton fabButton;
-	protected static Context context;
+	private Context context;
 	protected static boolean isSessionRunning;
 
 	@Override

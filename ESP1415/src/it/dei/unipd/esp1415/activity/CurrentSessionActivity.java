@@ -49,7 +49,6 @@ public class CurrentSessionActivity extends Activity{
 	private ImageButton btnStart,btnStop;
 	private TextView textDuration,textName,textDate;
 	private Context actContext;
-	private Context firstContext;
 	private ListView listFalls;
 	private String sessionId,sessionDialogName;
 	private boolean running;
@@ -128,7 +127,7 @@ public class CurrentSessionActivity extends Activity{
 		private void startClicked()
 		{
 			setRunning(true);
-			PreferenceStorage.storeSimpleData(firstContext, "isSessionRunning", "true");
+			PreferenceStorage.storeSimpleData(actContext, "isSessionRunning", "true");
 			Intent serviceIntent = new Intent(actContext,ESPService.class);
 			serviceIntent.putExtra(ID_TAG,sessionId);
 			serviceIntent.putExtra(DURATION_TAG,duration);
@@ -151,7 +150,7 @@ public class CurrentSessionActivity extends Activity{
 		private void stopClicked()
 		{
 			pauseClicked();
-			PreferenceStorage.storeSimpleData(firstContext, "isSessionRunning", "false");
+			PreferenceStorage.storeSimpleData(actContext, "isSessionRunning", "false");
 			//fermo il service
 			service.stop();
 			Intent i=new Intent(CurrentSessionActivity.this,SessionDataActivity.class);
@@ -238,8 +237,6 @@ public class CurrentSessionActivity extends Activity{
 			super.onCreate(savedInstanceState);
 			Log.d(TAG,"ON CREATE");
 			actContext=this;
-			// maniglia al context della prima activity
-			firstContext = SessionListActivity.context;
 			setLayout();//Imposta layout ed eventi
 			if(savedInstanceState==null)//l'activity viene creata da zero
 			{

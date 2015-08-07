@@ -39,20 +39,20 @@ public class SettingsActivity extends PreferenceActivity {
 	// alarm variables
 	private int hour;
 	private int minutes;
-	private int rate;
 	final static int RQS_1 = 1;
 	// settings variables
 	private String alarmSummary;
+	private int rate;
 	private TimePickerDialog timePickerDialog;
 	private AlertDialog sampleRateDialog;
 	private final CharSequence[] rateList = { "0", "1", "2" };
 	private int selectedRate;
 	protected static Context context;
-	// preferences keys stored
-	protected static String durationKey = "DURATION";
-	protected static String hourKey = "HOUR";
-	protected static String minutesKey = "MINUTES";
-	protected static String rateKey = "RATE";
+	// preferences keys to get values
+	public static String durationKey = "DURATION";
+	public static String hourKey = "HOUR";
+	public static String minutesKey = "MINUTES";
+	public static String rateKey = "RATE";
 
 	// listener for the choice of alarm time
 	private OnTimeSetListener mOnTimeSetListener = new OnTimeSetListener() {
@@ -67,23 +67,24 @@ public class SettingsActivity extends PreferenceActivity {
 			PreferenceStorage.storeSimpleData(context, hourKey, "" + hour);
 			PreferenceStorage
 					.storeSimpleData(context, minutesKey, "" + minutes);
-			// update summary
+			// update settings summary
 			bindPreferenceSummaryToValue(findPreference("alarmtimekey"));
 			// set the alarm
-			setAlarm();
+			setAlarm(hour, minutes, context);
 		}
 	};
 
 	// this method set the reminder through AlarmManager
-	private void setAlarm() {
+	public static void setAlarm(int alarmHour, int alarmMinutes, Context context) {
 
 		// settings for alarm
 		Calendar calNow = Calendar.getInstance();
 		Calendar calSet = (Calendar) calNow.clone();
 
 		// bind selected values hour, minutes
-		calSet.set(Calendar.HOUR_OF_DAY, hour);
-		calSet.set(Calendar.MINUTE, minutes);
+		calSet.set(Calendar.HOUR_OF_DAY, alarmHour);
+		calSet.set(Calendar.MINUTE, alarmMinutes);
+		
 		calSet.set(Calendar.SECOND, 0);
 		calSet.set(Calendar.MILLISECOND, 0);
 
@@ -92,16 +93,16 @@ public class SettingsActivity extends PreferenceActivity {
 			calSet.add(Calendar.DATE, 1);
 		}
 
-		// AlarmManager settings
-		Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+		// alarm settings
+		Intent intent = new Intent(context, AlarmReceiver.class);
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(
-				getBaseContext(), RQS_1, intent, 0);
+				context, RQS_1, intent, 0);
 
-		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
+		//set the alarm and set repeating
 		alarmManager.set(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
 				pendingIntent);
-
 		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
 				calSet.getTimeInMillis(), TimeUnit.DAYS.toMillis(1),
 				pendingIntent);
@@ -126,7 +127,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 		// this method is deprecated from API 11 to use a settings fragment (>
 		// Android 3.0)
-		// we choose this method to make it compatible with low level API
+		// we choose this procedure to make it compatible with low level API
 		addPreferencesFromResource(R.layout.activity_settings_layout);
 
 		// ensures that settings values are properly initialized with default
@@ -159,16 +160,16 @@ public class SettingsActivity extends PreferenceActivity {
 				});
 
 		// handler to preference's object
+		CheckBoxPreference checkboxPref = (CheckBoxPreference) findPreference("alarmkey");
 		final Preference ringtonePref = (Preference) findPreference("ringtonekey");
 		final Preference vibrationPref = (Preference) findPreference("vibrationkey");
-		CheckBoxPreference checkboxPref = (CheckBoxPreference) findPreference("alarmkey");
 		// if checkbox is checked show notification preference screens
 		if (checkboxPref.isChecked()) {
 			ringtonePref.setEnabled(true);
 			vibrationPref.setEnabled(true);
 			selectTimePref.setEnabled(true);
 			// set the alarm TODO è corretto inviare più allarmi?
-			setAlarm();
+			setAlarm(hour, minutes, context);
 		}
 		// checkbox listener to show/hide notification settings
 		checkboxPref
@@ -176,14 +177,14 @@ public class SettingsActivity extends PreferenceActivity {
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
 						String stringValue = newValue.toString();
-						boolean value = Boolean.parseBoolean(stringValue);
+						boolean check = Boolean.parseBoolean(stringValue);
 						// show or hide preferences
-						ringtonePref.setEnabled(value);
-						vibrationPref.setEnabled(value);
-						selectTimePref.setEnabled(value);
+						ringtonePref.setEnabled(check);
+						vibrationPref.setEnabled(check);
+						selectTimePref.setEnabled(check);
 						// if unchecked dismiss alarm
-						if (value)
-							setAlarm();
+						if (check)
+							setAlarm(hour,minutes, context);
 						else
 							cancelAlarm();
 						return true;
@@ -201,7 +202,7 @@ public class SettingsActivity extends PreferenceActivity {
 						switch (rate) {
 						case 0:
 							selectedRate = 0;
-							rate = 0;
+							rate = 0; //TODO
 							PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 							// update summary
 							ratePref.setSummary(rate + " campioni/s");
