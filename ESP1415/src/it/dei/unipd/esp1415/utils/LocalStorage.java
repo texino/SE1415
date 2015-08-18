@@ -32,7 +32,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -341,7 +341,7 @@ public class LocalStorage {
 	 * @throws IllegalArgumentException se uno dei parametri è null
 	 * @throws IOException se c'è stato un'errore nella lettura
 	 */
-	public static Bitmap getSessionImage(Context context,String sessionId) throws IOException,IllegalArgumentException
+	public static Drawable getSessionImage(Context context,String sessionId) throws IOException,IllegalArgumentException
 	{
 		if((context==null)||(sessionId==null))
 			throw new IllegalArgumentException();
@@ -350,7 +350,8 @@ public class LocalStorage {
 		File imageFile=new File(path);
 		if(!imageFile.exists())
 			return null;
-		return BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+		return Drawable.createFromPath(imageFile.getAbsolutePath());
+		//return BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 	}
 
 	/**
