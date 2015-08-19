@@ -9,6 +9,8 @@ import it.dei.unipd.esp1415.utils.LocalStorage;
 import java.io.IOException;
 import java.util.List;
 
+import com.example.esp1415.R;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * SessionListFragment class: Displays the list of sessions inside a fragment
@@ -97,20 +100,31 @@ public class SessionListFragment extends ListFragment {
 	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		SessionInfo item = items.get(pos);
-		// create the dialog
-		dialog = new RenameDeleteDialog(item.getId(), item.getName(),
-				item.getName());
-		// show the dialog
-		dialog.show(getFragmentManager(), "dialog");
-		// returning true means that Android stops event propagation
-		return true;
+		if (item.getStatus()) {
+			Intent i = new Intent(this.getActivity(), CurrentSessionActivity.class);
+			i.putExtra(CurrentSessionActivity.EMPTY_TAG, false);
+			i.putExtra(CurrentSessionActivity.ID_TAG, item.getId());
+			startActivity(i);
+			/*Toast.makeText(getActivity(), "Retry",
+					Toast.LENGTH_SHORT).show();*/
+			return true;
+		} else {
+			// create the dialog
+			dialog = new RenameDeleteDialog(item.getId(), item.getName(),
+					item.getName());
+			// show the dialog
+			dialog.show(getFragmentManager(), "dialog");
+			// returning true means that Android stops event propagation
+			return true;
+		}
 	}
 
 	// method that update the fragment during onResume state
 	@Override
 	public void onResume() {
 		super.onResume();
-		//TOCLEAN Log.i("RESUME", "onResume performed from SessionListFragment");
+		// TOCLEAN Log.i("RESUME",
+		// "onResume performed from SessionListFragment");
 		// get the list of session saved in the storage
 		try {
 			items = LocalStorage.getSessionInfos();
