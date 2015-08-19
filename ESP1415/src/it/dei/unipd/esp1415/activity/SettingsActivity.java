@@ -47,7 +47,8 @@ public class SettingsActivity extends PreferenceActivity {
 	private AlertDialog sampleRateDialog;
 	private final CharSequence[] rateList = { "0", "1", "2" };
 	private int selectedRate;
-	protected static Context context;
+	private static Context context;
+	private static boolean isSessionRunning;
 	// preferences keys to get values
 	public static String durationKey = "DURATION";
 	public static String hourKey = "HOUR";
@@ -169,7 +170,7 @@ public class SettingsActivity extends PreferenceActivity {
 			vibrationPref.setEnabled(true);
 			selectTimePref.setEnabled(true);
 			// set the alarm TODO è corretto inviare più allarmi?
-			setAlarm(hour, minutes, context);
+			//setAlarm(hour, minutes, context);
 		}
 		// checkbox listener to show/hide notification settings
 		checkboxPref
@@ -232,7 +233,25 @@ public class SettingsActivity extends PreferenceActivity {
 				return true;
 			}
 		});
-
+		/*//set mail list listener
+		final Preference mailPref = (Preference) findPreference("notifylistkey");
+		mailPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				return true;
+			}
+		});*/
+		Preference durationPref = (Preference) findPreference("maxdurationkey");
+		String value = PreferenceStorage.getSimpleData(context,
+				"isSessionRunning");
+		if (value.equals(""))
+			isSessionRunning = false;
+		else
+			isSessionRunning = java.lang.Boolean.parseBoolean(value);
+		if(isSessionRunning){
+			ratePref.setEnabled(false);
+			durationPref.setEnabled(false);
+			
+		}
 	}
 
 	// This method binds a preference's summary to its value. The summary is

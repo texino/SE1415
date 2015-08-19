@@ -3,22 +3,28 @@
     android:layout_height="match_parent" >
 
     <PreferenceCategory android:title="@string/setting_category1" >
+
         <PreferenceScreen
             android:key="sampleratekey"
             android:title="@string/samplerate_title" >
         </PreferenceScreen>
+
         <EditTextPreference
+            android:inputType="number"
             android:key="maxdurationkey"
-            android:title="@string/maxduration_title"
-            android:inputType="number" >
+            android:title="@string/maxduration_title" >
         </EditTextPreference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/setting_category2" >
+
         <PreferenceScreen
             android:key="notifylistkey"
-            android:title="@string/notifylist_title"
-            android:summary="@string/notifylist_summary" >
+            android:summary="@string/notifylist_summary"
+            android:title="@string/notifylist_title" >
+
+            <PreferenceScreen>
+            </PreferenceScreen>
         </PreferenceScreen>
     </PreferenceCategory>
 
