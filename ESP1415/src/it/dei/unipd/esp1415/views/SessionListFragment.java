@@ -7,9 +7,8 @@ import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.example.esp1415.R;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,30 +17,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 /**
  * SessionListFragment class: Displays the list of sessions inside a fragment
  */
 public class SessionListFragment extends ListFragment {
 
-	private SessionAdapter adapter;
-	private List<SessionInfo> items;
 	protected static RenameDeleteDialog dialog;
+	private List<SessionInfo> items = new ArrayList<SessionInfo>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// get the list of session saved in the storage
-		try {
-			items = LocalStorage.getSessionInfos();
-		} catch (IOException e) {
-			Log.i("ERROR", "Error getting session list - LocalStorage");
-		}
-		// initialize and set the list adapter
-		adapter = new SessionAdapter(getActivity(), items);
-		setListAdapter(adapter);
 	}
 
 	@Override
@@ -100,39 +87,20 @@ public class SessionListFragment extends ListFragment {
 	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		SessionInfo item = items.get(pos);
-		if (item.getStatus()) {
-			Intent i = new Intent(this.getActivity(), CurrentSessionActivity.class);
-			i.putExtra(CurrentSessionActivity.EMPTY_TAG, false);
-			i.putExtra(CurrentSessionActivity.ID_TAG, item.getId());
-			startActivity(i);
-			/*Toast.makeText(getActivity(), "Retry",
-					Toast.LENGTH_SHORT).show();*/
-			return true;
-		} else {
-			// create the dialog
-			dialog = new RenameDeleteDialog(item.getId(), item.getName(),
-					item.getName());
-			// show the dialog
-			dialog.show(getFragmentManager(), "dialog");
-			// returning true means that Android stops event propagation
-			return true;
-		}
+		// secure check, if a session is running it can be eliminated
+		dialog = new RenameDeleteDialog(item.getId(), item.getName(),
+				item.getName(), item.getStatus());
+		// show the dialog
+		dialog.show(getFragmentManager(), "dialog");
+		// returning true means that Android stops event propagation
+		return true;
 	}
 
 	// method that update the fragment during onResume state
 	@Override
 	public void onResume() {
 		super.onResume();
-		// TOCLEAN Log.i("RESUME",
-		// "onResume performed from SessionListFragment");
-		// get the list of session saved in the storage
-		try {
-			items = LocalStorage.getSessionInfos();
-		} catch (IOException e) {
-			Log.i("ERROR", "Error getting session list - LocalStorage");
-		}
-		// initialize and set the list adapter
-		setListAdapter(new SessionAdapter(getActivity(), items));
+		refreshList();
 	}
 
 	// method that update fragment while it is invisible
@@ -140,14 +108,25 @@ public class SessionListFragment extends ListFragment {
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (hidden) {
-			// get the list of session saved in the storage
-			try {
-				items = LocalStorage.getSessionInfos();
-			} catch (IOException e) {
-				Log.i("ERROR", "Error getting session list - LocalStorage");
-			}
-			// initialize and set the list adapter
-			setListAdapter(new SessionAdapter(getActivity(), items));
+			refreshList();
 		}
+	}
+
+	private void refreshList() {
+		SessionAdapter adapter;
+		List<SessionInfo> temp;
+		items = new ArrayList<SessionInfo>();
+		// get the list of session saved in the storage
+		try {
+			temp = LocalStorage.getSessionInfos();
+			for (int i = temp.size() - 1; i >= 0; i--) {
+				items.add(temp.get(i));
+			}
+		} catch (IOException e) {
+			Log.i("ERROR", "Error getting session list - LocalStorage");
+		}
+		// initialize and set the list adapter
+		adapter = new SessionAdapter(getActivity(), items);
+		setListAdapter(adapter);
 	}
 }

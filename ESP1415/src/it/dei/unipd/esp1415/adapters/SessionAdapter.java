@@ -1,6 +1,5 @@
 package it.dei.unipd.esp1415.adapters;
 
-import it.dei.unipd.esp1415.activity.SessionListActivity;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.Utils;
@@ -9,13 +8,14 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.esp1415.R;
@@ -50,6 +50,8 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 					.findViewById(R.id.picture);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.name);
 			viewHolder.date = (TextView) convertView.findViewById(R.id.date);
+			viewHolder.row = (RelativeLayout) convertView
+					.findViewById(R.id.itembackground);
 			viewHolder.duration = (TextView) convertView
 					.findViewById(R.id.duration);
 			viewHolder.falls = (TextView) convertView.findViewById(R.id.falls);
@@ -61,12 +63,14 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 
 		// update the item view
 		SessionInfo item = getItem(position);
+		if (item.getStatus()) {
+			viewHolder.row.setBackgroundColor(Color.RED);
+		} else
+			viewHolder.row.setBackgroundColor(0x00ffffff);
+
 		try {
 			viewHolder.picture.setImageDrawable(LocalStorage.getSessionImage(
 					appContext, item.getId()));
-			//viewHolder.picture.setScaleType(ScaleType.FIT_XY);
-			//viewHolder.picture.setX(100);
-			//viewHolder.picture.setY(100);
 		} catch (IOException e) {
 			Log.i("ERROR",
 					"Errore nella lettura del file immagine - LocalStorage");
@@ -74,7 +78,7 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 			Log.i("ERROR", "Uno dei parametri è null - LocalStorage");
 		}
 		viewHolder.name.setText(item.getName());
-		viewHolder.duration.setText(""
+		viewHolder.duration.setText("Durata: "
 				+ Utils.convertDuration(item.getDuration()));
 		viewHolder.date.setText(item.getDate());
 		viewHolder.falls.setText("Cadute: " + item.getNumberOfFalls());
@@ -87,7 +91,7 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 	 * in the getView() method of the adapter. Use this to access elements
 	 * directly without using findViewById().
 	 * 
-	 * @see http
+	 * @see http 
 	 *      ://developer.android.com/training/improving-layouts/smooth-scrolling
 	 *      .html#ViewHolder
 	 */
@@ -97,5 +101,6 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 		TextView date;
 		TextView duration;
 		TextView falls;
+		RelativeLayout row;
 	}
 }

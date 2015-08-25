@@ -12,6 +12,9 @@ public class PreferenceStorage {
 	/** Tag for the ratio preferences in the accelerometer*/
 	public static final String ACCEL_RATIO="aRatio";
 	
+	/** Tag for the duration preferences*/
+	public static final String DURATION = "DURATION";
+	
 	/** Tag for the number of session stored*/
 	public static final String N_SESSIONS="nSession";
 	

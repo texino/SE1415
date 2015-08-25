@@ -22,9 +22,6 @@
             android:key="notifylistkey"
             android:summary="@string/notifylist_summary"
             android:title="@string/notifylist_title" >
-
-            <PreferenceScreen>
-            </PreferenceScreen>
         </PreferenceScreen>
     </PreferenceCategory>
 

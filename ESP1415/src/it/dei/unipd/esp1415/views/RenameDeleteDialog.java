@@ -28,14 +28,16 @@ import com.example.esp1415.R;
 public class RenameDeleteDialog extends DialogFragment {
 
 	private String sessionId;
+	private boolean isRunning;
 	private String title = "Session name: ";
 	private String sessionName;
 	private Context context;
 
-	public RenameDeleteDialog(String sessionId, String sessionName, String title) {
+	public RenameDeleteDialog(String sessionId, String sessionName, String title, boolean isRunning) {
 		this.sessionId = sessionId;
 		this.sessionName = sessionName;
 		this.title += title;
+		this.isRunning = isRunning;
 	}
 
 	@Override
@@ -54,6 +56,9 @@ public class RenameDeleteDialog extends DialogFragment {
 		// handler to garbage image object
 		ImageView garbage = (ImageView) layout
 				.findViewById(R.id.dialog_garbage);
+		// secure check, if a session is running it can be eliminated
+		if(isRunning)
+			garbage.setVisibility(View.GONE);
 		// set garbage button listener and onClick
 		garbage.setOnClickListener(new OnClickListener() {
 

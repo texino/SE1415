@@ -45,15 +45,15 @@ public class SettingsActivity extends PreferenceActivity {
 	private int rate;
 	private TimePickerDialog timePickerDialog;
 	private AlertDialog sampleRateDialog;
-	private final CharSequence[] rateList = { "0", "1", "2" };
+	private final CharSequence[] rateList = { "1", "2", "3", "4", "5" };
 	private int selectedRate;
 	private static Context context;
 	private static boolean isSessionRunning;
 	// preferences keys to get values
-	public static String durationKey = "DURATION";
+	public static String durationKey = PreferenceStorage.DURATION;
 	public static String hourKey = "HOUR";
 	public static String minutesKey = "MINUTES";
-	public static String rateKey = "RATE";
+	public static String rateKey = PreferenceStorage.ACCEL_RATIO;
 
 	// listener for the choice of alarm time
 	private OnTimeSetListener mOnTimeSetListener = new OnTimeSetListener() {
@@ -203,21 +203,35 @@ public class SettingsActivity extends PreferenceActivity {
 						switch (rate) {
 						case 0:
 							selectedRate = 0;
-							rate = 0; //TODO
+							rate = 1;
 							PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 							// update summary
 							ratePref.setSummary(rate + " campioni/s");
 							break;
 						case 1:
 							selectedRate = 1;
-							rate = 1;
+							rate = 2;
 							PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 							// update summary
 							ratePref.setSummary(rate + " campioni/s");
 							break;
 						case 2:
 							selectedRate = 2;
-							rate = 2;
+							rate = 3;
+							PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
+							// update summary
+							ratePref.setSummary(rate + " campioni/s");
+							break;
+						case 3:
+							selectedRate = 3;
+							rate = 4;
+							PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
+							// update summary
+							ratePref.setSummary(rate + " campioni/s");
+							break;
+						case 4:
+							selectedRate = 4;
+							rate = 5;
 							PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 							// update summary
 							ratePref.setSummary(rate + " campioni/s");
@@ -233,13 +247,15 @@ public class SettingsActivity extends PreferenceActivity {
 				return true;
 			}
 		});
-		/*//set mail list listener
+		//set mail list listener
 		final Preference mailPref = (Preference) findPreference("notifylistkey");
 		mailPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
+				Intent i = new Intent(context, MailingListActivity.class);
+				startActivity(i);
 				return true;
 			}
-		});*/
+		});
 		Preference durationPref = (Preference) findPreference("maxdurationkey");
 		String value = PreferenceStorage.getSimpleData(context,
 				"isSessionRunning");
@@ -250,7 +266,7 @@ public class SettingsActivity extends PreferenceActivity {
 		if(isSessionRunning){
 			ratePref.setEnabled(false);
 			durationPref.setEnabled(false);
-			
+			mailPref.setEnabled(false);
 		}
 	}
 
@@ -285,8 +301,8 @@ public class SettingsActivity extends PreferenceActivity {
 			String stringRate = PreferenceStorage.getSimpleData(context,
 					rateKey);
 			if (stringRate.equals("")) {
-				selectedRate = 0;
-				rate = 0; // TODO Scrivere o far riferimento al primo rate
+				selectedRate = 2;
+				rate = 3;
 				PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 				//set sample rate summary
 				preference.setSummary(rate + " campioni/s");
@@ -298,9 +314,11 @@ public class SettingsActivity extends PreferenceActivity {
 					Log.i("ERROR-SETTINGS", "Parse sample rate error");
 				}
 				switch (rate){
-				case 0: selectedRate=0; break;
-				case 1: selectedRate=1; break;
-				case 2: selectedRate=2; break;
+				case 1: selectedRate=0; break;
+				case 2: selectedRate=1; break;
+				case 3: selectedRate=2; break;
+				case 4: selectedRate=3; break;
+				case 5: selectedRate=4; break;
 				}
 				PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 				//set sample rate summary

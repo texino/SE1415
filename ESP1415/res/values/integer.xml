@@ -1,0 +1,4 @@
+
+    <resources>
+        <item type="integer" format="integer" name="name_lenght">50</item>
+    </resources>

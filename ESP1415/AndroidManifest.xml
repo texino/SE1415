@@ -51,6 +51,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="it.dei.unipd.esp1415.activity.MailingListActivity"
+            android:label="@string/title_activity_mailing_list" >
+        </activity>
     </application>
 
 </manifest>
