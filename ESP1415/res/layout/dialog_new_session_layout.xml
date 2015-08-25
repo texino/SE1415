@@ -1,17 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="wrap_content" 
-    android:layout_centerHorizontal="true">
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true" >
 
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-         android:layout_marginTop="30dp"
+        android:layout_marginTop="30dp"
         android:ems="10" >
-
-        <requestFocus />
     </EditText>
 
     <Button
@@ -21,6 +21,6 @@
         android:layout_below="@+id/edit_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="@string/button_ok" />
+        android:text="Button" />
 
 </RelativeLayout>

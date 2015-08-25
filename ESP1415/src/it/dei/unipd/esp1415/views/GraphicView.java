@@ -1,9 +1,10 @@
 package it.dei.unipd.esp1415.views;
 
-import java.util.ArrayList;
+import com.example.esp1415.R;
 
-import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.utils.DataArray;
+import it.dei.unipd.esp1415.utils.GlobalConstants;
+import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,82 +12,102 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class GraphicView extends View
 {
 	/**Dati rappresentati in questo grafico*/
+	Context actContext;
 	DataArray data;
 	Bitmap canvasBitmap;
-	Paint canvasPaint=new Paint(Paint.DITHER_FLAG);
-	Canvas backgroundCanvas;
-	int pixelXIndex=30,pixelYIndex=20;
-	float textYIndex=4f,startYIndex=4f;
-	float textXIndex=1f;//ogni indice indica un secondo
-
-	public GraphicView(Context context) {
-		super(context);
-		init();
-	}
-	public GraphicView(Context context,AttributeSet attr) {
-		super(context,attr);
-		init();
-	}
+	Paint canvasPaint=new Paint(Paint.DITHER_FLAG),paintX,paintY,paintZ;
+	int pixelY=20;//pixel Y per uno slot
+	float textYIndex=4f;//numero di g per uno slot
+	float textXIndex=1f;//numero di secondi per uno slot
+	boolean oneSecond=false;
+	private static final int MIN_ACC=-16,MAX_ACC=16;
+	private int SECONDS=6;
 
 	@Override
 	public void onSizeChanged(int w,int h,int oW,int oH)
 	{
-		canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-		backgroundCanvas = new Canvas(canvasBitmap);
-		drawAxesOnCanvas(backgroundCanvas);
-		String todo;//TODO prendiamo il rate dalle preference
-		int rate=10;//dobbiamo avere questo numero di dati al secondo
-		int sNumber=(int)((float)w/((pixelXIndex)));
-		int dataNumber=sNumber*rate;
-		data=new DataArray(dataNumber);
-		super.onSizeChanged(w, h, oW, oH);
-	}
-	
-	
-	public void changeXscale(int xPixel)
-	{
-		pixelXIndex=xPixel;
-		canvasBitmap = Bitmap.createBitmap(this.getWidth(),this.getHeight(), Bitmap.Config.ARGB_8888);
-		backgroundCanvas = new Canvas(canvasBitmap);
-		drawAxesOnCanvas(backgroundCanvas);
-	}
-
-	public void setRate(int rate)
-	{
-		data=new DataArray(rate);
-
-		if(this.getWidth()>0)
-			pixelXIndex=this.getWidth();
+		if(w==0||h==0)//non abbiamo misure per adattare
+			return;
+		//creiamo la bitmap di sfondo e l'allegato canvas
+		canvasBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
+		Canvas backgroundCanvas = new Canvas(canvasBitmap);
+		
+		float secondPixel=((float)w)/SECONDS;
+		pixelY=(int)(h/((MAX_ACC/textYIndex)-(MIN_ACC/textYIndex)));
+		//disegniamo gli assi
+		drawAxesOnCanvas(backgroundCanvas,secondPixel,pixelY);
+		
+		//misuriamo il numero di dati da rappresentare
+		String r=PreferenceStorage.getSimpleData(actContext,PreferenceStorage.ACCEL_RATIO);
+		int rate;
+		if(r.equals(""))
+		{
+			rate=GlobalConstants.MIN_RATIO;
+			PreferenceStorage.storeSimpleData(actContext,PreferenceStorage.ACCEL_RATIO,""+rate);
+		}
 		else
-			pixelXIndex=1;
+			rate=Integer.parseInt(r);
+		int dataNumber=(int)(SECONDS*rate);
+		if(data==null)//non ci sono dati da visualizzare
+		{
+			data=new DataArray(dataNumber);
+			super.onSizeChanged(w,h,oW,oH);
+			return;			
+		}
+		//ci sono già dei dati che vorremmo visualizzare
+		DataArray tData=new DataArray(dataNumber);//dati effettivi da visualizzare
+		int oldDataNumber=data.getRate();//numero di dati da cerare di riprodurre
+		
+		int rIndex=data.getIndex(); //indice da cui riprodurre i dati 
+		int off=dataNumber-oldDataNumber;//se <0 allora devo troncare dati
+		if(off<0)
+		{
+			rIndex=(data.getIndex()-off);
+			if(rIndex>=oldDataNumber)
+				rIndex-=oldDataNumber;
+		}
+		float[] Xs=data.getXData();
+		float[] Ys=data.getYData();
+		float[] Zs=data.getZData();
+		for (int i=rIndex;i<data.getRate();i++)
+			tData.add(Xs[i],Ys[i],Zs[i]);
+		for (int i=0;i<data.getIndex();i++)
+			tData.add(Xs[i],Ys[i],Zs[i]);
+		super.onSizeChanged(w,h,oW,oH);
 	}
-
-	private void init()
+	
+	public void setScaleToOneSecond()
 	{
-		this.setBackgroundColor(0xFF000000);
+		oneSecond=true;
+		SECONDS=1;
 	}
 
 	@Override
 	public void onDraw(Canvas canvas)
 	{
 		if(canvasBitmap!=null)
-			canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+			canvas.drawBitmap(canvasBitmap,0,0,canvasPaint);
 		drawDataOnCanvas(canvas,data);
 	}
 
-	private void drawAxesOnCanvas(Canvas canvas)
+	/**
+	 * Disegna le assi sul canvas
+	 * @param canvas Il canvas su cui disegnare
+	 * @param pixelX Il numero di pixel tra un secondo e l'altro nell'asse X
+	 * @param pixelY Il numero di pixel tra un valore e l'altro nell'asse Y
+	 */
+	private void drawAxesOnCanvas(Canvas canvas,float pixelX,int pixelY)
 	{
 		Paint paint=new Paint();
 		paint.setAntiAlias(false);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeWidth(1);
-		paint.setColor(0xFFFFFFFF);
+		paint.setColor(actContext.getResources().getColor(R.color.graphic_axes_color));
 		paint.setTextSize(10);
 		paint.setTextAlign(Align.CENTER);
 
@@ -100,7 +121,7 @@ public class GraphicView extends View
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		canvas.drawText("0 s",mW,mH+5, paint);
 		//Disegno gli indici sull'asse X
-		int off=pixelXIndex;
+		int off=(int)pixelX;
 		float text=textXIndex;
 		while(off<mW)
 		{
@@ -108,36 +129,37 @@ public class GraphicView extends View
 			canvas.drawLine(mW-off,mH-5,mW-off,mH+5, paint);
 			canvas.drawText(""+text+" s",mW+off,mH-7,paint);
 			canvas.drawText("-"+text+" s",mW-off,mH-7,paint);
-			text=text+textXIndex;
-			off=off+pixelXIndex;
+			text+=textXIndex;
+			off=off+(int)pixelX;
 		}
 
 		//Disegno gli indici sull'asse Y
 		paint.setTextAlign(Align.LEFT);
 		text=textYIndex;
-		off=pixelYIndex;
+		off=pixelY;
 		while(off<mH)
 		{
 			canvas.drawLine(mW-5,mH-off-5,mW+5,mH-off-5, paint);
 			canvas.drawLine(mW-5,mH+off-5,mW+5,mH+off-5, paint);
 			canvas.drawText(""+text,mW+7,mH-off,paint);
 			canvas.drawText("-"+text,mW+7,mH+off,paint);
-			text=text+textYIndex;
-			off=off+pixelYIndex;
+			text+=textYIndex;
+			off+=pixelY;
 		}
 	}
 
-	public void drawDataOnCanvas(Canvas canvas,DataArray data)
+	/**
+	 * Imposta un certo gruppo di dati come contenuto del grafico
+	 * @param datas
+	 */
+	public void setData(DataArray datas)
 	{
-		Paint paintX=new Paint();
-		paintX.setAntiAlias(true);
-		paintX.setStyle(Paint.Style.STROKE);
-		paintX.setStrokeWidth(1);
-		Paint paintY=new Paint(paintX);
-		Paint paintZ=new Paint(paintY);
-		paintX.setColor(0xFFFF0000);
-		paintY.setColor(0xFF00FF00);
-		paintZ.setColor(0xFF0000FF);
+		data=datas;
+		invalidate();
+	}
+	
+	private void drawDataOnCanvas(Canvas canvas,DataArray data)
+	{
 		int index=data.getIndex();
 		float dataX[]=data.getXData(),dataY[]=data.getYData(),dataZ[]=data.getZData();
 		int w=this.getWidth();
@@ -172,12 +194,22 @@ public class GraphicView extends View
 		canvas.drawLine(x,adjust(dataZ[i]),w-1,adjust(dataZ[i]),paintZ);
 	}
 
+	/**
+	 * Aggiunge un dato al grafico aggiornandolo visivamente
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public void add(float x,float y,float z)
 	{
 		data.add(x,y,z);
-		this.invalidate();
+		invalidate();
 	}
 
+	/**
+	 * Salva l'attuale stato del grafico sul bundle
+	 * @param bundle
+	 */
 	public void saveStatusOnBundle(Bundle bundle)
 	{
 		bundle.putFloatArray("x_array",data.getXData());
@@ -186,34 +218,22 @@ public class GraphicView extends View
 		bundle.putInt("index",data.getIndex());
 	}
 
+	/**
+	 * Ripristina lo stato del grafico dal bundle
+	 * @param bundle
+	 */
 	public void restoreStatusFromBundle(Bundle bundle)
 	{
 		float[] x=bundle.getFloatArray("x_array");
 		float[] y=bundle.getFloatArray("y_array");
 		float[] z=bundle.getFloatArray("z_array");
+		int dataNumber=x.length;
+		data=new DataArray(dataNumber);
 		int l=x.length;
 		for(int i=0;i<l;i++)
 			data.add(x[i],y[i],z[i]);
 		data.setIndex(bundle.getInt("index"));
 		this.invalidate();
-	}
-
-	/**
-	 * When this method is called the graphic scale is changed to that of a second
-	 * @param dataList
-	 */
-	public void setData(AccelPoint[] dataList)
-	{
-		pixelXIndex=this.getWidth();
-		int length=dataList.length;
-		System.out.println("LENGTH = "+length);
-		data=new DataArray(length);
-		for(int i=0;i<length;i++)
-		{
-			System.out.println("REMAINING = "+(length-i));
-			AccelPoint p=dataList[i];
-			data.add(p.getX(),p.getY(),p.getZ());
-		}
 	}
 
 	/**
@@ -228,9 +248,8 @@ public class GraphicView extends View
 	{
 		//il valore dell'acceleratore è circa nell'intervallo
 		int h=this.getHeight();
-		float offset=f-startYIndex;//valore rispetto l'origine
-		float indexNumber=offset/textYIndex;
-		float pixelOffset=indexNumber*pixelYIndex;
+		
+		float pixelOffset=pixelY*(((float)f)/textYIndex);
 
 		int rH=(int)((h/2)-(pixelOffset));
 
@@ -239,5 +258,30 @@ public class GraphicView extends View
 		if(rH>=h)
 			return h-1;
 		return rH;
+	}
+
+	public GraphicView(Context context) {
+		super(context);
+		init(context);
+	}
+	
+	public GraphicView(Context context,AttributeSet attr) {
+		super(context,attr);
+		init(context);
+	}
+
+	private void init(Context context)
+	{
+		actContext=context;
+		this.setBackgroundColor(context.getResources().getColor(R.color.graphic_background_color));
+		paintX=new Paint();
+		paintX.setAntiAlias(true);
+		paintX.setStyle(Paint.Style.STROKE);
+		paintX.setStrokeWidth(1);
+		paintY=new Paint(paintX);
+		paintZ=new Paint(paintY);
+		paintX.setColor(context.getResources().getColor(R.color.graphic_x_color));
+		paintY.setColor(context.getResources().getColor(R.color.graphic_y_color));
+		paintZ.setColor(context.getResources().getColor(R.color.graphic_z_color));
 	}
 }

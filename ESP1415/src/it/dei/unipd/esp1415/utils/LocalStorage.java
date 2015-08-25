@@ -7,7 +7,6 @@ import it.dei.unipd.esp1415.exceptions.IllegalNumberException;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
-import it.dei.unipd.esp1415.objects.AccelPoint;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.objects.FallInfo;
 import it.dei.unipd.esp1415.objects.SessionData;
@@ -174,7 +173,7 @@ public class LocalStorage {
 				File fall=new File(sessionPath+fallId+".txt");
 				//passiamo in uscita le info della sessione solo se il file associato esiste
 				if(fall.exists()){
-					FallInfo info=new FallInfo(fallId,json.getString(DATE_TAG),json.getBoolean(STATUS_TAG));
+					FallInfo info=new FallInfo(fallId,json.getString(DATE_TAG),json.getBoolean(STATUS_TAG),name);
 					list.add(info);
 					finalS+=line+"\n";
 				}
@@ -221,33 +220,38 @@ public class LocalStorage {
 		if(sessionId==null||fallId==null||sessionId.equals("")||fallId.equals(""))
 			throw new IllegalArgumentException();
 
-		String path=sessionsDataFolderPath+sessionId+"/"+fallId+".txt";
+		String path=sessionsDataFolderPath+sessionId+"/"+sessionId+".txt";
 		File fallFile=new File(path);
 		if(!fallFile.exists())
 			throw new NoSuchFallException();
-		//Leggiamo i dati
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(fallFile));
+		String sessionName=bufferedReader.readLine();
+		bufferedReader.close();
+		path=sessionsDataFolderPath+sessionId+"/"+fallId+".txt";
+		fallFile=new File(path);
+		if(!fallFile.exists())
+			throw new NoSuchFallException();
+		//Leggiamo i dati
+		bufferedReader = new BufferedReader(new FileReader(fallFile));
 		//INFORMAZIONI
 		int rate=Integer.parseInt(bufferedReader.readLine());
 		String data=bufferedReader.readLine();
 		boolean notificato=Boolean.parseBoolean(bufferedReader.readLine());
-		int longit=Integer.parseInt(bufferedReader.readLine());
-		int lat=Integer.parseInt(bufferedReader.readLine());
+		double longit=Double.parseDouble(bufferedReader.readLine());
+		double lat=Double.parseDouble(bufferedReader.readLine());
 
-		AccelPoint[] points=new AccelPoint[rate];
+		DataArray points=new DataArray(rate);
 		String line;
-		int nP=0;
 		while((line=bufferedReader.readLine())!=null)
 		{
 			String[] coords=line.split(";");
-			points[nP]=new AccelPoint(Float.parseFloat(coords[0]),
+			points.add(Float.parseFloat(coords[0]),
 					Float.parseFloat(coords[1]),
 					Float.parseFloat(coords[2]));
-			nP++;
 		}
 		bufferedReader.close();
 		try {
-			return new FallData(fallId,data,notificato,longit,lat,points);
+			return new FallData(fallId,data,notificato,sessionName,longit,lat,points);
 		} catch (IllegalDateFormatException e) {
 			e.printStackTrace();
 		} catch (IllegalNumberException e) {
@@ -276,8 +280,8 @@ public class LocalStorage {
 		JSONObject json=new JSONObject();
 		try{
 			json.put(ID_TAG,data.getId());
-			json.put(DATE_TAG, data.getDate());
-			json.put(STATUS_TAG, data.isNotified());
+			json.put(DATE_TAG,data.getDate());
+			json.put(STATUS_TAG,data.isNotified());
 		}catch(JSONException e)
 		{
 			e.printStackTrace();
@@ -286,17 +290,19 @@ public class LocalStorage {
 		String info=json.toString();
 
 		//CONTENUTO DEL FILE DELLA SESSIONE
-		AccelPoint[] dataPoints=data.getAccelDatas();
-		int pointsN=dataPoints.length;
+		DataArray dataPoints=data.getAccelDatas();
+		int pointsN=dataPoints.getRate();
 		String file="";
-		file+=(dataPoints.length)+"\n";
+		file+=pointsN+"\n";
 		file+=data.getDate()+"\n";
 		file+=data.isNotified()+"\n";
 		file+=data.getLongitude()+"\n";
 		file+=data.getLatitude()+"\n";
+		float[] x=dataPoints.getXData();
+		float[] y=dataPoints.getYData();
+		float[] z=dataPoints.getZData();
 		for(int i=0;i<pointsN;i++)
-			file+=dataPoints[i].getX()+";"+dataPoints[i].getY()+";"
-					+dataPoints[i].getZ()+"\n";
+			file+=x[i]+";"+y[i]+";"+z[i]+"\n";
 
 		//CONTROLLIAMO CHE CI SIA ABBASTANZA SPAZIO
 		long bytesAvailable=getAvailableSpace();
@@ -321,7 +327,7 @@ public class LocalStorage {
 		if(!mfile.exists())
 			mfile.createNewFile();
 		bufferedWriter = new BufferedWriter(new FileWriter(mfile,true));
-		bufferedWriter.write(info+"\n");
+		bufferedWriter.write(file);
 		bufferedWriter.flush();
 		bufferedWriter.close();
 		return true;

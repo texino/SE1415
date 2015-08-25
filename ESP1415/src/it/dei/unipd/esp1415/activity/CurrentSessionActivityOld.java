@@ -17,43 +17,34 @@ import it.dei.unipd.esp1415.tasks.ESPService.ESPBinder;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.GraphicView;
-import it.dei.unipd.esp1415.views.PlayAnimatedButton;
-import it.dei.unipd.esp1415.views.PlayButtonDrawable;
-import it.dei.unipd.esp1415.views.StopAnimatedButton;
-import it.dei.unipd.esp1415.views.StopButtonDrawable;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CurrentSessionActivity extends Activity{
+public class CurrentSessionActivityOld extends Activity{
 	//TAGS
 	public final static String TAG="ACTIVITY",ID_TAG="ID",EMPTY_TAG="EMPTY";
 	public final static String DURATION_TAG="DURATION";
 	//Views
 	private GraphicView graphic;
-	private StopAnimatedButton btnStop;
-	private PlayAnimatedButton btnStart;
+	private ImageButton btnStart,btnStop;
 	private TextView textDuration,textName,textDate;
 	private Context actContext;
 	private ListView listFalls;
@@ -64,8 +55,6 @@ public class CurrentSessionActivity extends Activity{
 	private long duration;
 	private ESPService service;
 	private CreateSessionDialog createDialog;
-	private StateListDrawable stopStates;
-	private AlertDialog alertDialog;
 
 	private BroadcastReceiver graphicReceiver=new BroadcastReceiver() {
 		@Override
@@ -124,13 +113,16 @@ public class CurrentSessionActivity extends Activity{
 		private void setRunning(boolean run)
 		{
 			running=run;
+			if(run)
+				btnStart.setImageResource(R.drawable.button_pause);
+			else
+				btnStart.setImageResource(R.drawable.button_play);
 		}
 
 		/**Chiamato quando viene premuto il tasto Play*/
 		private void startClicked()
 		{
 			setRunning(true);
-			btnStart.toggle(false);
 			Intent serviceIntent = new Intent(actContext,ESPService.class);
 			serviceIntent.putExtra(ID_TAG,sessionId);
 			serviceIntent.putExtra(DURATION_TAG,duration);
@@ -144,7 +136,6 @@ public class CurrentSessionActivity extends Activity{
 		private void pauseClicked()
 		{
 			setRunning(false);
-			btnStart.toggle(true);
 			//metto in pausa il service
 			service.pause();
 			unregisterReceivers();
@@ -153,35 +144,13 @@ public class CurrentSessionActivity extends Activity{
 		/**Chiamato quando viene premuto il tasto Stop*/
 		private void stopClicked()
 		{
-			btnStop.toggle(true);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			ViewGroup vg = (ViewGroup)inflater.inflate(R.layout.dialog_stop_session_layout,null);
-			builder.setView(vg);
-			((Button)vg.findViewById(R.id.button_ok)).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					pauseClicked();
-					//fermo il service
-					service.stop();
-					Intent i=new Intent(CurrentSessionActivity.this,SessionDataActivity.class);
-					i.putExtra(SessionDataActivity.ID_TAG,sessionId);
-					startActivity(i);
-					CurrentSessionActivity.this.finish();
-					alertDialog.dismiss();
-				}});
-			((Button)vg.findViewById(R.id.button_ko)).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					alertDialog.dismiss();
-				}});
-			alertDialog=builder.create();
-			alertDialog.setCancelable(true);
-			alertDialog.setOnDismissListener(new OnDismissListener(){
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					btnStop.toggle(false);}});
-			alertDialog.show();
+			pauseClicked();
+			//fermo il service
+			service.stop();
+			Intent i=new Intent(CurrentSessionActivityOld.this,SessionDataActivity.class);
+			i.putExtra(SessionDataActivity.ID_TAG,sessionId);
+			startActivity(i);
+			CurrentSessionActivityOld.this.finish();
 		}
 
 		//INTENT METHODS
@@ -230,10 +199,6 @@ public class CurrentSessionActivity extends Activity{
 				instance.putLong("duration",duration);			
 				instance.putString("sessionName",textName.getText().toString());
 				instance.putString("sessionDate",textDate.getText().toString());
-				if(alertDialog==null)
-					instance.putBoolean("dialogPresence",false);
-				else
-					instance.putBoolean("dialogPresence",alertDialog.isShowing());
 				graphic.saveStatusOnBundle(instance);
 			}
 			super.onSaveInstanceState(instance);
@@ -254,13 +219,6 @@ public class CurrentSessionActivity extends Activity{
 				textName.setText(state.getString("sessionName"));
 				textDate.setText(state.getString("sessionDate"));
 				textDuration.setText(Utils.convertDuration((int)duration));
-				if(state.getBoolean("dialogPresence"))
-				{
-					if(alertDialog==null)
-						stopClicked();
-					else
-						alertDialog.show();
-				}
 			}
 		}
 
@@ -297,13 +255,13 @@ public class CurrentSessionActivity extends Activity{
 				session=LocalStorage.getSessionData(sessionId);
 				ok=true;
 			} catch (IllegalArgumentException e) {
-				Toast.makeText(CurrentSessionActivity.this,R.string.error_arguments,Toast.LENGTH_SHORT).show();
+				Toast.makeText(CurrentSessionActivityOld.this,R.string.error_arguments,Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
 			} catch (IOException e) {
-				Toast.makeText(CurrentSessionActivity.this,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
+				Toast.makeText(CurrentSessionActivityOld.this,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
 			} catch (NoSuchSessionException e) {
-				Toast.makeText(CurrentSessionActivity.this,R.string.error_inexistent_session,Toast.LENGTH_SHORT).show();
+				Toast.makeText(CurrentSessionActivityOld.this,R.string.error_inexistent_session,Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
 			}
 			if(!ok)
@@ -400,19 +358,9 @@ public class CurrentSessionActivity extends Activity{
 
 		private void setLayout()
 		{
-			stopStates=new StateListDrawable();
-			stopStates.addState(new int[]{},new StopButtonDrawable(actContext));
-
 			setContentView(R.layout.activity_current_session_layout);
-
-			btnStart=(PlayAnimatedButton)findViewById(R.id.button_start);
-			//btnStart.setImageDrawable(playStates);
-			btnStart.setImageDrawable(new PlayButtonDrawable(actContext));
-
-			btnStop=(StopAnimatedButton)findViewById(R.id.button_stop);
-			//btnStop.setImageDrawable(stopStates);
-			btnStop.setImageDrawable(new StopButtonDrawable(actContext));
-
+			btnStart=(ImageButton)findViewById(R.id.button_start);
+			btnStop=(ImageButton)findViewById(R.id.button_stop);
 			textDuration=(TextView)findViewById(R.id.text_duration);
 			textName=(TextView)findViewById(R.id.text_name);
 			textDate=(TextView)findViewById(R.id.text_date);
@@ -455,11 +403,12 @@ public class CurrentSessionActivity extends Activity{
 				Button ok=(Button)findViewById(R.id.button_ok);
 				edit=(EditText)findViewById(R.id.edit_name);
 				edit.setText(name);
+				setTitle(R.string.dialog_name_title);
 				setOnCancelListener(new OnCancelListener(){
 					@Override
 					public void onCancel(DialogInterface dialog) {
 						//L'utente si rifiuta di inserire il nome quindi torniamo indietro
-						CurrentSessionActivity.this.finish();}});
+						CurrentSessionActivityOld.this.finish();}});
 				ok.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -482,13 +431,13 @@ public class CurrentSessionActivity extends Activity{
 							bindToService();
 							CreateSessionDialog.this.dismiss();
 						} catch (IllegalArgumentException e) {
-							Toast.makeText(CurrentSessionActivity.this,R.string.error_arguments,Toast.LENGTH_SHORT).show();
+							Toast.makeText(CurrentSessionActivityOld.this,R.string.error_arguments,Toast.LENGTH_SHORT).show();
 							e.printStackTrace();
 						} catch (IOException e) {
-							Toast.makeText(CurrentSessionActivity.this,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
+							Toast.makeText(CurrentSessionActivityOld.this,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
 							e.printStackTrace();
 						} catch (LowSpaceException e) {
-							Toast.makeText(CurrentSessionActivity.this,R.string.text_low_memory,Toast.LENGTH_SHORT).show();
+							Toast.makeText(CurrentSessionActivityOld.this,R.string.text_low_memory,Toast.LENGTH_SHORT).show();
 							e.printStackTrace();
 						}
 					}});

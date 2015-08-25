@@ -13,6 +13,7 @@ public class FallInfo {
 	
 	private String fallId;
 	private String date;
+	private String sessionName;
 	private boolean notified;
 	
 	/**
@@ -26,7 +27,7 @@ public class FallInfo {
 	 * @throws IllegalDateFormatException if the date isn't in the correct format
 	 * @throws IllegalIdException if the id isn't acceptable
 	 */
-	public FallInfo(String id,String date,boolean notified) throws IllegalDateFormatException,IllegalIdException
+	public FallInfo(String id,String date,boolean notified,String sessionName) throws IllegalDateFormatException,IllegalIdException
 	{
 		if(date==null||!Utils.checkDateFormat(date))
 			throw new IllegalDateFormatException();
@@ -35,6 +36,7 @@ public class FallInfo {
 		this.fallId=id;
 		this.date=date;
 		this.notified=notified;
+		this.sessionName=sessionName;
 	}
 
 	/**
@@ -55,6 +57,15 @@ public class FallInfo {
 	public boolean isNotified()
 	{
 		return notified;
+	}
+	
+	/**
+	 * Get the name of the session of this fall event
+	 * @return the name of the session
+	 */
+	public String getSessionName()
+	{
+		return sessionName;
 	}
 	
 	/**
