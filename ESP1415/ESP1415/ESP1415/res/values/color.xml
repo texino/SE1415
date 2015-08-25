@@ -8,6 +8,7 @@
         <color name="pause_pressed_color">#999900</color>
         <color name="stop_normal_color">#ff0000</color>
         <color name="stop_pressed_color">#990000</color>
+        <color name="edit_color">#aaaaaa</color>
         <color name="main_shadowed_color">#6fd7c2</color>
         <color name="main_pressed_color">#3fa792</color>
         <color name="action_bar_color">#6fd7c2</color>

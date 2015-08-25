@@ -48,7 +48,7 @@ public class RenameDeleteDialog extends DialogFragment {
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
-		final View layout = inflater.inflate((R.layout.dialog_rename_delete),
+		final View layout = inflater.inflate((R.layout.dialog_rename_delete_session),
 				null);
 		builder.setTitle(title);
 		ImageView garbage = (ImageView) layout

@@ -65,5 +65,6 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
         TextView date;
         TextView duration;
         TextView falls;
+        boolean running;
     }
 }

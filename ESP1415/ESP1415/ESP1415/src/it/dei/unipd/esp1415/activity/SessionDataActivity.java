@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,9 +47,9 @@ public class SessionDataActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_session_data_layout);
-		date=(TextView)findViewById(R.id.date);
-		nameS=(TextView)findViewById(R.id.Session_Name);
+		setContentView(R.layout.activity_session_data_layout_new);
+		date=(TextView)findViewById(R.id.text_date);
+		nameS=(TextView)findViewById(R.id.text_name);
 		durata=(TextView)findViewById(R.id.durata);
 		lista=(ListView)findViewById(R.id.fall_list);
 		Button cancellaSessione=(Button)findViewById(R.id.delete);
@@ -57,10 +58,6 @@ public class SessionDataActivity extends Activity {
 
 		//Prendi dagli extra la sessionId
 		id=getIntent().getExtras().getString(ID_TAG);
-
-
-
-
 
 		cancellaSessione.setOnClickListener(new OnClickListener() {
 
@@ -80,9 +77,6 @@ public class SessionDataActivity extends Activity {
 
 				final EditText cambia=(EditText)dialog.findViewById(R.id.edit_name);
 				final	Button buttonConferma = (Button) dialog.findViewById(R.id.button_ok);
-
-
-
 
 				buttonConferma.setOnClickListener(new OnClickListener() {
 
@@ -169,10 +163,17 @@ public class SessionDataActivity extends Activity {
 		ArrayList<FallInfo> falls=data.getFalls();
 		ArrayList<FallInfo> orderedFalls=new ArrayList<FallInfo>();
 		int s=falls.size();
+		if(s!=0)
+		{
 		for(int i=s-1;i>=0;i--)
 			orderedFalls.add(falls.get(i));
 		FallAdapter adapter = new FallAdapter(this,orderedFalls,id);
 		lista.setAdapter(adapter);
+		}
+		else
+		{
+			((ImageView)this.findViewById(R.id.image_bkg)).setImageDrawable(getResources().getDrawable(R.drawable.image_empty_list));
+		}
 
 	}
 }

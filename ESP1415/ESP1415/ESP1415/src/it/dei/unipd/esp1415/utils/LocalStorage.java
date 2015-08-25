@@ -418,7 +418,7 @@ public class LocalStorage {
 		for(int c=0;c<50;c++)
 		{
 			for(int r=0;r<50;r++)
-				pixels[(r*50)+c]=0xffffff00;
+				pixels[(r*50)+c]=0xff0088aa;
 		}
 		Bitmap b=Bitmap.createBitmap(pixels, 50, 50, Bitmap.Config.ARGB_8888);
 		storeBitmapInFile(b,imageFile.getAbsolutePath());

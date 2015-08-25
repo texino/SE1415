@@ -1,11 +1,12 @@
 package it.dei.unipd.esp1415.activity;
 
+import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.views.FloatingActionButton;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,12 +15,14 @@ import android.view.View;
 import com.example.esp1415.R;
 
 /**
- * SessionListActivity class: First activity to be display that show and manage a
- * list of sessions
+ * SessionListActivity class: First activity to be display that show and manage
+ * a list of sessions
  */
 public class SessionListActivity extends ActionBarActivity {
 
-	protected static FloatingActionButton fabButton;
+	private static FloatingActionButton fabButton;
+	protected static Context context;
+	protected static boolean isSessionRunning;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +30,16 @@ public class SessionListActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		// set the activity layout
 		setContentView(R.layout.activity_session_list_layout);
-		// set FAB button
+		// activity context
+		context = this;
+		// check if a session is running
+		String value = PreferenceStorage.getSimpleData(context,
+				"isSessionRunning");
+		if (value.equals(""))
+			isSessionRunning = false;
+		else
+			isSessionRunning = java.lang.Boolean.parseBoolean(value);
+		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
 				.withDrawable(
 						getResources().getDrawable(
@@ -35,23 +47,23 @@ public class SessionListActivity extends ActionBarActivity {
 				.withButtonColor(Color.WHITE)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
-		// set the onClick Listener to FAB button
+		// hide the fab button if a session is running
+		if (isSessionRunning)
+			fabButton.setVisibility(View.GONE);
+		else
+			fabButton.setVisibility(View.VISIBLE);
+
+		// set the listener to FAB button to go to third activity
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!fabButton.isHidden()) {
-					Log.i("FAB", "FAB button pressed");
-					// TODO new intent to third activity
-					Intent i = new Intent(SessionListActivity.this,
-							CurrentSessionActivity.class);
-					i.putExtra(CurrentSessionActivity.EMPTY_TAG, true);
-					startActivity(i);
-					// FIXME fabButton.hideFloatingActionButton();
-				} else {
-					// FIXME fabButton.showFloatingActionButton();
-				}
+				Intent i = new Intent(SessionListActivity.this,
+						CurrentSessionActivity.class);
+				i.putExtra(CurrentSessionActivity.EMPTY_TAG, true);
+				startActivity(i);
 			}
 		});
+
 	}
 
 	@Override
@@ -77,7 +89,18 @@ public class SessionListActivity extends ActionBarActivity {
 
 	@Override
 	public void onResume() {
-		Log.i("RESUME", "onResume performed");
 		super.onResume();
+		//TOCLEAN Log.i("RESUME", "onResume performed from SessionListActivity");
+		String value = PreferenceStorage.getSimpleData(context,
+				"isSessionRunning");
+		if (value.equals(""))
+			isSessionRunning = false;
+		else
+			isSessionRunning = java.lang.Boolean.parseBoolean(value);
+		if (isSessionRunning)
+			fabButton.setVisibility(View.GONE);
+		else
+			fabButton.setVisibility(View.VISIBLE);
+
 	}
 }

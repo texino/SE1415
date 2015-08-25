@@ -18,7 +18,7 @@
             android:layout_marginStart="@dimen/layout_horizontal_margins"
             android:layout_marginTop="@dimen/layout_vertical_margins"
             android:gravity="center"
-            android:text="@string/texts_titles_name_session"
+            android:text="@string/texts_titles_rename_session"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dialogs_titles_color" />
     </RelativeLayout>
@@ -31,7 +31,6 @@
         android:background="@color/background_color" >
 
         <EditText
-            android:id="@+id/edit_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
