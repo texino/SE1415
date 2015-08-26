@@ -36,14 +36,16 @@ public class GraphicView extends View
 		//creiamo la bitmap di sfondo e l'allegato canvas
 		canvasBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
 		Canvas backgroundCanvas = new Canvas(canvasBitmap);
-		
+
 		float secondPixel=((float)w)/SECONDS;
 		pixelY=(int)(h/((MAX_ACC/textYIndex)-(MIN_ACC/textYIndex)));
 		//disegniamo gli assi
 		drawAxesOnCanvas(backgroundCanvas,secondPixel,pixelY);
-		
+
 		//misuriamo il numero di dati da rappresentare
-		String r=PreferenceStorage.getSimpleData(actContext,PreferenceStorage.ACCEL_RATIO);
+		String r="";
+		if(actContext!=null)
+			r=PreferenceStorage.getSimpleData(actContext,PreferenceStorage.ACCEL_RATIO);
 		int rate;
 		if(r.equals(""))
 		{
@@ -62,7 +64,7 @@ public class GraphicView extends View
 		//ci sono già dei dati che vorremmo visualizzare
 		DataArray tData=new DataArray(dataNumber);//dati effettivi da visualizzare
 		int oldDataNumber=data.getRate();//numero di dati da cerare di riprodurre
-		
+
 		int rIndex=data.getIndex(); //indice da cui riprodurre i dati 
 		int off=dataNumber-oldDataNumber;//se <0 allora devo troncare dati
 		if(off<0)
@@ -80,7 +82,7 @@ public class GraphicView extends View
 			tData.add(Xs[i],Ys[i],Zs[i]);
 		super.onSizeChanged(w,h,oW,oH);
 	}
-	
+
 	public void setScaleToOneSecond()
 	{
 		oneSecond=true;
@@ -157,7 +159,7 @@ public class GraphicView extends View
 		data=datas;
 		invalidate();
 	}
-	
+
 	private void drawDataOnCanvas(Canvas canvas,DataArray data)
 	{
 		int index=data.getIndex();
@@ -248,7 +250,7 @@ public class GraphicView extends View
 	{
 		//il valore dell'acceleratore è circa nell'intervallo
 		int h=this.getHeight();
-		
+
 		float pixelOffset=pixelY*(((float)f)/textYIndex);
 
 		int rH=(int)((h/2)-(pixelOffset));
@@ -264,7 +266,7 @@ public class GraphicView extends View
 		super(context);
 		init(context);
 	}
-	
+
 	public GraphicView(Context context,AttributeSet attr) {
 		super(context,attr);
 		init(context);

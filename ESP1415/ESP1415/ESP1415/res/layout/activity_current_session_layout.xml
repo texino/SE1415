@@ -138,12 +138,25 @@
                 android:layout_below="@+id/layout_buttons" />
         </RelativeLayout>
 
-        <ListView
-            android:id="@+id/list"
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/center_text"
-            android:layout_marginTop="@dimen/layout_vertical_margins" />
+            android:layout_marginTop="@dimen/layout_vertical_margins"
+            android:background="@color/row_color" >
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+            <ImageView
+                android:id="@+id/image_bkg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:contentDescription="@string/description_image"
+                android:src="@drawable/image_empty_list" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <LinearLayout

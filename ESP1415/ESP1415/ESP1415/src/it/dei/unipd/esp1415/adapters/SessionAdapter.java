@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,24 +65,28 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 		// update the item view
 		SessionInfo item = getItem(position);
 		if (item.getStatus()) {
-			viewHolder.row.setBackgroundColor(Color.RED);
+			viewHolder.row.setBackgroundColor(appContext.getResources().getColor(R.color.row_running_session_color));
 		} else
-			viewHolder.row.setBackgroundColor(0x00ffffff);
+			viewHolder.row.setBackgroundColor(appContext.getResources().getColor(R.color.row_color));
 
 		try {
-			viewHolder.picture.setImageBitmap(LocalStorage.getSessionImage(
-					appContext, item.getId()));
+			Bitmap b=LocalStorage.getSessionImage(appContext,item.getId());
+			if(b!=null)
+				viewHolder.picture.setImageBitmap(b);
+			if(item.getStatus())
+				viewHolder.picture.setImageDrawable(appContext.getResources().getDrawable(R.drawable.image_session_running));
 		} catch (IOException e) {
+			e.printStackTrace();
 			Log.i("ERROR",
 					"Errore nella lettura del file immagine - LocalStorage");
 		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			Log.i("ERROR", "Uno dei parametri è null - LocalStorage");
 		}
 		viewHolder.name.setText(item.getName());
-		viewHolder.duration.setText("Durata: "
-				+ Utils.convertDuration(item.getDuration()));
+		viewHolder.duration.setText(Utils.convertDuration(item.getDuration()));
 		viewHolder.date.setText(item.getDate());
-		viewHolder.falls.setText("Cadute: " + item.getNumberOfFalls());
+		viewHolder.falls.setText(""+item.getNumberOfFalls());
 
 		return convertView;
 	}

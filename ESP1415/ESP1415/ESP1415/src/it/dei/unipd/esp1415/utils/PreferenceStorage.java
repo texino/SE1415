@@ -30,6 +30,8 @@ public class PreferenceStorage {
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		//SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
+		if(prefs==null)
+			return;
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(tag, value);
 		editor.commit();
@@ -46,6 +48,8 @@ public class PreferenceStorage {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		//SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
 		//SharedPreferences sp=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
+		if(prefs==null)
+			return "";
 		String s=prefs.getString(tag,"");
 		return s;
 	}

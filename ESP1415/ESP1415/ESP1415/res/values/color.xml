@@ -1,26 +1,29 @@
+<resources>
 
-    <resources>
-        
-        <color name="main_color">#6fd7c2</color>
-        <color name="play_normal_color">#00ff00</color>
-        <color name="play_pressed_color">#009900</color>
-        <color name="pause_normal_color">#dddd00</color>
-        <color name="pause_pressed_color">#999900</color>
-        <color name="stop_normal_color">#ff0000</color>
-        <color name="stop_pressed_color">#990000</color>
-        <color name="edit_color">#aaaaaa</color>
-        <color name="main_shadowed_color">#6fd7c2</color>
-        <color name="main_pressed_color">#3fa792</color>
-        <color name="action_bar_color">#6fd7c2</color>
-        <color name="dialogs_titles_color">#6fd7c2</color>
-        <color name="button_text_color">#ffffff</color>
-        <color name="background_color">#fff1f1f1</color>
-        <color name="graphic_background_color">#ff000000</color>
-        <color name="graphic_axes_color">#ffffffff</color>
-        <color name="graphic_x_color">#ffff0000</color>
-        <color name="graphic_y_color">#ff00ff00</color>
-        <color name="graphic_z_color">#ff0000ff</color>
-        <color name="texts_action_bar_color">#ffffffff</color>
-        <color name="texts_layout_color">#ff000000</color>
-        <color name="texts_secondary_action_bar_color">#ffffffff</color>
-    </resources>
+    <color name="main_color">#6fd7c2</color>
+    <color name="play_normal_color">#00ff00</color>
+    <color name="row_color">#e0e0e0</color>
+    <color name="background_color">#fff1f1f1</color>
+    <color name="row_running_session_color">#ffff0000</color>
+    <color name="fab_button_color">#ffffff00</color>
+    <color name="play_pressed_color">#009900</color>
+    <color name="pause_normal_color">#dddd00</color>
+    <color name="pause_pressed_color">#999900</color>
+    <color name="stop_normal_color">#ff0000</color>
+    <color name="stop_pressed_color">#990000</color>
+    <color name="edit_color">#aaaaaa</color>
+    <color name="main_shadowed_color">#6fd7c2</color>
+    <color name="main_pressed_color">#3fa792</color>
+    <color name="action_bar_color">#6fd7c2</color>
+    <color name="dialogs_titles_color">#6fd7c2</color>
+    <color name="button_text_color">#ffffff</color>
+    <color name="graphic_background_color">#ff000000</color>
+    <color name="graphic_axes_color">#ffffffff</color>
+    <color name="graphic_x_color">#ffff0000</color>
+    <color name="graphic_y_color">#ff00ff00</color>
+    <color name="graphic_z_color">#ff0000ff</color>
+    <color name="texts_action_bar_color">#ffffffff</color>
+    <color name="texts_layout_color">#ff000000</color>
+    <color name="texts_secondary_action_bar_color">#ffffffff</color>
+
+</resources>

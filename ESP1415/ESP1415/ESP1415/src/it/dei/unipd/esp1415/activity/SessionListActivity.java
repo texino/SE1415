@@ -2,16 +2,11 @@ package it.dei.unipd.esp1415.activity;
 
 import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.views.FloatingActionButton;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,8 +33,7 @@ public class SessionListActivity extends ActionBarActivity {
 		// activity context
 		context = this;
 		// check if a session is running
-		String value = PreferenceStorage.getSimpleData(context,
-				"isSessionRunning");
+		String value = PreferenceStorage.getSimpleData(context,"isSessionRunning");
 		if (value.equals(""))
 			isSessionRunning = false;
 		else
@@ -49,7 +43,7 @@ public class SessionListActivity extends ActionBarActivity {
 				.withDrawable(
 						getResources().getDrawable(
 								R.drawable.ic_plus_grey600_36dp))
-				.withButtonColor(Color.YELLOW)
+				.withButtonColor(getResources().getColor(R.color.fab_button_color))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		// hide the fab button if a session is running

@@ -33,73 +33,49 @@ public class FallDataActivity extends Activity
 	private Context actContext;
 	private String sessionId,fallId;
 
-	public void onSaveInstanceState(Bundle state)
-	{
-		state.putString("sessionName", textName.getText().toString());
-		state.putString("fallDate", textDate.getText().toString());
-		state.putBoolean("notified", notified);
-		graphic.saveStatusOnBundle(state);
-		super.onSaveInstanceState(state);
-	}
-
-	public void onRestoreInstanceState(Bundle state)
-	{
-		super.onRestoreInstanceState(state);
-		textName.setText(state.getString("sessionName"));
-		textDate.setText(state.getString("fallDate"));
-		notified=state.getBoolean("notified");
-		graphic.restoreStatusFromBundle(state);
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d(TAG,"ON CREATE");
 		setLayout();//Imposta layout ed eventi
-		actContext=this;		
-		if(savedInstanceState==null)//l'activity è creata da zero
-		{
-			Bundle extras=getIntent().getExtras();
-			sessionId=extras.getString(SESSION_ID_TAG);
-			fallId=extras.getString(FALL_ID_TAG);
-			boolean ok=false;
-			FallData fall=null;
-			try {
-				fall=LocalStorage.getFallData(sessionId, fallId);
-				ok=true;
-			} catch (IllegalArgumentException e) {
-				Toast.makeText(actContext,R.string.error_arguments,Toast.LENGTH_SHORT).show();
-				e.printStackTrace();
-			} catch (IOException e) {
-				Toast.makeText(actContext,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
-				e.printStackTrace();
-			} catch (NoSuchFallException e) {
-				e.printStackTrace();
-			}
-			if(!ok){//c'è stato un errore
-				this.finish();
-				return;}
-			textLong.setText(""+fall.getLongitude());
-			textLat.setText(""+fall.getLatitude());
-			textName.setText(fall.getSessionName());
-			textDate.setText(fall.getDate());
-			notified=fall.isNotified();
-			if(notified)
-				imageFall.setImageDrawable(this.getResources().getDrawable(R.drawable.image_notified_ok));
-			try {
-				Bitmap b=LocalStorage.getSessionImage(this,sessionId);
-				if(b!=null)
-					imageSess.setImageBitmap(b);
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			DataArray data=fall.getAccelDatas();
-			graphic.setData(data);
+		actContext=this;
+		Bundle extras=getIntent().getExtras();
+		sessionId=extras.getString(SESSION_ID_TAG);
+		fallId=extras.getString(FALL_ID_TAG);
+		boolean ok=false;
+		FallData fall=null;
+		try {
+			fall=LocalStorage.getFallData(sessionId, fallId);
+			ok=true;
+		} catch (IllegalArgumentException e) {
+			Toast.makeText(actContext,R.string.error_arguments,Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		} catch (IOException e) {
+			Toast.makeText(actContext,R.string.error_file_writing,Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		} catch (NoSuchFallException e) {
+			e.printStackTrace();
 		}
-		else//abbiamo già dei dati
-			onRestoreInstanceState(savedInstanceState);
+		if(!ok){//c'è stato un errore
+			this.finish();
+			return;}
+		textLong.setText(""+fall.getLongitude());
+		textLat.setText(""+fall.getLatitude());
+		textName.setText(fall.getSessionName());
+		textDate.setText(fall.getDate());
+		notified=fall.isNotified();
+		if(notified)
+			imageFall.setImageDrawable(this.getResources().getDrawable(R.drawable.image_notified_ok));
+		try {
+			Bitmap b=LocalStorage.getSessionImage(this,sessionId);
+			if(b!=null)
+				imageSess.setImageBitmap(b);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		DataArray data=fall.getAccelDatas();
+		graphic.setData(data);
 	}
 
 	private void setLayout()

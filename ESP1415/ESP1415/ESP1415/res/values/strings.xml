@@ -55,8 +55,11 @@
     <string name="texts_button_yes">SI</string>
     <string name="texts_button_no">NO</string>
     <string name="texts_latitude">Latitudine</string>
-    <string name="texts_separator">:</string>
+    <string name="texts_falls">Cadute</string>
+    <string name="texts_separator"> : </string>
     <string name="texts_duration">Durata</string>
+    <string name="texts_duration_separator">Durata : </string>
+    <string name="texts_fall_separator">Cadute : </string>
     <string name="texts_longitude">Longitudine</string>
     <string name="texts_changed_name">Nome cambiato in</string>
     <string name="texts_deleted_session">Sessione cancellata</string>

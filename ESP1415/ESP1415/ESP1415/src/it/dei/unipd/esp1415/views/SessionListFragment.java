@@ -88,10 +88,10 @@ public class SessionListFragment extends ListFragment {
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		SessionInfo item = items.get(pos);
 		// secure check, if a session is running it can be eliminated
-		dialog = new RenameDeleteDialog(item.getId(), item.getName(),
-				item.getName(), item.getStatus());
+		dialog = new RenameDeleteDialog(item.getId(),item.getName(),
+				item.getName(),item.getStatus());
 		// show the dialog
-		dialog.show(getFragmentManager(), "dialog");
+		dialog.show(getFragmentManager(),"dialog");
 		// returning true means that Android stops event propagation
 		return true;
 	}

@@ -45,6 +45,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class CurrentSessionActivity extends Activity{
@@ -202,7 +203,10 @@ public class CurrentSessionActivity extends Activity{
 				e.printStackTrace();
 			}
 			if(info!=null)
+			{
 				adapter.insert(info,0);
+				((ImageView)findViewById(R.id.image_bkg)).setVisibility(View.INVISIBLE);
+			}
 		}
 
 		/**Interpreta l'intent per l'aggiornamento del grafico*/
@@ -322,6 +326,8 @@ public class CurrentSessionActivity extends Activity{
 			if(falls!=null)
 			{
 				int s=falls.size();
+				if(s>0)
+					((ImageView)findViewById(R.id.image_bkg)).setVisibility(View.INVISIBLE);
 				for(int i=s-1;i>=0;i--)
 					orderedFalls.add(falls.get(i));
 			}
