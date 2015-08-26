@@ -29,6 +29,7 @@ public class SessionListActivity extends ActionBarActivity {
 	private Context context;
 	private static boolean isSessionRunning;
 	public static final String RUNNING = "IS_RUNNING";
+	public static final int colour = Color.rgb(255, 165, 0);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,8 @@ public class SessionListActivity extends ActionBarActivity {
 		fabButton = new FloatingActionButton.Builder(this)
 				.withDrawable(
 						getResources().getDrawable(
-								R.drawable.ic_plus_grey600_36dp))
-				.withButtonColor(Color.YELLOW)
+								R.drawable.plus_grey))
+				.withButtonColor(colour)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		// hide the fab button if a session is running

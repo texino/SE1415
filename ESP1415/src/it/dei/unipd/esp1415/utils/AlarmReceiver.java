@@ -1,6 +1,7 @@
 package it.dei.unipd.esp1415.utils;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
+import it.dei.unipd.esp1415.activity.SessionListActivity;
 import it.dei.unipd.esp1415.activity.SettingsActivity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -57,7 +58,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		} else {
 			// check if a session is already running
 			String value = PreferenceStorage.getSimpleData(context,
-					"isSessionRunning");
+					SessionListActivity.RUNNING);
 			if (value.equals(""))
 				isSessionRunning = false;
 			else
@@ -72,7 +73,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 						intentClick, Intent.FLAG_ACTIVITY_NEW_TASK);
 				// build the notification
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-						context).setSmallIcon(R.drawable.button_play)
+						context).setSmallIcon(R.drawable.plus_circle)
 						.setContentTitle("ESP Daily Reminder")
 						.setContentText("Click to start a new session")
 						.setLights(Color.GREEN, 1000, 1000).setAutoCancel(true)

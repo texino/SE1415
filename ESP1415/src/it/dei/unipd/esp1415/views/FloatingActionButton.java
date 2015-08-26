@@ -28,7 +28,6 @@ public class FloatingActionButton extends View {
 	Paint mButtonPaint;
 	Paint mDrawablePaint;
 	Bitmap mBitmap;
-	boolean mHidden = false;
 
 	public FloatingActionButton(Context context) {
 		super(context);
@@ -48,9 +47,6 @@ public class FloatingActionButton extends View {
 
 	public void init(int FloatingActionButtonColor) {
 		setWillNotDraw(false);
-		// set shadow to the button (available from API 11)
-		// setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
 		mButtonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mButtonPaint.setColor(FloatingActionButtonColor);
 		mButtonPaint.setStyle(Paint.Style.FILL);
