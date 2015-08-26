@@ -3,6 +3,9 @@
     android:id="@+id/edittextrename"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:inputType="textWebEmailAddress" >
+    android:layout_gravity="center"
+    android:hint="@string/hint_new_mail"
+    android:inputType="textWebEmailAddress"
+    android:maxLines="1" >
 
 </EditText>

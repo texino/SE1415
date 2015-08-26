@@ -4,20 +4,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/mailtextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:text="@string/mailing_activity_title"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/abc_text_size_medium_material" >
-        
-    </TextView>    
-    <ListView 
+    <RelativeLayout
+        android:id="@+id/layout_title"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/dialog_title_height"
+        android:background="@color/background_color" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/layout_horizontal_margins"
+            android:layout_marginStart="@dimen/layout_horizontal_margins"
+            android:layout_marginTop="@dimen/layout_vertical_margins"
+            android:gravity="center"
+            android:text="@string/mailing_activity_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dialogs_titles_color" />
+    </RelativeLayout>
+
+    <ListView
         android:id="@+id/mailinglist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clickable="false" >
+
     </ListView>
 
 </LinearLayout>

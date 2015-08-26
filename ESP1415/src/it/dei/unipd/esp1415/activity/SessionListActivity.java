@@ -2,20 +2,17 @@ package it.dei.unipd.esp1415.activity;
 
 import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.views.FloatingActionButton;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.esp1415.R;
 
@@ -70,7 +67,6 @@ public class SessionListActivity extends ActionBarActivity {
 				startActivity(i);
 			}
 		});
-
 	}
 
 	@Override
@@ -107,6 +103,5 @@ public class SessionListActivity extends ActionBarActivity {
 			fabButton.setVisibility(View.GONE);
 		else
 			fabButton.setVisibility(View.VISIBLE);
-
 	}
 }

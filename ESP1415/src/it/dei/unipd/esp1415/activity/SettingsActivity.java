@@ -169,8 +169,6 @@ public class SettingsActivity extends PreferenceActivity {
 			ringtonePref.setEnabled(true);
 			vibrationPref.setEnabled(true);
 			selectTimePref.setEnabled(true);
-			// set the alarm TODO è corretto inviare più allarmi?
-			//setAlarm(hour, minutes, context);
 		}
 		// checkbox listener to show/hide notification settings
 		checkboxPref
@@ -397,6 +395,11 @@ public class SettingsActivity extends PreferenceActivity {
 					}
 					if (duration > 24) {
 						Toast.makeText(context, R.string.message_24h,
+								Toast.LENGTH_SHORT).show();
+						return false;
+					}
+					else if (duration == 0){
+						Toast.makeText(context, R.string.message_durationO,
 								Toast.LENGTH_SHORT).show();
 						return false;
 					}

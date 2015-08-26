@@ -2,23 +2,26 @@ package it.dei.unipd.esp1415.views;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.activity.SessionDataActivity;
-import it.dei.unipd.esp1415.activity.SessionListActivity;
 import it.dei.unipd.esp1415.adapters.SessionAdapter;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
-import it.dei.unipd.esp1415.utils.PreferenceStorage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.example.esp1415.R;
 
 /**
  * SessionListFragment class: Displays the list of sessions inside a fragment
@@ -89,12 +92,10 @@ public class SessionListFragment extends ListFragment {
 	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		SessionInfo item = items.get(pos);
-		// secure check, if a session is running it can be eliminated
 		dialog = new RenameDeleteDialog(item.getId(), item.getName(),
 				item.getName(), item.getStatus());
 		// show the dialog
 		dialog.show(getFragmentManager(), "dialog");
-		// returning true means that Android stops event propagation
 		return true;
 	}
 
@@ -123,19 +124,12 @@ public class SessionListFragment extends ListFragment {
 			temp = LocalStorage.getSessionInfos();
 			for (int i = temp.size() - 1; i >= 0; i--)
 				items.add(temp.get(i));
-			/*if (items.size() != 0) { TOCLEAN
-				if (items.get(0).getStatus()){
-					PreferenceStorage.storeSimpleData(getActivity(),
-							SessionListActivity.RUNNING, "true");
-				}
-				else
-					PreferenceStorage.storeSimpleData(getActivity(),
-							SessionListActivity.RUNNING, "false");
-			}*/
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
-		// initialize and set the list adapter
+		/*if(items.size()==0)
+			view.findViewById(R.id.image_empty).setVisibility(View.GONE);
+		*/// initialize and set the list adapter
 		adapter = new SessionAdapter(getActivity(), items);
 		setListAdapter(adapter);
 	}

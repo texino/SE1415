@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MailingListActivity extends Activity {
 
@@ -52,14 +53,6 @@ public class MailingListActivity extends Activity {
 				android.R.layout.simple_list_item_1, items);
 		lv = (ListView) findViewById(R.id.mailinglist);
 		lv.setAdapter(adapter);
-		// setting up single click
-		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-				onListItemClick(v, pos, id);
-			}
-		});
-
 		// setting up long click
 		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
@@ -81,26 +74,25 @@ public class MailingListActivity extends Activity {
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// nuovo dialog con l'inserimento della mail
 				renameDialog = new AlertDialog.Builder(context);
 				LayoutInflater inflater = getLayoutInflater();
-				View layout = inflater.inflate(R.layout.dialog_rename, null);
-				final EditText addedMail = (EditText) layout
+				View dialoglayout = inflater.inflate(R.layout.dialog_rename, null);
+				final EditText addedMail = (EditText) dialoglayout
 						.findViewById(R.id.edittextrename);
 				renameDialog
-						.setView(layout)
-						.setTitle("Set a new mail address")
+						.setView(dialoglayout)
+						.setTitle("Set new mail address")
 						.setPositiveButton(R.string.conferma,
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int id) {
-										// aggiungi l'indirizzo all'adapter e
-										// salva
 										String newMail = addedMail.getText()
 												.toString();
-										if (newMail.equals(""))
-											dialog.dismiss();
+										if (newMail.equals("")){
+											Toast.makeText(context, "Retry",
+													Toast.LENGTH_SHORT).show();
+										}
 										else {
 											adapter.add(newMail);
 											saveData();
@@ -112,7 +104,6 @@ public class MailingListActivity extends Activity {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int id) {
-										// annulla
 										dialog.dismiss();
 									}
 								}).create().show();
@@ -120,25 +111,17 @@ public class MailingListActivity extends Activity {
 		});
 	}
 
-	// single click implementation
-	protected void onListItemClick(View v, int pos, long id) {
-
-	}
-
 	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
-
 		mailString = adapter.getItem(pos);
 		// create the dialog
 		deleteDialog = new AlertDialog.Builder(context)
-				.setMessage("Delete " + mailString + " ?")
+				.setTitle("Delete mail address?")
+				.setMessage(mailString)
 				.setPositiveButton(R.string.conferma,
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								// rimuovi dall'adapter e aggiorna la listview
-								// eliminated = true;
-
 								adapter.remove(mailString);
 								saveData();
 							}
@@ -147,13 +130,11 @@ public class MailingListActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								// annulla
 								dialog.dismiss();
 							}
 						});
 		;
 		deleteDialog.create().show();
-		// returning true means that Android stops event propagation
 		return true;
 	}
 
@@ -172,9 +153,9 @@ public class MailingListActivity extends Activity {
 		try {
 			LocalStorage.saveMailingListToFile(lv.getAdapter());
 		} catch (IOException e) {
-
+			Log.i("ERROR", "Error saving mailing list - LocalStorage");	
 		} catch (LowSpaceException e) {
-
+			Log.i("ERROR", "Low space error - LocalStorage");
 		}
 	}
 
@@ -182,12 +163,5 @@ public class MailingListActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		items = getData();
-
-	}
-
-	@Override
-	public void onPause() {
-		saveData();
-		super.onPause();
 	}
 }
