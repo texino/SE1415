@@ -69,7 +69,7 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 			viewHolder.row.setBackgroundColor(0x00ffffff);
 
 		try {
-			viewHolder.picture.setImageDrawable(LocalStorage.getSessionImage(
+			viewHolder.picture.setImageBitmap(LocalStorage.getSessionImage(
 					appContext, item.getId()));
 		} catch (IOException e) {
 			Log.i("ERROR",

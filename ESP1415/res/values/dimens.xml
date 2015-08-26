@@ -15,5 +15,6 @@
     <dimen name="shadow_height">10dp</dimen>
     <dimen name="row_height">60dp</dimen>
     <dimen name="row_image_size">50dp</dimen>
+    <dimen name="dialog_title_height">70dp</dimen>
 
 </resources>

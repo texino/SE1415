@@ -89,7 +89,7 @@
             android:layout_toLeftOf="@+id/text_duration"
             android:layout_toStartOf="@+id/text_duration" >
 
-            <ImageButton
+            <it.dei.unipd.esp1415.views.PlayAnimatedButton
                 android:id="@+id/button_start"
                 android:layout_width="@dimen/layout_button_size"
                 android:layout_height="@dimen/layout_button_size"
@@ -98,8 +98,7 @@
                 android:cacheColorHint="@android:color/transparent"
                 android:contentDescription="@string/description_button"
                 android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/button_play_source" />
+                android:scaleType="fitCenter" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -108,7 +107,7 @@
             android:layout_toEndOf="@+id/text_duration"
             android:layout_toRightOf="@+id/text_duration" >
 
-            <ImageButton
+            <it.dei.unipd.esp1415.views.StopAnimatedButton
                 android:id="@+id/button_stop"
                 android:layout_width="@dimen/layout_button_size"
                 android:layout_height="@dimen/layout_button_size"
@@ -117,8 +116,7 @@
                 android:cacheColorHint="@android:color/transparent"
                 android:contentDescription="@string/description_button"
                 android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/button_stop_source" />
+                android:scaleType="fitCenter" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -143,6 +141,16 @@
         android:layout_below="@+id/layout_action_bar"
         android:layout_toEndOf="@+id/text_dummy"
         android:layout_toRightOf="@+id/text_dummy" />
+
+    <ImageView
+        android:id="@+id/image_bkg"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/layout_action_bar"
+        android:layout_toEndOf="@+id/text_dummy"
+        android:layout_toRightOf="@+id/text_dummy"
+        android:contentDescription="@string/description_image"
+        android:src="@drawable/image_empty_list" />
 
     <LinearLayout
         android:layout_width="fill_parent"
