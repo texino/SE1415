@@ -58,6 +58,8 @@
     <string name="texts_separator">:</string>
     <string name="texts_duration">Durata</string>
     <string name="texts_longitude">Longitudine</string>
+    <string name="texts_changed_name">Nome cambiato in</string>
+    <string name="texts_deleted_session">Sessione cancellata</string>
     <string name="cancel">Cancel</string>
     <string name="rename">Rename</string>
     <string name="notifylist_title">Notifier List</string>
@@ -65,5 +67,8 @@
     <string name="notifylist_summary">Manage the list of people to notify by email</string>
     <string name="samplerate_title">Sample rate</string>
     <string name="message_24h">Maybe is too much, retry!</string>
+    <string name="mailing_activity_title">Mailing address list:</string> <!-- Settings strings -->
+
+    <string name="title_activity_mailing_list">MailingListActivity</string>
 
 </resources>

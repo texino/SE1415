@@ -1,115 +1,89 @@
 package it.dei.unipd.esp1415.activity;
 
 import it.dei.unipd.esp1415.adapters.FallAdapter;
-import it.dei.unipd.esp1415.exceptions.IOException;
 import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.objects.FallInfo;
 import it.dei.unipd.esp1415.objects.SessionData;
 import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.Utils;
-
+import java.io.IOException;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnDismissListener;
+import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.esp1415.R;
 
-
 public class SessionDataActivity extends Activity {
+
 	public static final String ID_TAG="sessionId";
-	String id;
-	String nameSession;
-	final Context con =this;
-	TextView date,nameS,durata;
-	ListView lista;
-	private AlertDialog alertDialog;
-	//String cambiaNomeSessione;
-	//EditText cambiaNomeSessione=(EditText)findViewById(R.id.renamesession);
+	public static final String NAME_TAG = "name";
+	public static final String DURATION_TAG = "duration";
+	public static final String DATE_TAG = "date";
+
+	private String id;
+	private String nameSession;
+	private final Context con =this;
+	private TextView date,nameS,durata;
+	private ListView lista;
+	private ImageView sessionImm;
+	AlertDialog alertDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_session_data_layout_new);
+		setContentView(R.layout.activity_session_data_layout);
 		date=(TextView)findViewById(R.id.text_date);
 		nameS=(TextView)findViewById(R.id.text_name);
 		durata=(TextView)findViewById(R.id.durata);
 		lista=(ListView)findViewById(R.id.fall_list);
-		Button cancellaSessione=(Button)findViewById(R.id.delete);
-		Button rinominaSessione=(Button)findViewById(R.id.rename);
-		//EditText cambiaNomeSessione=(EditText)findViewById(R.id.renamesession);
+		sessionImm=(ImageView)findViewById(R.id.image);
 
+		Button cancellaSessione=(Button)findViewById(R.id.button_delete);
+		Button rinominaSessione=(Button)findViewById(R.id.button_rename);
 		//Prendi dagli extra la sessionId
 		id=getIntent().getExtras().getString(ID_TAG);
 
-		cancellaSessione.setOnClickListener(new OnClickListener() {
+		try {
+			Bitmap btm=null;
+			btm = LocalStorage.getSessionImage(this,id);
+			if(btm!=null)
+				sessionImm.setImageBitmap(btm);
+		} catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
+		cancellaSessione.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				cancelClicked();		}
+				cancelClicked();}
 		});
 
 		rinominaSessione.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				final	Dialog dialog=new Dialog(con);
-				dialog.setContentView(R.layout.dialog_new_session_layout);
-				dialog.setTitle("Rinomina Sessione");
-
-				final EditText cambia=(EditText)dialog.findViewById(R.id.edit_name);
-				final	Button buttonConferma = (Button) dialog.findViewById(R.id.button_ok);
-
-				buttonConferma.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						String cambiaNomeSessione=cambia.getText().toString();
-						try {
-							LocalStorage.renameSession(id, cambiaNomeSessione);
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (NoSuchSessionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (java.io.IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						Toast.makeText(getApplicationContext(),"ho cambiato il nome"+" "+cambiaNomeSessione, Toast.LENGTH_SHORT).show();
-						dialog.dismiss();
-					}
-				});
-
-				dialog.show();	
-			}
-
-
-		});
-
-
-
-
+				renameClicked();
+			}});
 	}
+
 	private void cancelClicked()
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -120,60 +94,100 @@ public class SessionDataActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try{LocalStorage.deleteSession(id);
-				}catch(NoSuchSessionException e){}
-				finish();
-				Toast.makeText(getApplicationContext(),"Sessione"+" "+nameSession+" "+"cancellata", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),getResources().getString(R.string.texts_deleted_session), Toast.LENGTH_SHORT).show();
+				}catch(NoSuchSessionException e){
+					Toast.makeText(getApplicationContext(),R.string.error_inexistent_session, Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				}
 				alertDialog.dismiss();
+				alertDialog=null;
+				finish();
 			}});
 		((Button)vg.findViewById(R.id.button_ko)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				alertDialog.dismiss();
+				alertDialog=null;
 			}});
 		alertDialog=builder.create();
 		alertDialog.setCancelable(true);
+		alertDialog.setCanceledOnTouchOutside(true);
 		alertDialog.show();
+	}
+
+	private void renameClicked()
+	{
+		final	Dialog dialog=new Dialog(con);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setCancelable(true);
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.setContentView(R.layout.dialog_rename_session_layout);
+		final EditText cambia=(EditText)dialog.findViewById(R.id.edit_name);
+		cambia.setText(nameS.getText().toString());
+		final	Button buttonConferma = (Button) dialog.findViewById(R.id.button_ok);
+		buttonConferma.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cambiaNomeSessione=cambia.getText().toString();
+				try {
+					LocalStorage.renameSession(id, cambiaNomeSessione);
+					nameS.setText(cambiaNomeSessione);
+				} catch (IllegalArgumentException e) {
+					Toast.makeText(getApplicationContext(),R.string.error_arguments, Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				} catch (NoSuchSessionException e) {
+					Toast.makeText(getApplicationContext(),R.string.error_inexistent_session, Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				} catch (java.io.IOException e) {
+					Toast.makeText(getApplicationContext(),R.string.error_file_writing, Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				}
+				finally{
+					Toast.makeText(getApplicationContext(),getResources().getString(R.string.texts_changed_name)+" : "+cambiaNomeSessione, Toast.LENGTH_SHORT).show();}
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
 	}
 
 	public void onResume(){
 		super.onResume();
-		SessionData data=null;
 		try {
-			data=LocalStorage.getSessionData(id);
+			SessionData data=LocalStorage.getSessionData(id);
+			nameSession =data.getName();
+			int duration=data.getDuration();
+			String dataS=data.getDate();
+			nameS.setText(nameSession);
+			durata.setText(Utils.convertDuration(duration));
+			date.setText(dataS);
+			Log.d("ACTIVITY SECOND",""+data.getFalls());
+			ArrayList<FallInfo> falls=data.getFalls();
+			ArrayList<FallInfo> orderedFalls=new ArrayList<FallInfo>();
+			int s=falls.size();
+			if(s!=0)
+			{
+				for(int i=s-1;i>=0;i--)
+					orderedFalls.add(falls.get(i));
+				FallAdapter adapter = new FallAdapter(this,orderedFalls,id);
+				lista.setAdapter(adapter);
+			}
+			else{
+				Drawable d=getResources().getDrawable(R.drawable.image_empty_list);
+				d.setColorFilter(0x77ffffff,PorterDuff.Mode.SRC_OVER);
+				((ImageView)findViewById(R.id.image_bkg)).setImageDrawable(d);
+			}
 		} catch (IllegalArgumentException e) {
+			Toast.makeText(getApplicationContext(),R.string.error_arguments, Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
 			finish();
-			Toast.makeText(this, "id errato", Toast.LENGTH_SHORT).show();
-			e.printStackTrace();return;
 		} catch (NoSuchSessionException e) {
-			Toast.makeText(this, "sessione non esistente!!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),R.string.error_inexistent_session, Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
 			finish();
-			e.printStackTrace();return;
 		} catch (java.io.IOException e) {
-			Toast.makeText(this, "Errore in lettura", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),R.string.error_file_writing, Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
 			finish();
-			e.printStackTrace();return;
 		}
-		nameSession =data.getName();
-		int duration=data.getDuration();
-		String dataS=data.getDate();
-		nameS.setText(nameSession);
-		durata.setText(Utils.convertDuration(duration));
-		date.setText(dataS);
-		Log.d("ACTIVITY SECOND",""+data.getFalls());
-		ArrayList<FallInfo> falls=data.getFalls();
-		ArrayList<FallInfo> orderedFalls=new ArrayList<FallInfo>();
-		int s=falls.size();
-		if(s!=0)
-		{
-		for(int i=s-1;i>=0;i--)
-			orderedFalls.add(falls.get(i));
-		FallAdapter adapter = new FallAdapter(this,orderedFalls,id);
-		lista.setAdapter(adapter);
-		}
-		else
-		{
-			((ImageView)this.findViewById(R.id.image_bkg)).setImageDrawable(getResources().getDrawable(R.drawable.image_empty_list));
-		}
-
 	}
 }
