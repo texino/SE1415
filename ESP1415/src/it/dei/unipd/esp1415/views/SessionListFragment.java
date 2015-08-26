@@ -2,9 +2,11 @@ package it.dei.unipd.esp1415.views;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.activity.SessionDataActivity;
+import it.dei.unipd.esp1415.activity.SessionListActivity;
 import it.dei.unipd.esp1415.adapters.SessionAdapter;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import it.dei.unipd.esp1415.utils.PreferenceStorage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,16 +114,24 @@ public class SessionListFragment extends ListFragment {
 		}
 	}
 
-	private void refreshList() {
+	public void refreshList() {
 		SessionAdapter adapter;
 		List<SessionInfo> temp;
 		items = new ArrayList<SessionInfo>();
 		// get the list of session saved in the storage
 		try {
 			temp = LocalStorage.getSessionInfos();
-			for (int i = temp.size() - 1; i >= 0; i--) {
+			for (int i = temp.size() - 1; i >= 0; i--)
 				items.add(temp.get(i));
-			}
+			/*if (items.size() != 0) { TOCLEAN
+				if (items.get(0).getStatus()){
+					PreferenceStorage.storeSimpleData(getActivity(),
+							SessionListActivity.RUNNING, "true");
+				}
+				else
+					PreferenceStorage.storeSimpleData(getActivity(),
+							SessionListActivity.RUNNING, "false");
+			}*/
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}

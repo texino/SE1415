@@ -28,6 +28,7 @@ public class SessionListActivity extends ActionBarActivity {
 	private static FloatingActionButton fabButton;
 	private Context context;
 	private static boolean isSessionRunning;
+	public static final String RUNNING = "IS_RUNNING";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class SessionListActivity extends ActionBarActivity {
 		context = this;
 		// check if a session is running
 		String value = PreferenceStorage.getSimpleData(context,
-				"isSessionRunning");
+				RUNNING);
 		if (value.equals(""))
 			isSessionRunning = false;
 		else
@@ -95,9 +96,8 @@ public class SessionListActivity extends ActionBarActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		//TOCLEAN Log.i("RESUME", "onResume performed from SessionListActivity");
 		String value = PreferenceStorage.getSimpleData(context,
-				"isSessionRunning");
+				RUNNING);
 		if (value.equals(""))
 			isSessionRunning = false;
 		else

@@ -1,10 +1,5 @@
 package it.dei.unipd.esp1415.activity;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.example.esp1415.R;
-
 import it.dei.unipd.esp1415.adapters.FallAdapter;
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.exceptions.NoSuchFallException;
@@ -15,12 +10,17 @@ import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.tasks.ESPService;
 import it.dei.unipd.esp1415.tasks.ESPService.ESPBinder;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.utils.Utils;
 import it.dei.unipd.esp1415.views.GraphicView;
 import it.dei.unipd.esp1415.views.PlayAnimatedButton;
 import it.dei.unipd.esp1415.views.PlayButtonDrawable;
 import it.dei.unipd.esp1415.views.StopAnimatedButton;
 import it.dei.unipd.esp1415.views.StopButtonDrawable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -43,10 +43,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.esp1415.R;
 
 public class CurrentSessionActivity extends Activity{
 	//TAGS
@@ -133,6 +135,8 @@ public class CurrentSessionActivity extends Activity{
 		{
 			setRunning(true);
 			btnStart.toggle(false);
+			PreferenceStorage.storeSimpleData(actContext,
+					SessionListActivity.RUNNING, "true");
 			Intent serviceIntent = new Intent(actContext,ESPService.class);
 			serviceIntent.putExtra(ID_TAG,sessionId);
 			serviceIntent.putExtra(DURATION_TAG,duration);
@@ -164,6 +168,8 @@ public class CurrentSessionActivity extends Activity{
 				@Override
 				public void onClick(View v) {
 					pauseClicked();
+					PreferenceStorage.storeSimpleData(actContext,
+							SessionListActivity.RUNNING, "false");
 					//fermo il service
 					service.stop();
 					Intent i=new Intent(CurrentSessionActivity.this,SessionDataActivity.class);
