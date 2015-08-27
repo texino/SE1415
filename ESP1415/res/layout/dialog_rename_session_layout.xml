@@ -18,7 +18,7 @@
             android:layout_marginStart="@dimen/layout_horizontal_margins"
             android:layout_marginTop="@dimen/layout_vertical_margins"
             android:gravity="center"
-            android:text="@string/texts_titles_name_session"
+            android:text="@string/texts_titles_rename_session"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dialogs_titles_color" />
     </RelativeLayout>
@@ -41,7 +41,9 @@
             android:layout_marginTop="@dimen/layout_vertical_margins"
             android:background="@drawable/shape_edit_text"
             android:gravity="center"
-            android:inputType="text" />
+            android:inputType="text"
+            android:maxLength="@integer/name_lenght" />
+
     </RelativeLayout>
 
     <RelativeLayout

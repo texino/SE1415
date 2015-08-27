@@ -11,8 +11,10 @@ import com.example.esp1415.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ public class FallDataActivity extends Activity
 	//Views
 	private GraphicView graphic;
 	private TextView textLong,textLat,textName,textDate;
+	private ImageView imageSess,imageFall;
 	private boolean notified;
 
 	private static final String TAG="FALL DATA ACTIVITY";
@@ -38,7 +41,7 @@ public class FallDataActivity extends Activity
 		graphic.saveStatusOnBundle(state);
 		super.onSaveInstanceState(state);
 	}
-	
+
 	public void onRestoreInstanceState(Bundle state)
 	{
 		super.onRestoreInstanceState(state);
@@ -47,7 +50,7 @@ public class FallDataActivity extends Activity
 		notified=state.getBoolean("notified");
 		graphic.restoreStatusFromBundle(state);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,6 +84,17 @@ public class FallDataActivity extends Activity
 			textName.setText(fall.getSessionName());
 			textDate.setText(fall.getDate());
 			notified=fall.isNotified();
+			if(notified)
+				imageFall.setImageDrawable(this.getResources().getDrawable(R.drawable.image_notified_ok));
+			try {
+				Bitmap b=LocalStorage.getSessionImage(this,sessionId);
+				if(b!=null)
+					imageSess.setImageBitmap(b);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			DataArray data=fall.getAccelDatas();
 			graphic.setData(data);
 		}
@@ -96,6 +110,8 @@ public class FallDataActivity extends Activity
 		textName=(TextView)findViewById(R.id.text_name);
 		textDate=(TextView)findViewById(R.id.text_date);
 		graphic=(GraphicView)findViewById(R.id.graphic);
+		imageSess=(ImageView)findViewById(R.id.image_session);
+		imageFall=(ImageView)findViewById(R.id.image_notified);
 	}
 
 	public void onStart()

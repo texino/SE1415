@@ -40,6 +40,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -450,7 +451,7 @@ public class CurrentSessionActivity extends Activity{
 			protected CreateSessionDialog(Context context,String name) {
 				super(context);
 				actContext=context;
-				setTitle(R.string.dialog_name_title);
+				this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				setContentView(R.layout.dialog_new_session_layout);
 				Button ok=(Button)findViewById(R.id.button_ok);
 				edit=(EditText)findViewById(R.id.edit_name);

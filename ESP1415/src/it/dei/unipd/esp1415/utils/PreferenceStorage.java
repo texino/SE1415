@@ -14,6 +14,8 @@ public class PreferenceStorage {
 	
 	/** Tag for the number of session stored*/
 	public static final String N_SESSIONS="nSession";
+
+	public static final String DURATION="duration";
 	
 	private static final String preferencesName="com.rpt.workingforelders.preferences";
 	
