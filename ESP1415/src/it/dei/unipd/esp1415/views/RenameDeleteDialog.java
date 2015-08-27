@@ -50,7 +50,7 @@ public class RenameDeleteDialog extends DialogFragment {
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
-		final View layout = inflater.inflate((R.layout.dialog_rename_delete),
+	    View layout = inflater.inflate((R.layout.dialog_rename_delete),
 				null);
 		builder.setTitle(title);
 		// handler to garbage image object
@@ -78,7 +78,7 @@ public class RenameDeleteDialog extends DialogFragment {
 				// toast to confirm deletion
 				Toast.makeText(context, "Session " + sessionName + " delete",
 						Toast.LENGTH_SHORT).show();
-
+				RenameDeleteDialog.this.getDialog().dismiss();
 			}
 		});
 		// insert current session name in dialog's editText
@@ -93,7 +93,7 @@ public class RenameDeleteDialog extends DialogFragment {
 							public void onClick(DialogInterface dialog, int id) {
 
 								String newName = editText.getText().toString();
-								// if newname is an empty string, dismiss dialog
+								// if newName is an empty string, dismiss dialog
 								// with toast
 								if (newName.equals(""))
 									Toast.makeText(context, "Retry",
@@ -119,13 +119,14 @@ public class RenameDeleteDialog extends DialogFragment {
 									// toast to confirm rename operation
 									Toast.makeText(context, "Session renamed",
 											Toast.LENGTH_SHORT).show();
+									RenameDeleteDialog.this.getDialog().dismiss();
 								}
 							}
 						})
 				.setNegativeButton(R.string.cancel,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								RenameDeleteDialog.this.getDialog().cancel();
+								RenameDeleteDialog.this.getDialog().dismiss();
 							}
 						});
 		return builder.create();
@@ -137,8 +138,7 @@ public class RenameDeleteDialog extends DialogFragment {
 		Fragment fragment = getFragmentManager().findFragmentById(
 				R.id.listfragment);
 		getFragmentManager().beginTransaction().hide(fragment).commit();
-		// show fragment updated and dismiss dialog
-		SessionListFragment.dialog.dismiss();
+		// show fragment updated
 		getFragmentManager().beginTransaction().show(fragment).commit();
 	}
 }

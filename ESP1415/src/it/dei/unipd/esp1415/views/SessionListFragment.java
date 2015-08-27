@@ -2,6 +2,7 @@ package it.dei.unipd.esp1415.views;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.activity.SessionDataActivity;
+import it.dei.unipd.esp1415.activity.SessionListActivity;
 import it.dei.unipd.esp1415.adapters.SessionAdapter;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
@@ -28,7 +29,7 @@ import com.example.esp1415.R;
  */
 public class SessionListFragment extends ListFragment {
 
-	protected static RenameDeleteDialog dialog;
+	private RenameDeleteDialog dialog;
 	private List<SessionInfo> items = new ArrayList<SessionInfo>();
 
 	@Override
@@ -61,13 +62,6 @@ public class SessionListFragment extends ListFragment {
 				return onLongListItemClick(v, pos, id);
 			}
 		});
-	}
-
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		// remove the dividers from the ListView of the ListFragment
-		getListView().setDivider(null);
 	}
 
 	// single click implementation
@@ -127,9 +121,7 @@ public class SessionListFragment extends ListFragment {
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
-		/*if(items.size()==0)
-			view.findViewById(R.id.image_empty).setVisibility(View.GONE);
-		*/// initialize and set the list adapter
+		// initialize and set the list adapter
 		adapter = new SessionAdapter(getActivity(), items);
 		setListAdapter(adapter);
 	}

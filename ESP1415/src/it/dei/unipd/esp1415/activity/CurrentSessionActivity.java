@@ -135,8 +135,6 @@ public class CurrentSessionActivity extends Activity{
 		{
 			setRunning(true);
 			btnStart.toggle(false);
-			PreferenceStorage.storeSimpleData(actContext,
-					SessionListActivity.RUNNING, "true");
 			Intent serviceIntent = new Intent(actContext,ESPService.class);
 			serviceIntent.putExtra(ID_TAG,sessionId);
 			serviceIntent.putExtra(DURATION_TAG,duration);
@@ -168,8 +166,6 @@ public class CurrentSessionActivity extends Activity{
 				@Override
 				public void onClick(View v) {
 					pauseClicked();
-					PreferenceStorage.storeSimpleData(actContext,
-							SessionListActivity.RUNNING, "false");
 					//fermo il service
 					service.stop();
 					Intent i=new Intent(CurrentSessionActivity.this,SessionDataActivity.class);
