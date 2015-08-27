@@ -46,7 +46,7 @@ public class SessionDataActivity extends Activity {
 	private AlertDialog alertDialog;
 	private EditText cambia;
 	private Dialog dialog;
-	String save;
+
 	
 
 
@@ -61,11 +61,8 @@ public class SessionDataActivity extends Activity {
 		sessionImm=(ImageView)findViewById(R.id.image);
 		
 		if(savedInstanceState!=null)//l'activity viene ripristinata
-			
 			onRestoreInstanceState(savedInstanceState);
 			
-		
-		
 		
 		
 		Button cancellaSessione=(Button)findViewById(R.id.button_delete);
@@ -211,14 +208,17 @@ public class SessionDataActivity extends Activity {
 	}
 	public void onSaveInstanceState(Bundle instance){
 	
-		if(alertDialog==null)
+		if(alertDialog==null){
 			instance.putBoolean("dialogPresence",false);
-		else
+		}
+		else{
 			instance.putBoolean("dialogPresence",alertDialog.isShowing());
-		if(dialog==null)
-			instance.putBoolean("dialogPresence",false);
-		else
-			instance.putBoolean("dialogPresence",dialog.isShowing());
+		}
+	if(dialog==null){
+			instance.putBoolean("dialog",false);}
+		else{
+			instance.putBoolean("dialog",dialog.isShowing());
+		}	
 		super.onSaveInstanceState(instance);
 		 
 	}
@@ -232,7 +232,7 @@ public class SessionDataActivity extends Activity {
 			else
 				alertDialog.show();
 		}
-		if(state.getBoolean("dialogPresence"))
+		if(state.getBoolean("dialog"))
 		{
 			if(dialog==null)
 				renameClicked();
