@@ -43,7 +43,9 @@ public class SessionDataActivity extends Activity {
 	private TextView date,nameS,durata;
 	private ListView lista;
 	private ImageView sessionImm;
-	AlertDialog alertDialog;
+	private AlertDialog alertDialog;
+	private EditText cambia;
+	private Dialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,12 @@ public class SessionDataActivity extends Activity {
 		durata=(TextView)findViewById(R.id.durata);
 		lista=(ListView)findViewById(R.id.fall_list);
 		sessionImm=(ImageView)findViewById(R.id.image);
-
+		
+		if(savedInstanceState!=null)//l'activity viene ripristinata
+			onRestoreInstanceState(savedInstanceState);
+			
+		
+		
 		Button cancellaSessione=(Button)findViewById(R.id.button_delete);
 		Button rinominaSessione=(Button)findViewById(R.id.button_rename);
 		//Prendi dagli extra la sessionId
@@ -70,7 +77,8 @@ public class SessionDataActivity extends Activity {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
+		
+      
 		cancellaSessione.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -80,12 +88,12 @@ public class SessionDataActivity extends Activity {
 		rinominaSessione.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				renameClicked();
+				renameClicked(nameS.getText().toString());
 			}});
 	}
 
 	private void cancelClicked()
-	{
+	{	   
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ViewGroup vg = (ViewGroup)inflater.inflate(R.layout.dialog_delete_session_layout,null);
@@ -101,6 +109,7 @@ public class SessionDataActivity extends Activity {
 				}
 				alertDialog.dismiss();
 				alertDialog=null;
+				
 				finish();
 			}});
 		((Button)vg.findViewById(R.id.button_ko)).setOnClickListener(new View.OnClickListener() {
@@ -108,22 +117,24 @@ public class SessionDataActivity extends Activity {
 			public void onClick(View v) {
 				alertDialog.dismiss();
 				alertDialog=null;
+				
 			}});
 		alertDialog=builder.create();
 		alertDialog.setCancelable(true);
 		alertDialog.setCanceledOnTouchOutside(true);
 		alertDialog.show();
+		
 	}
 
-	private void renameClicked()
+	private void renameClicked(String oldName)
 	{
-		final	Dialog dialog=new Dialog(con);
+	    dialog=new Dialog(con);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setCancelable(true);
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.setContentView(R.layout.dialog_rename_session_layout);
-		final EditText cambia=(EditText)dialog.findViewById(R.id.edit_name);
-		cambia.setText(nameS.getText().toString());
+		cambia=(EditText)dialog.findViewById(R.id.edit_name);
+		cambia.setText(oldName);
 		final	Button buttonConferma = (Button) dialog.findViewById(R.id.button_ok);
 		buttonConferma.setOnClickListener(new OnClickListener() {
 			@Override
@@ -148,6 +159,7 @@ public class SessionDataActivity extends Activity {
 			}
 		});
 		dialog.show();
+		
 	}
 
 	public void onResume(){
@@ -188,6 +200,41 @@ public class SessionDataActivity extends Activity {
 			Toast.makeText(getApplicationContext(),R.string.error_file_writing, Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 			finish();
+		}
+	}
+
+	public void onSaveInstanceState(Bundle instance){
+	
+		if(alertDialog==null){
+			instance.putBoolean("dialogPresence",false);
+		}
+		else{
+			instance.putBoolean("dialogPresence",alertDialog.isShowing());
+				
+		}
+	if(dialog==null){
+			instance.putBoolean("dialog",false);}
+		else{
+			instance.putBoolean("dialog",dialog.isShowing());			
+			if(cambia!=null)
+				instance.putString("dialogName",cambia.getText().toString());
+		}	
+		super.onSaveInstanceState(instance);
+		 
+	}
+	
+	public void onRestoreInstanceState(Bundle state) {
+		super.onRestoreInstanceState(state);
+		if(state.getBoolean("dialogPresence"))
+		{
+			if(alertDialog==null)
+				cancelClicked();
+			else
+				alertDialog.show();
+		}
+		if(state.getBoolean("dialog"))
+		{
+				renameClicked(state.getString("dialogName"));
 		}
 	}
 }

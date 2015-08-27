@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -416,11 +418,17 @@ public class LocalStorage {
 		imageFile=new File(path);
 		if(!imageFile.exists())
 			imageFile.createNewFile();
+		
+		Random random=new Random();
+		int red=random.nextInt(255);
+		int green=random.nextInt(255);
+		int blue=random.nextInt(255);
+		int color=Color.rgb(red, green, blue);
 		int[] pixels=new int[50*50];
 		for(int c=0;c<50;c++)
 		{
 			for(int r=0;r<50;r++)
-				pixels[(r*50)+c]=0xff0088aa;
+				pixels[(r*50)+c]=color;
 		}
 		Bitmap b=Bitmap.createBitmap(pixels, 50, 50, Bitmap.Config.ARGB_8888);
 		storeBitmapInFile(b,imageFile.getAbsolutePath());
