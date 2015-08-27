@@ -84,7 +84,7 @@ public class PlayButtonDrawable extends Drawable {
 		rightPauseBar.rewind();
 
 		//Distanza attuale fra le due barre
-		final float barDist = lerp(pauseBarDistance,0,progress);
+		final float barDist = lerp(pauseBarDistance,-1,progress);
 		//Larghezza attuale delle due barre
 		final float barWidth = lerp(pauseBarWidth,pauseBarHeight/2f,progress);
 

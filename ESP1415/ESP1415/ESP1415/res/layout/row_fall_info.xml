@@ -27,6 +27,8 @@
         android:layout_marginRight="@dimen/layout_horizontal_margins"
         android:layout_marginStart="@dimen/layout_horizontal_margins"
         android:layout_marginTop="@dimen/layout_horizontal_margins"
+        android:layout_toLeftOf="@+id/notifica"
+        android:layout_toStartOf="@+id/notifica"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceLarge"

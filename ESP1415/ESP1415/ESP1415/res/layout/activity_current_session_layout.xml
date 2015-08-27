@@ -42,6 +42,7 @@
             android:id="@+id/text_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_below="@+id/text_name"
             android:layout_marginBottom="@dimen/action_bar_margins"
             android:layout_marginEnd="@dimen/action_bar_margins"
@@ -53,7 +54,8 @@
             android:layout_toRightOf="@+id/image"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/texts_secondary_action_bar_color" />
+            android:textColor="@color/texts_secondary_action_bar_color"/>
+
     </RelativeLayout>
 
     <RelativeLayout

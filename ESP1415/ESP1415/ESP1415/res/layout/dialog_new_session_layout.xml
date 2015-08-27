@@ -41,7 +41,9 @@
             android:layout_marginTop="@dimen/layout_vertical_margins"
             android:background="@drawable/shape_edit_text"
             android:gravity="center"
-            android:inputType="text" />
+            android:inputType="text"
+            android:maxLength="@integer/name_lenght" />
+
     </RelativeLayout>
 
     <RelativeLayout

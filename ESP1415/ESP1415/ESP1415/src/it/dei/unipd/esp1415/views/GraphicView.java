@@ -25,7 +25,7 @@ public class GraphicView extends View
 	float textYIndex=4f;//numero di g per uno slot
 	float textXIndex=1f;//numero di secondi per uno slot
 	boolean oneSecond=false;
-	private static final int MIN_ACC=-16,MAX_ACC=16;
+	private static final int MIN_ACC=-8,MAX_ACC=8;
 	private int SECONDS=6;
 
 	@Override

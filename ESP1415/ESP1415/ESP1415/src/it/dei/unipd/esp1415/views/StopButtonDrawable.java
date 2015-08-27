@@ -67,7 +67,7 @@ public class StopButtonDrawable extends Drawable {
 
         // The current distance between the two pause bars.
         //final float barDist = lerp(pauseBarDistance, 0, mProgress);
-        float barDist=0;
+        float barDist=-1;
         // The current width of each pause bar.
         //final float barWidth = lerp(pauseBarWidth, pauseBarHeight / 2f, mProgress);
         float barWidth=pauseBarHeight/2f;
