@@ -118,6 +118,8 @@ public class SessionListFragment extends ListFragment {
 			temp = LocalStorage.getSessionInfos();
 			for (int i = temp.size() - 1; i >= 0; i--)
 				items.add(temp.get(i));
+			if(temp.size()==0)
+				getActivity().findViewById(R.id.image_empty).setVisibility(View.VISIBLE);
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
