@@ -53,4 +53,12 @@
             android:title="@string/vibration_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/setting_category4" >
+
+        <PreferenceScreen
+            android:key="languagekey"
+            android:title="@string/language_title" >
+        </PreferenceScreen>
+    </PreferenceCategory>
+
 </PreferenceScreen>

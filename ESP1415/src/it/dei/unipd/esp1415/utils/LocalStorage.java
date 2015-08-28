@@ -655,6 +655,12 @@ public class LocalStorage {
 		bufferedWriter.close();
 	}
 
+	/**
+	 * Salva la lista delle mail in un file di testo
+	 * @param listAdapter Una lista di oggetti
+	 * @throws LowSpaceException Se lo spazio di salvataggio è insufficiente
+	 * @throws IOException Se sussiste un errore di scrittura/lettura
+	 */
 	public static void saveMailingListToFile(ListAdapter listAdapter)
 			throws LowSpaceException, IOException {
 		int index = listAdapter.getCount();
@@ -679,6 +685,10 @@ public class LocalStorage {
 		bufferedWriter.close();
 	}
 
+	/**
+	 * Fornisce una lista delle mail salvate o una lista vuota se non ce ne sono
+	 * @throws IOException Se sussiste un errore di scrittura/lettura
+	 */
 	public static List<String> getMailingList() throws IOException {
 		List<String> mailingList = new ArrayList<String>();
 		String path=applicationPath;

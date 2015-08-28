@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_dialog_rename_delete">Nome sessione: </string>
+    <string name="dialog_message1">Sessione </string>
+    <string name="dialog_message2"> cancellata</string>
+    <string name="toast_confirm">Sessione rinominata</string>
+    <string name="ritenta">Riprova!</string>
+    <string name="ritenta_errore">C\'é stato un errore, riprova!</string>
+    <string name="title_activity_session_info">SessionInfo</string>
+    <string name="title_activity_second_actiity">SecondActivity</string>
+    <string name="SessionIm">SessionIm</string>
+    <string name="title_activity_second_acitivity">SecondActivity</string>
+    <string name="date_session">dd/mm/yyyy</string>
+    <string name="name_session">Nome Sessione</string>
+    <string name="nDurata">Durata:</string>
+    <string name="nDate">Data:</string>
+    <string name="datetimefall">indica ora e data della caduta</string>
+    <string name="durata_session">00:00</string>
+    <string name="default_duration">00:00:00</string>
+    <string name="number_separator">:</string>
+    <string name="description_image">Immagine della sessione</string>
+    <string name="description_button">Pulsante con immagine</string>
+    <string name="dummy_text">Testo</string>
+    <string name="dialog_name_title">Inserisci un nome</string>
+    <string name="text_insert_name">Inserisci un nome</string>
+    <string name="text_rate_measurement">campioni/s</string>
+    <string name="text_low_memory">Memoria Insufficiente</string>
+    <string name="error_file_writing">Errore durante la scrittura</string>
+    <string name="error_arguments">Argomenti sbagliati, riprova</string>
+    <string name="app_name">FALL DETECTOR</string>
+    <string name="error_inexistent_session">Sessione inesistente</string>
+    <string name="picture_descriptor">Session\'s Picture</string>
+    <string name="picture_descriptor1">Rename\'s button</string>
+    <string name="picture_descriptor2">Delete\'s button</string>
+    <string name="picture_descriptor3">Details\'s button</string>
+    <string name="delete_dialog">Eliminare la sessione?</string>
+    <string name="conferma">OK</string>
+    <string name="annulla">Annulla</string>
+    <string name="rinomina">Rinomina</string>
+    <string name="dialog_title">Sessione</string>
+    <string name="elimina">Elimina</string>
+    <string name="session_list">Session List</string>
+    <string name="hint_dialog_1">Nuovo nome della sessione</string>
+    <string name="texts_titles_stop_session">Vuoi veramente terminare la sessione?</string>
+    <string name="texts_titles_delete_session">Vuoi veramente cancellare la sessione?</string>
+    <string name="texts_titles_name_session">Nomina la sessione</string>
+    <string name="texts_titles_rename_session">Rinomina la sessione</string>
+    <string name="texts_button_yes">SI</string>
+    <string name="texts_button_no">NO</string>
+    <string name="texts_latitude">Latitudine</string>
+    <string name="texts_separator">:</string>
+    <string name="texts_duration">Durata</string>
+    <string name="texts_longitude">Longitudine</string>
+    <string name="texts_changed_name">Nome cambiato in</string>
+    <string name="texts_deleted_session">Sessione cancellata</string>
+    <string name="cancel">Annulla</string>
+    <string name="rename">Rinomina</string>
+    <string name="mailing_activity_title">Lista indirizzi mail:</string>
+    <string name="hint_new_mail">example@gmail.com</string>
+    <string name="title_activity_mailing_list">MailingListActivity</string>
+    <string name="mail_dialog_title1">Inserisci una nuova mail</string>
+    <string name="mail_dialog_title2">Cancellare l\'indirizzo mail?</string>
+    <!-- Settings strings -->
+    <string name="text_select_rate">Seleziona un rate</string>
+    <string name="alarm_dialog_title">Seleziona l\'ora di notifica</string>
+    <string name="language_dialog_title">Seleziona la lingua dell\'applicazione</string>
+    <string name="rate_dialog_title">Seleziona i campioni al secondo</string>
+    <string name="setting_category1">Dati della sessione</string>
+    <string name="setting_category2">Notifiche mail</string>
+    <string name="setting_category3">Notifica</string>
+    <string name="setting_category4">Applicazione</string>
+    <string name="language_title">Seleziona la lingua</string>
+    <string name="vibration_title">Vibrazione</string>
+    <string name="ringtone_title">Suoneria</string>
+    <string name="alarm_title">Notifica</string>
+    <string name="summary_alarm">Ti ricorda di fare una sessione ogni giorno</string>
+    <string name="dialog_title1">Scegli un\'ora</string>
+    <string name="alarmtime_title">Ora di notifica</string>
+    <string name="notifylist_title">Lista per la notifica</string>
+    <string name="maxduration_title">Durata massima</string>
+    <string name="notifylist_summary">Organizza le persone da notificare via mail</string>
+    <string name="samplerate_title">Campionamento</string>
+    <string name="message_24h">Forse è troppo, riprova!</string>
+    <string name="rate_summary">campioni al secondo</string>
+    <!-- Notification strings -->
+    <string name="notification_title">ESP Promemoria Giornaliero</string>
+    <string name="notification_message">Clicca per iniziare una nuova sessione</string>
+    
+
+</resources>

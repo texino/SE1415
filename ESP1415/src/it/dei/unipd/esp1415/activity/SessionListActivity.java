@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -26,7 +25,6 @@ public class SessionListActivity extends FragmentActivity {
 
 	private FloatingActionButton fabButton;
 	private boolean isSessionRunning;
-	public static final int colour = Color.rgb(255, 165, 0);
 	public static final String RUNNING = "RUNNING";
 
 	@Override
@@ -35,18 +33,13 @@ public class SessionListActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		// set the activity layout
 		setContentView(R.layout.activity_session_list_layout);
+
 		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
-				.withDrawable(getResources().getDrawable(R.drawable.plus_grey))
-				.withButtonColor(colour)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_plus))
+				.withButtonColor(R.color.fab_color)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
-		// hide the fab button if a session is running
-		if (isSessionRunning)
-			fabButton.setVisibility(View.GONE);
-		else
-			fabButton.setVisibility(View.VISIBLE);
-
 		// set the listener to FAB button to go to third activity
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -57,30 +50,41 @@ public class SessionListActivity extends FragmentActivity {
 				startActivity(i);
 			}
 		});
+		// set settings button
+		findViewById(R.id.settings_button).setOnClickListener(
+				new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent settingIntent = new Intent(
+								SessionListActivity.this,
+								SettingsActivity.class);
+						startActivity(settingIntent);
+					}
+				});
 	}
 
-	/*
-	 * Intent setting_intent = new Intent(this, SettingsActivity.class);
-	 * startActivity(setting_intent); return true;
-	 */
 	@Override
 	public void onResume() {
 		super.onResume();
+		// on resume() check application state and set layout visibility
 		List<SessionInfo> items;
 		int size;
 		try {
 			items = LocalStorage.getSessionInfos();
 			size = items.size();
-			if (size != 0) {
-				findViewById(R.id.image_empty).setVisibility(View.GONE);
-				if (items.get(size - 1).getStatus()) {
+			if (size != 0) { // the list is not empty
+				findViewById(R.id.image_empty).setVisibility(View.GONE); // hide
+																			// image
+																			// fills
+				if (items.get(size - 1).getStatus()) { // check if a session is
+														// running
 					isSessionRunning = true;
 					PreferenceStorage.storeSimpleData(this, RUNNING, "true");
 				} else {
 					isSessionRunning = false;
 					PreferenceStorage.storeSimpleData(this, RUNNING, "false");
 				}
-			} else {
+			} else { // the list is empty
 				findViewById(R.id.image_empty).setVisibility(View.VISIBLE);
 				isSessionRunning = false;
 				PreferenceStorage.storeSimpleData(this, RUNNING, "false");
@@ -88,7 +92,7 @@ public class SessionListActivity extends FragmentActivity {
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}
-		if (isSessionRunning)
+		if (isSessionRunning) // check and set fab button visibility
 			fabButton.setVisibility(View.GONE);
 		else
 			fabButton.setVisibility(View.VISIBLE);

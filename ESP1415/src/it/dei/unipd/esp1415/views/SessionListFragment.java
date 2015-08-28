@@ -2,7 +2,6 @@ package it.dei.unipd.esp1415.views;
 
 import it.dei.unipd.esp1415.activity.CurrentSessionActivity;
 import it.dei.unipd.esp1415.activity.SessionDataActivity;
-import it.dei.unipd.esp1415.activity.SessionListActivity;
 import it.dei.unipd.esp1415.adapters.SessionAdapter;
 import it.dei.unipd.esp1415.objects.SessionInfo;
 import it.dei.unipd.esp1415.utils.LocalStorage;
@@ -11,14 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -118,8 +114,9 @@ public class SessionListFragment extends ListFragment {
 			temp = LocalStorage.getSessionInfos();
 			for (int i = temp.size() - 1; i >= 0; i--)
 				items.add(temp.get(i));
-			if(temp.size()==0)
-				getActivity().findViewById(R.id.image_empty).setVisibility(View.VISIBLE);
+			if (temp.size() == 0) // image to fill the empty list
+				getActivity().findViewById(R.id.image_empty).setVisibility(
+						View.VISIBLE);
 		} catch (IOException e) {
 			Log.i("ERROR", "Error getting session list - LocalStorage");
 		}

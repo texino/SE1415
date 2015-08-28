@@ -23,4 +23,5 @@
         <color name="texts_action_bar_color">#ffffffff</color>
         <color name="texts_layout_color">#ff000000</color>
         <color name="texts_secondary_action_bar_color">#ffffffff</color>
+        <color name="fab_color">#ffa500</color>
     </resources>

@@ -63,7 +63,7 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 
 		// update the item view
 		SessionInfo item = getItem(position);
-		if (item.getStatus()) {
+		if (item.getStatus()) { // if a session is running set background red
 			viewHolder.row.setBackgroundColor(Color.RED);
 		} else
 			viewHolder.row.setBackgroundColor(0x00ffffff);
@@ -90,10 +90,6 @@ public class SessionAdapter extends ArrayAdapter<SessionInfo> {
 	 * The view holder design pattern prevents using findViewById() repeatedly
 	 * in the getView() method of the adapter. Use this to access elements
 	 * directly without using findViewById().
-	 * 
-	 * @see http 
-	 *      ://developer.android.com/training/improving-layouts/smooth-scrolling
-	 *      .html#ViewHolder
 	 */
 	private static class ViewHolder {
 		ImageView picture;

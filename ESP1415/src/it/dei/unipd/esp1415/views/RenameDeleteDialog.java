@@ -29,11 +29,12 @@ public class RenameDeleteDialog extends DialogFragment {
 
 	private String sessionId;
 	private boolean isRunning;
-	private String title = "Session name: ";
+	private String title = getString(R.string.title_dialog_rename_delete);
 	private String sessionName;
 	private Context context;
 
-	public RenameDeleteDialog(String sessionId, String sessionName, String title, boolean isRunning) {
+	public RenameDeleteDialog(String sessionId, String sessionName,
+			String title, boolean isRunning) {
 		this.sessionId = sessionId;
 		this.sessionName = sessionName;
 		this.title += title;
@@ -44,20 +45,18 @@ public class RenameDeleteDialog extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// get activity context (for fragment)
 		context = getActivity();
-		// Use the Builder class for convenient dialog construction
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		// Get the layout inflater
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
-	    View layout = inflater.inflate((R.layout.dialog_rename_delete),
-				null);
+		View layout = inflater.inflate((R.layout.dialog_rename_delete), null);
 		builder.setTitle(title);
 		// handler to garbage image object
 		ImageView garbage = (ImageView) layout
 				.findViewById(R.id.dialog_garbage);
 		// secure check, if a session is running it can be eliminated
-		if(isRunning)
+		if (isRunning)
 			garbage.setVisibility(View.GONE);
 		// set garbage button listener and onClick
 		garbage.setOnClickListener(new OnClickListener() {
@@ -76,8 +75,11 @@ public class RenameDeleteDialog extends DialogFragment {
 				// fragment update
 				refreshfragment();
 				// toast to confirm deletion
-				Toast.makeText(context, "Session " + sessionName + " delete",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(
+						context,
+						R.string.dialog_message1 + sessionName
+								+ R.string.dialog_message2, Toast.LENGTH_SHORT)
+						.show();
 				RenameDeleteDialog.this.getDialog().dismiss();
 			}
 		});
@@ -96,7 +98,7 @@ public class RenameDeleteDialog extends DialogFragment {
 								// if newName is an empty string, dismiss dialog
 								// with toast
 								if (newName.equals(""))
-									Toast.makeText(context, "Retry",
+									Toast.makeText(context, R.string.ritenta,
 											Toast.LENGTH_SHORT).show();
 								else {
 									// save new name
@@ -117,9 +119,11 @@ public class RenameDeleteDialog extends DialogFragment {
 									// update fragment
 									refreshfragment();
 									// toast to confirm rename operation
-									Toast.makeText(context, "Session renamed",
+									Toast.makeText(context,
+											R.string.toast_confirm,
 											Toast.LENGTH_SHORT).show();
-									RenameDeleteDialog.this.getDialog().dismiss();
+									RenameDeleteDialog.this.getDialog()
+											.dismiss();
 								}
 							}
 						})

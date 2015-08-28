@@ -2,23 +2,15 @@ package it.dei.unipd.esp1415.activity;
 
 import it.dei.unipd.esp1415.exceptions.LowSpaceException;
 import it.dei.unipd.esp1415.utils.LocalStorage;
-import it.dei.unipd.esp1415.utils.PreferenceStorage;
 import it.dei.unipd.esp1415.views.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.example.esp1415.R;
-import com.example.esp1415.R.drawable;
-import com.example.esp1415.R.id;
-import com.example.esp1415.R.layout;
-import com.example.esp1415.R.string;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,14 +22,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.esp1415.R;
+
+/**
+ * MailingListActivity class: sets and organizes mail addresses
+ */
 public class MailingListActivity extends Activity {
 
 	private static FloatingActionButton fabButton;
-	protected List<String> items;
+	private List<String> items;
 	private ArrayAdapter<String> adapter;
 	private Context context;
 	private AlertDialog.Builder deleteDialog;
-	private AlertDialog.Builder renameDialog;
+	private AlertDialog.Builder addDialog;
 	private String mailString;
 	private ListView lv;
 
@@ -45,7 +42,9 @@ public class MailingListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = this;
+		// set activity layout
 		setContentView(R.layout.activity_mailing_list_layout);
+
 		// get the list of session saved in the storage
 		items = getData();
 		// initialize and set the list adapter
@@ -64,24 +63,23 @@ public class MailingListActivity extends Activity {
 
 		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
-				.withDrawable(
-						getResources().getDrawable(
-								R.drawable.plus_grey))
-				.withButtonColor(SessionListActivity.colour)
+				.withDrawable(getResources().getDrawable(R.drawable.ic_plus))
+				.withButtonColor(R.color.fab_color)
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		// set the listener to FAB button
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				renameDialog = new AlertDialog.Builder(context);
+				addDialog = new AlertDialog.Builder(context);
 				LayoutInflater inflater = getLayoutInflater();
-				View dialoglayout = inflater.inflate(R.layout.dialog_rename, null);
+				View dialoglayout = inflater.inflate(R.layout.dialog_rename,
+						null);
 				final EditText addedMail = (EditText) dialoglayout
 						.findViewById(R.id.edittextrename);
-				renameDialog
+				addDialog
 						.setView(dialoglayout)
-						.setTitle("Set new mail address")
+						.setTitle(R.string.mail_dialog_title1)
 						.setPositiveButton(R.string.conferma,
 								new DialogInterface.OnClickListener() {
 									@Override
@@ -89,11 +87,10 @@ public class MailingListActivity extends Activity {
 											int id) {
 										String newMail = addedMail.getText()
 												.toString();
-										if (newMail.equals("")){
-											Toast.makeText(context, "Retry",
+										if (newMail.equals("")) {
+											Toast.makeText(context, R.string.ritenta,
 													Toast.LENGTH_SHORT).show();
-										}
-										else {
+										} else {
 											adapter.add(newMail);
 											saveData();
 										}
@@ -116,7 +113,7 @@ public class MailingListActivity extends Activity {
 		mailString = adapter.getItem(pos);
 		// create the dialog
 		deleteDialog = new AlertDialog.Builder(context)
-				.setTitle("Delete mail address?")
+				.setTitle(R.string.mail_dialog_title2)
 				.setMessage(mailString)
 				.setPositiveButton(R.string.conferma,
 						new DialogInterface.OnClickListener() {
@@ -153,7 +150,7 @@ public class MailingListActivity extends Activity {
 		try {
 			LocalStorage.saveMailingListToFile(lv.getAdapter());
 		} catch (IOException e) {
-			Log.i("ERROR", "Error saving mailing list - LocalStorage");	
+			Log.i("ERROR", "Error saving mailing list - LocalStorage");
 		} catch (LowSpaceException e) {
 			Log.i("ERROR", "Low space error - LocalStorage");
 		}

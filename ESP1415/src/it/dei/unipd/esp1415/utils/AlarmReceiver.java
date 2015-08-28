@@ -51,7 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 						minutes = Integer.parseInt(stringMinutes);
 						SettingsActivity.setAlarm(hour, minutes, context);
 					} catch (NumberFormatException e) {
-						Log.i("ERROR-SETTINGS", "Parse hour or minutes error");
+						Log.i("ERROR", "Parse hour or minutes error");
 					}
 				}
 			}
@@ -74,8 +74,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 				// build the notification
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 						context).setSmallIcon(R.drawable.plus_circle)
-						.setContentTitle("ESP Daily Reminder")
-						.setContentText("Click to start a new session")
+						.setContentTitle(context.getString(R.string.notification_title))
+						.setContentText(context.getString(R.string.notification_message))
 						.setLights(Color.GREEN, 1000, 1000).setAutoCancel(true)
 						.setContentIntent(pIntent);
 				// check and set notification settings
