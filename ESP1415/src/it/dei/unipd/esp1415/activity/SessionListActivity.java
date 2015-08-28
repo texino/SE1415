@@ -9,13 +9,12 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ListView;
 
 import com.example.esp1415.R;
 
@@ -78,9 +77,7 @@ public class SessionListActivity extends FragmentActivity {
 			items = LocalStorage.getSessionInfos();
 			size = items.size();
 			if (size != 0) { // the list is not empty
-				findViewById(R.id.image_empty).setVisibility(View.GONE); // hide
-																			// image
-																			// fills
+				findViewById(R.id.image_empty).setVisibility(View.GONE);
 				if (items.get(size - 1).getStatus()) { // check if a session is
 														// running
 					isSessionRunning = true;
