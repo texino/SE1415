@@ -42,6 +42,7 @@
             android:id="@+id/text_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_below="@+id/text_name"
             android:layout_marginBottom="@dimen/action_bar_margins"
             android:layout_marginEnd="@dimen/action_bar_margins"
@@ -53,84 +54,112 @@
             android:layout_toRightOf="@+id/image"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/texts_secondary_action_bar_color" />
+            android:textColor="@color/texts_secondary_action_bar_color"/>
+
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/layout_buttons"
+        android:id="@+id/layout_data_tot"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_below="@+id/layout_action_bar"
         android:layout_marginEnd="@dimen/layout_horizontal_margins"
         android:layout_marginLeft="@dimen/layout_horizontal_margins"
         android:layout_marginRight="@dimen/layout_horizontal_margins"
         android:layout_marginStart="@dimen/layout_horizontal_margins"
-        android:layout_marginTop="@dimen/layout_vertical_margins" >
+        android:background="@color/background_color" >
 
         <TextView
-            android:id="@+id/text_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/default_duration" />
+            android:id="@+id/center_text"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true" />
 
         <RelativeLayout
+            android:id="@+id/layout_graphic_datas"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/text_duration"
-            android:layout_toStartOf="@+id/text_duration" >
+            android:layout_above="@+id/center_text" >
 
-            <ImageButton
-                android:id="@+id/button_start"
-                android:layout_width="@dimen/layout_button_size"
-                android:layout_height="@dimen/layout_button_size"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                android:cacheColorHint="@android:color/transparent"
-                android:contentDescription="@string/description_button"
-                android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/button_play_source" />
+            <RelativeLayout
+                android:id="@+id/layout_buttons"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/layout_vertical_margins"
+                android:layout_marginTop="@dimen/layout_vertical_margins" >
+
+                <TextView
+                    android:id="@+id/text_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/default_duration" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/text_duration"
+                    android:layout_toStartOf="@+id/text_duration" >
+
+                    <it.dei.unipd.esp1415.views.PlayAnimatedButton
+                        android:id="@+id/button_start"
+                        android:layout_width="@dimen/layout_button_size"
+                        android:layout_height="@dimen/layout_button_size"
+                        android:layout_centerHorizontal="true"
+                        android:background="@android:color/transparent"
+                        android:cacheColorHint="@android:color/transparent"
+                        android:contentDescription="@string/description_button"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/text_duration"
+                    android:layout_toRightOf="@+id/text_duration" >
+
+                    <it.dei.unipd.esp1415.views.StopAnimatedButton
+                        android:id="@+id/button_stop"
+                        android:layout_width="@dimen/layout_button_size"
+                        android:layout_height="@dimen/layout_button_size"
+                        android:layout_centerHorizontal="true"
+                        android:background="@android:color/transparent"
+                        android:cacheColorHint="@android:color/transparent"
+                        android:contentDescription="@string/description_button"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <it.dei.unipd.esp1415.views.GraphicView
+                android:id="@+id/graphic"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/layout_buttons" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/text_duration"
-            android:layout_toRightOf="@+id/text_duration" >
+            android:layout_below="@+id/center_text"
+            android:layout_marginTop="@dimen/layout_vertical_margins"
+            android:background="@color/row_color" >
 
-            <ImageButton
-                android:id="@+id/button_stop"
-                android:layout_width="@dimen/layout_button_size"
-                android:layout_height="@dimen/layout_button_size"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                android:cacheColorHint="@android:color/transparent"
-                android:contentDescription="@string/description_button"
-                android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/button_stop_source" />
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+            <ImageView
+                android:id="@+id/image_bkg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:contentDescription="@string/description_image"
+                android:src="@drawable/image_empty_list" />
         </RelativeLayout>
     </RelativeLayout>
-
-    <it.dei.unipd.esp1415.views.GraphicView
-        android:id="@+id/graphic"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_graphic_height"
-        android:layout_below="@+id/layout_buttons"
-        android:layout_marginEnd="@dimen/layout_horizontal_margins"
-        android:layout_marginLeft="@dimen/layout_horizontal_margins"
-        android:layout_marginRight="@dimen/layout_horizontal_margins"
-        android:layout_marginStart="@dimen/layout_horizontal_margins"
-        android:layout_marginTop="@dimen/layout_vertical_margins" />
-
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/graphic"
-        android:layout_marginTop="@dimen/layout_vertical_margins" />
 
     <LinearLayout
         android:layout_width="fill_parent"

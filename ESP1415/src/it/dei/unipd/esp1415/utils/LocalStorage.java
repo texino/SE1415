@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,9 +34,11 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
+import android.widget.ListAdapter;
 
 /**
  * Classe che gestisce il salvataggio ed il recupero delle sessioni
@@ -51,6 +54,7 @@ public class LocalStorage {
 	private final static String ID_TAG="ID";
 	private final static String DATE_TAG="DATE";
 	private final static String STATUS_TAG="STATUS";
+	private final static String applicationPath=extDirectory+"/Working/";
 
 	/**
 	 * Prende la lista delle informazioni di tutte le sessioni memorizzate
@@ -414,11 +418,17 @@ public class LocalStorage {
 		imageFile=new File(path);
 		if(!imageFile.exists())
 			imageFile.createNewFile();
+		
+		Random random=new Random();
+		int red=random.nextInt(255);
+		int green=random.nextInt(255);
+		int blue=random.nextInt(255);
+		int color=Color.rgb(red, green, blue);
 		int[] pixels=new int[50*50];
 		for(int c=0;c<50;c++)
 		{
 			for(int r=0;r<50;r++)
-				pixels[(r*50)+c]=0xffffff00;
+				pixels[(r*50)+c]=color;
 		}
 		Bitmap b=Bitmap.createBitmap(pixels, 50, 50, Bitmap.Config.ARGB_8888);
 		storeBitmapInFile(b,imageFile.getAbsolutePath());
@@ -651,5 +661,54 @@ public class LocalStorage {
 		bufferedWriter.write(sessionId);
 		bufferedWriter.flush();
 		bufferedWriter.close();
+	}
+
+	public static void saveMailingListToFile(ListAdapter listAdapter)
+			throws LowSpaceException, IOException {
+		int index = listAdapter.getCount();
+		String listString = "";
+		for (int i = 0; i < index; i++)
+			listString += listAdapter.getItem(i) + "\n";
+		long aSpace = getAvailableSpace();
+		int nSpace = listString.length();
+		if (aSpace < nSpace)
+			throw new LowSpaceException(aSpace, nSpace);
+		File mailFile = new File(applicationPath);
+		if (!mailFile.exists())
+			mailFile.mkdirs();
+		mailFile = new File(applicationPath + "mailinglist.txt");
+		if (!mailFile.exists())
+			mailFile.createNewFile();
+		// Scriviamo nel file
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(
+				mailFile));
+		bufferedWriter.write(listString);
+		bufferedWriter.flush();
+		bufferedWriter.close();
+	}
+
+	public static List<String> getMailingList() throws IOException {
+		List<String> mailingList = new ArrayList<String>();
+		String path=applicationPath;
+		String name = "mailinglist.txt";
+		try{
+			File mailFile=new File(path);
+			if(!mailFile.exists())
+				mailFile.mkdirs();
+			mailFile=new File(path+name);
+			if(!mailFile.exists())
+				mailFile.createNewFile();
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(mailFile));
+			String mailString;
+			while((mailString=bufferedReader.readLine())!=null)
+			{
+				mailingList.add(mailString);
+			}
+			bufferedReader.close();
+			return mailingList;
+		} catch (java.io.IOException e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 }

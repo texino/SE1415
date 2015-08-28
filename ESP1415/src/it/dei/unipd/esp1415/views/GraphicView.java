@@ -25,8 +25,8 @@ public class GraphicView extends View
 	float textYIndex=4f;//numero di g per uno slot
 	float textXIndex=1f;//numero di secondi per uno slot
 	boolean oneSecond=false;
-	private static final int MIN_ACC=-16,MAX_ACC=16;
-	private int SECONDS=10;
+	private static final int MIN_ACC=-8,MAX_ACC=8;
+	private int SECONDS=6;
 
 	@Override
 	public void onSizeChanged(int w,int h,int oW,int oH)
@@ -36,25 +36,25 @@ public class GraphicView extends View
 		//creiamo la bitmap di sfondo e l'allegato canvas
 		canvasBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
 		Canvas backgroundCanvas = new Canvas(canvasBitmap);
-		
-		int secondPixel=w/SECONDS;
+
+		float secondPixel=((float)w)/SECONDS;
 		pixelY=(int)(h/((MAX_ACC/textYIndex)-(MIN_ACC/textYIndex)));
 		//disegniamo gli assi
 		drawAxesOnCanvas(backgroundCanvas,secondPixel,pixelY);
-		
+
 		//misuriamo il numero di dati da rappresentare
-		String r;
-		//r=PreferenceStorage.getSimpleData(actContext,PreferenceStorage.ACCEL_RATIO);
-		String cancellaQuesteDueRighe;
-		r="2";
-		int rate=2;
+		String r="";
+		if(actContext!=null)
+			r=PreferenceStorage.getSimpleData(actContext,PreferenceStorage.ACCEL_RATIO);
+		int rate;
 		if(r.equals(""))
 		{
 			rate=GlobalConstants.MIN_RATIO;
 			PreferenceStorage.storeSimpleData(actContext,PreferenceStorage.ACCEL_RATIO,""+rate);
 		}
-		float sNumber=((float)w)/secondPixel;
-		int dataNumber=(int)(sNumber*rate);
+		else
+			rate=Integer.parseInt(r);
+		int dataNumber=(int)(SECONDS*rate);
 		if(data==null)//non ci sono dati da visualizzare
 		{
 			data=new DataArray(dataNumber);
@@ -64,7 +64,7 @@ public class GraphicView extends View
 		//ci sono già dei dati che vorremmo visualizzare
 		DataArray tData=new DataArray(dataNumber);//dati effettivi da visualizzare
 		int oldDataNumber=data.getRate();//numero di dati da cerare di riprodurre
-		
+
 		int rIndex=data.getIndex(); //indice da cui riprodurre i dati 
 		int off=dataNumber-oldDataNumber;//se <0 allora devo troncare dati
 		if(off<0)
@@ -82,7 +82,7 @@ public class GraphicView extends View
 			tData.add(Xs[i],Ys[i],Zs[i]);
 		super.onSizeChanged(w,h,oW,oH);
 	}
-	
+
 	public void setScaleToOneSecond()
 	{
 		oneSecond=true;
@@ -103,7 +103,7 @@ public class GraphicView extends View
 	 * @param pixelX Il numero di pixel tra un secondo e l'altro nell'asse X
 	 * @param pixelY Il numero di pixel tra un valore e l'altro nell'asse Y
 	 */
-	private void drawAxesOnCanvas(Canvas canvas,int pixelX,int pixelY)
+	private void drawAxesOnCanvas(Canvas canvas,float pixelX,int pixelY)
 	{
 		Paint paint=new Paint();
 		paint.setAntiAlias(false);
@@ -123,7 +123,7 @@ public class GraphicView extends View
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		canvas.drawText("0 s",mW,mH+5, paint);
 		//Disegno gli indici sull'asse X
-		int off=pixelX;
+		int off=(int)pixelX;
 		float text=textXIndex;
 		while(off<mW)
 		{
@@ -132,7 +132,7 @@ public class GraphicView extends View
 			canvas.drawText(""+text+" s",mW+off,mH-7,paint);
 			canvas.drawText("-"+text+" s",mW-off,mH-7,paint);
 			text+=textXIndex;
-			off=off+pixelX;
+			off=off+(int)pixelX;
 		}
 
 		//Disegno gli indici sull'asse Y
@@ -150,12 +150,17 @@ public class GraphicView extends View
 		}
 	}
 
+	/**
+	 * Imposta un certo gruppo di dati come contenuto del grafico
+	 * @param datas
+	 */
 	public void setData(DataArray datas)
 	{
 		data=datas;
+		invalidate();
 	}
-	
-	public void drawDataOnCanvas(Canvas canvas,DataArray data)
+
+	private void drawDataOnCanvas(Canvas canvas,DataArray data)
 	{
 		int index=data.getIndex();
 		float dataX[]=data.getXData(),dataY[]=data.getYData(),dataZ[]=data.getZData();
@@ -191,10 +196,16 @@ public class GraphicView extends View
 		canvas.drawLine(x,adjust(dataZ[i]),w-1,adjust(dataZ[i]),paintZ);
 	}
 
+	/**
+	 * Aggiunge un dato al grafico aggiornandolo visivamente
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public void add(float x,float y,float z)
 	{
 		data.add(x,y,z);
-		this.invalidate();
+		invalidate();
 	}
 
 	/**
@@ -239,7 +250,7 @@ public class GraphicView extends View
 	{
 		//il valore dell'acceleratore è circa nell'intervallo
 		int h=this.getHeight();
-		
+
 		float pixelOffset=pixelY*(((float)f)/textYIndex);
 
 		int rH=(int)((h/2)-(pixelOffset));
@@ -255,6 +266,7 @@ public class GraphicView extends View
 		super(context);
 		init(context);
 	}
+
 	public GraphicView(Context context,AttributeSet attr) {
 		super(context,attr);
 		init(context);

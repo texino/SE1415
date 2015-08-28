@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_height"
-    android:background="@color/background_color" >
+    android:background="@color/row_color" >
 
     <ImageView
         android:id="@+id/notifica"
@@ -15,7 +15,7 @@
         android:layout_marginEnd="@dimen/layout_horizontal_margins"
         android:layout_marginRight="@dimen/layout_horizontal_margins"
         android:contentDescription="@string/datetimefall"
-        android:src="@drawable/image_notified_ok" />
+        android:src="@drawable/image_notified_ko" />
 
     <TextView
         android:id="@+id/date_time_fall"
@@ -27,6 +27,8 @@
         android:layout_marginRight="@dimen/layout_horizontal_margins"
         android:layout_marginStart="@dimen/layout_horizontal_margins"
         android:layout_marginTop="@dimen/layout_horizontal_margins"
+        android:layout_toLeftOf="@+id/notifica"
+        android:layout_toStartOf="@+id/notifica"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceLarge"

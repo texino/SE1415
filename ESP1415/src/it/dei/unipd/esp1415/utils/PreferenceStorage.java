@@ -14,6 +14,8 @@ public class PreferenceStorage {
 	
 	/** Tag for the number of session stored*/
 	public static final String N_SESSIONS="nSession";
+
+	public static final String DURATION="duration";
 	
 	private static final String preferencesName="com.rpt.workingforelders.preferences";
 	
@@ -28,6 +30,8 @@ public class PreferenceStorage {
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		//SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
+		if(prefs==null)
+			return;
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(tag, value);
 		editor.commit();
@@ -44,6 +48,8 @@ public class PreferenceStorage {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		//SharedPreferences prefs=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
 		//SharedPreferences sp=ctx.getSharedPreferences(preferencesName,Context.MODE_PRIVATE);
+		if(prefs==null)
+			return "";
 		String s=prefs.getString(tag,"");
 		return s;
 	}

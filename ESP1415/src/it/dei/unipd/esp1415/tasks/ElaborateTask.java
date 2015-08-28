@@ -1,9 +1,6 @@
 package it.dei.unipd.esp1415.tasks;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import it.dei.unipd.esp1415.exceptions.IllegalDateFormatException;
 import it.dei.unipd.esp1415.exceptions.IllegalIdException;
@@ -13,6 +10,7 @@ import it.dei.unipd.esp1415.exceptions.NoSuchSessionException;
 import it.dei.unipd.esp1415.objects.FallData;
 import it.dei.unipd.esp1415.utils.DataArray;
 import it.dei.unipd.esp1415.utils.LocalStorage;
+import it.dei.unipd.esp1415.utils.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -42,24 +40,54 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		int prevIndex=index-1;
-		if(index==0)
-			prevIndex=dZ.length-1;
-		int middleIndex=index+dZ.length/2;
-		if(middleIndex>=dZ.length)
-			middleIndex=middleIndex-dZ.length;
-		if((dZ[prevIndex]-dZ[index])>9)
+		int tI,maxZi=0,minZi=0,rI=0;
+		float minZ=dZ[index],maxZ=dZ[index];
+		for(tI=index;tI<dZ.length;tI++)
 		{
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
-			String date=dateFormat.format(new Date());
-			DataArray datas=new DataArray(dX.length);
+			if(dZ[tI]>maxZ)
+			{
+				maxZ=dZ[tI];
+				maxZi=rI;
+			}
+			else if(dZ[tI]<minZ)
+			{
+				minZ=dZ[tI];
+				minZi=rI;
+			}
+			rI++;
+		}
+		for(tI=0;tI<index;tI++)
+		{
+			if(dZ[tI]>maxZ)
+			{
+				maxZ=dZ[tI];
+				maxZi=rI;
+			}
+			else if(dZ[tI]<minZ)
+			{
+				minZ=dZ[tI];
+				minZi=rI;
+			}
+			rI++;
+		}
+		if(maxZi<=minZi) //ci assicuriamo che il valore più alto sia DOPO quello più basso
+			return null;
+		if(((maxZ-minZ)>16)&&((ESPService)context).elaborateFall())
+		{
+			Log.d(TAG,"FALLEN");
+			String date=Utils.getDateHour();
+			DataArray datas=new DataArray(dZ.length);
 			for(int i=index;i<dX.length;i++)
 				datas.add(dX[i],dY[i],dZ[i]);
 			for(int i=0;i<index;i++)
 				datas.add(dX[i],dY[i],dZ[i]);
+			//TODO get GPS
+			//TODO make HTTP
+			String todo;
+			boolean notified=true;
 			FallData data;
 			try {
-				data = new FallData(""+System.currentTimeMillis(),date,true,"",actualLong,actualLat,datas);
+				data = new FallData(""+System.currentTimeMillis(),date,notified,"",actualLong,actualLat,datas);
 				LocalStorage.storeFallData(sessionId,data);
 				sendBroadcastMessage(data.getId());
 			} catch (IllegalArgumentException e) {
@@ -77,7 +105,6 @@ public class ElaborateTask extends AsyncTask<Void,Void,Void>{
 			} catch (LowSpaceException e) {
 				e.printStackTrace();
 			}
-			Log.d("FALL EVENT","FALLEN");
 		}
 		return null;
 	}

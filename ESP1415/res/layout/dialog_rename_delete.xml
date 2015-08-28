@@ -5,24 +5,26 @@
     android:orientation="horizontal"
     android:weightSum="1" >
 
+    <ImageView
+        android:id="@+id/dialog_garbage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_weight="0.3"
+        android:clickable="true"
+        android:contentDescription="@string/picture_descriptor2"
+        android:padding="5dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_discard" />
+
     <EditText
         android:id="@+id/renamesession"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
+        android:layout_weight="0.7"
         android:hint="@string/hint_dialog_1"
-        android:inputType="text" />
-
-    <ImageView
-        android:id="@+id/delete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_weight="0.2"
-        android:clickable="true"
-        android:onClick="deleteSession"
-        android:contentDescription="@string/picture_descriptor2"
-        android:scaleType="center"
-        android:src="@drawable/ic_action_discard" />
+        android:inputType="text"
+        android:maxLength="@integer/name_lenght"
+        android:maxLines="1" />
 
 </LinearLayout>

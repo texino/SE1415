@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/myfragment"
-        android:name="it.dei.unipd.esp1415.MyListFragment"
+        android:name="it.dei.unipd.esp1415.views.SessionListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <!--

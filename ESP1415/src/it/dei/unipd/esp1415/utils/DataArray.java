@@ -1,13 +1,13 @@
 package it.dei.unipd.esp1415.utils;
 
 public class DataArray {
-	
+
 	private float[] dataX;
 	private float[] dataY;
 	private float[] dataZ;
 	private int index;
 	private int rate;
-	
+
 	/**
 	 * Crea un nuovo array disegnabile per i dati dell'accellerometro
 	 * @param rate Il numero di dati memorizzabili in questo array (almeno 1)<br>
@@ -53,7 +53,7 @@ public class DataArray {
 		else
 			index=i;
 	}
-	
+
 	/**
 	 * Prende l'indice di lettura di questo array
 	 * @return Un valore intero nell'intervallo [0,rate[
@@ -71,7 +71,7 @@ public class DataArray {
 	{
 		return rate;
 	}
-	
+
 	/**
 	 * Prende l'array di valori sull'asse X di questo array
 	 * @return Un array di valori float
@@ -97,5 +97,22 @@ public class DataArray {
 	public float[] getZData()
 	{
 		return dataZ;
+	}
+
+	/**
+	 * Copia il contenuto di questo array in un'altro indipendente
+	 * @return
+	 */
+	public DataArray copy()
+	{
+		DataArray d=new DataArray(rate);
+		for(int i=0;i<rate;i++)
+		{
+			d.dataX[i]=dataX[i];
+			d.dataY[i]=dataY[i];
+			d.dataZ[i]=dataZ[i];
+			d.setIndex(index);
+		}
+		return d;
 	}
 }
