@@ -29,7 +29,7 @@ public class RenameDeleteDialog extends DialogFragment {
 
 	private String sessionId;
 	private boolean isRunning;
-	private String title = getString(R.string.title_dialog_rename_delete);
+	private String title;
 	private String sessionName;
 	private Context context;
 
@@ -45,6 +45,7 @@ public class RenameDeleteDialog extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// get activity context (for fragment)
 		context = getActivity();
+		title = getString(R.string.title_dialog_rename_delete);
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		// Get the layout inflater
 		LayoutInflater inflater = getActivity().getLayoutInflater();

@@ -37,6 +37,9 @@ public class MailingListActivity extends Activity {
 	private AlertDialog.Builder addDialog;
 	private String mailString;
 	private ListView lv;
+	private boolean isAddDialogOpen;
+	private boolean isDeleteDialogOpen;
+	private EditText addedMail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +75,11 @@ public class MailingListActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				addDialog = new AlertDialog.Builder(context);
+				isAddDialogOpen = true;
 				LayoutInflater inflater = getLayoutInflater();
 				View dialoglayout = inflater.inflate(R.layout.dialog_rename,
 						null);
-				final EditText addedMail = (EditText) dialoglayout
+				addedMail = (EditText) dialoglayout
 						.findViewById(R.id.edittextrename);
 				addDialog
 						.setView(dialoglayout)
@@ -88,12 +92,14 @@ public class MailingListActivity extends Activity {
 										String newMail = addedMail.getText()
 												.toString();
 										if (newMail.equals("")) {
-											Toast.makeText(context, R.string.ritenta,
+											Toast.makeText(context,
+													R.string.ritenta,
 													Toast.LENGTH_SHORT).show();
 										} else {
 											adapter.add(newMail);
 											saveData();
 										}
+										isAddDialogOpen = false;
 									}
 								})
 						.setNegativeButton(R.string.cancel,
@@ -102,15 +108,59 @@ public class MailingListActivity extends Activity {
 									public void onClick(DialogInterface dialog,
 											int id) {
 										dialog.dismiss();
+										isAddDialogOpen = false;
 									}
-								}).create().show();
+								}).create().setOnDismissListener(
+				new DialogInterface.OnDismissListener() {
+
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						isAddDialogOpen = false;
+					}
+				});
+				addDialog.show();
 			}
-		});
+		});/*
+		if (savedInstanceState != null)
+			onRestoreInstanceState(savedInstanceState);*/
+	}
+
+	// saving the state of the activity
+	public void onSaveInstanceState(Bundle state) {
+		if (isAddDialogOpen) {
+			state.putString("newMail", addedMail.getText().toString());
+			state.putBoolean("addDialog", isAddDialogOpen);
+		} else if (isDeleteDialogOpen) {
+			state.putBoolean("deleteDialog", isDeleteDialogOpen);
+			state.putString("deleteMail", mailString);
+		}
+		super.onSaveInstanceState(state);
+	}
+
+	// restore the state of the activity
+	public void onRestoreInstanceState(Bundle state) {
+		isAddDialogOpen = state.getBoolean("addDialog", false);
+		isDeleteDialogOpen = state.getBoolean("deleteDialog", false);
+		if (isAddDialogOpen) {
+			fabButton.performClick();
+			addedMail.setText(state.getCharSequence("newMail").toString());
+		} else if (isDeleteDialogOpen) {
+			mailString = state.getCharSequence("deleteMail").toString();
+			createDeleteDialog();
+			deleteDialog.show();
+		}
 	}
 
 	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		mailString = adapter.getItem(pos);
+		createDeleteDialog();
+		deleteDialog.show();
+		isDeleteDialogOpen = true;
+		return true;
+	}
+
+	private void createDeleteDialog() {
 		// create the dialog
 		deleteDialog = new AlertDialog.Builder(context)
 				.setTitle(R.string.mail_dialog_title2)
@@ -121,6 +171,7 @@ public class MailingListActivity extends Activity {
 							public void onClick(DialogInterface dialog, int id) {
 								adapter.remove(mailString);
 								saveData();
+								isDeleteDialogOpen = false;
 							}
 						})
 				.setNegativeButton(R.string.cancel,
@@ -128,11 +179,18 @@ public class MailingListActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.dismiss();
+								isDeleteDialogOpen = false;
 							}
 						});
 		;
-		deleteDialog.create().show();
-		return true;
+		deleteDialog.create().setOnCancelListener(
+				new DialogInterface.OnCancelListener() {
+					
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						isDeleteDialogOpen = false;
+					}
+				});
 	}
 
 	private List<String> getData() {

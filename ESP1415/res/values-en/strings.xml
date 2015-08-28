@@ -82,9 +82,10 @@
     <string name="notifylist_summary">Manage the list of people to notify by email</string>
     <string name="samplerate_title">Sample rate</string>
     <string name="message_24h">Maybe is too much, retry!</string>
-    <string name="rate_summary">samples per second</string>
+    <string name="single_rate_summary">sample per second</string>    
+    <string name="multi_rate_summary">sample per second</string>
     <!-- Notification strings -->
-    <string name="notification_title">ESP Daily Reminder</string>
+    <string name="notification_title">Fall Detector</string>
     <string name="notification_message">Click to start a new session</string>
     
 

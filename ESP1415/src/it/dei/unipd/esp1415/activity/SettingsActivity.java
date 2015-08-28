@@ -40,6 +40,8 @@ public class SettingsActivity extends PreferenceActivity {
 	public static String hourKey = "HOUR";
 	public static String minutesKey = "MINUTES";
 	public static String languageKey = "LANGUAGE";
+	public static String itKey = "it";
+	public static String enKey = "en";
 	public static String rateKey = PreferenceStorage.ACCEL_RATIO;
 	public static String durationKey = PreferenceStorage.DURATION;
 	// alarm variables
@@ -57,7 +59,8 @@ public class SettingsActivity extends PreferenceActivity {
 	private int selectedLanguage;
 	private boolean isSessionRunning;
 	private static Context context;
-	private String rateString = getString(R.string.rate_summary);
+	private String singleRateString;
+	private String multiRateString;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -75,6 +78,9 @@ public class SettingsActivity extends PreferenceActivity {
 
 		// activity context
 		context = this;
+		
+		singleRateString = getString(R.string.single_rate_summary);
+		multiRateString = getString(R.string.multi_rate_summary);
 
 		// Bind the summaries preferences to their stored values by keys
 		// set also activity's variables
@@ -141,7 +147,7 @@ public class SettingsActivity extends PreferenceActivity {
 							PreferenceStorage.storeSimpleData(context, rateKey,
 									"" + rate);
 							// update summary
-							ratePref.setSummary(rate + rateString);
+							ratePref.setSummary(rate + " " + singleRateString);
 							break;
 						case 1:
 							selectedRate = 1;
@@ -149,7 +155,7 @@ public class SettingsActivity extends PreferenceActivity {
 							PreferenceStorage.storeSimpleData(context, rateKey,
 									"" + rate);
 							// update summary
-							ratePref.setSummary(rate + rateString);
+							ratePref.setSummary(rate + " " + multiRateString);
 							break;
 						case 2:
 							selectedRate = 2;
@@ -157,7 +163,7 @@ public class SettingsActivity extends PreferenceActivity {
 							PreferenceStorage.storeSimpleData(context, rateKey,
 									"" + rate);
 							// update summary
-							ratePref.setSummary(rate + rateString);
+							ratePref.setSummary(rate + " " + multiRateString);
 							break;
 						case 3:
 							selectedRate = 3;
@@ -165,7 +171,7 @@ public class SettingsActivity extends PreferenceActivity {
 							PreferenceStorage.storeSimpleData(context, rateKey,
 									"" + rate);
 							// update summary
-							ratePref.setSummary(rate + rateString);
+							ratePref.setSummary(rate + " " + multiRateString);
 							break;
 						case 4:
 							selectedRate = 4;
@@ -173,7 +179,7 @@ public class SettingsActivity extends PreferenceActivity {
 							PreferenceStorage.storeSimpleData(context, rateKey,
 									"" + rate);
 							// update summary
-							ratePref.setSummary(rate + rateString);
+							ratePref.setSummary(rate + " " + multiRateString);
 							break;
 						}
 						sampleRateDialog.dismiss();
@@ -206,18 +212,18 @@ public class SettingsActivity extends PreferenceActivity {
 						switch (choice) {
 						case 0:
 							selectedLanguage = 0;
-							language = "ita"; // TODO
+							language = itKey;
 							PreferenceStorage.storeSimpleData(context,
-									languageKey, "" + language);
-							// TODO richiamare il metodo LocalStorage
+									languageKey, language);
+							// TODO richiamare il metodo LocalStorage passargli language
 							// update summary
 							languagePref.setSummary(languageList[0]);
 							break;
 						case 1:
 							selectedLanguage = 1;
-							language = "eng"; // TODO
+							language = enKey;
 							PreferenceStorage.storeSimpleData(context,
-									languageKey, "" + language);
+									languageKey, language);
 							// TODO richiamare il metodo LocalStorage
 							// update summary
 							languagePref.setSummary(languageList[1]);
@@ -285,7 +291,7 @@ public class SettingsActivity extends PreferenceActivity {
 				rate = 3;
 				PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 				// set sample rate summary
-				preference.setSummary(rate + rateString);
+				preference.setSummary(rate + " " + multiRateString);
 			} else {
 				try {
 					// string value to int value
@@ -312,7 +318,10 @@ public class SettingsActivity extends PreferenceActivity {
 				}
 				PreferenceStorage.storeSimpleData(context, rateKey, "" + rate);
 				// set sample rate summary
-				preference.setSummary(rate + rateString);
+				if (selectedRate == 0)
+					preference.setSummary(rate + singleRateString);
+				else
+					preference.setSummary(rate + " " + multiRateString);
 			}
 		} else if (preference.getKey().equalsIgnoreCase("languagekey")) {
 			// language preference
@@ -321,18 +330,16 @@ public class SettingsActivity extends PreferenceActivity {
 					languageKey);
 			if (stringLanguage.equals("")) {
 				selectedLanguage = 0;
-				stringLanguage = "ita";// TODO
-				PreferenceStorage.storeSimpleData(context, languageKey, ""
-						+ stringLanguage);
+				stringLanguage = itKey;
+				PreferenceStorage.storeSimpleData(context, languageKey, stringLanguage);
 				// set summary
 				preference.setSummary(languageList[0]);
 			} else {
-				if (stringLanguage.equalsIgnoreCase("ita"))// TODO
+				if (stringLanguage.equalsIgnoreCase(itKey))
 					selectedLanguage = 0;
 				else
 					selectedLanguage = 1;
-				PreferenceStorage.storeSimpleData(context, languageKey, ""
-						+ stringLanguage);
+				PreferenceStorage.storeSimpleData(context, languageKey, stringLanguage);
 				// set summary
 				preference.setSummary(languageList[selectedLanguage]);
 			}

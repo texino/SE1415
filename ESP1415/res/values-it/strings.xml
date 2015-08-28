@@ -82,9 +82,10 @@
     <string name="notifylist_summary">Organizza le persone da notificare via mail</string>
     <string name="samplerate_title">Campionamento</string>
     <string name="message_24h">Forse è troppo, riprova!</string>
-    <string name="rate_summary">campioni al secondo</string>
+    <string name="single_rate_summary">campione al secondo</string>
+    <string name="multi_rate_summary">campioni al secondo</string>
     <!-- Notification strings -->
-    <string name="notification_title">ESP Promemoria Giornaliero</string>
+    <string name="notification_title">Fall Detector</string>
     <string name="notification_message">Clicca per iniziare una nuova sessione</string>
     
 

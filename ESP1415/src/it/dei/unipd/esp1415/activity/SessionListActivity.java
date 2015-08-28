@@ -37,7 +37,7 @@ public class SessionListActivity extends FragmentActivity {
 		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_plus))
-				.withButtonColor(R.color.fab_color)
+				.withButtonColor(getResources().getColor(R.color.fab_color))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		// set the listener to FAB button to go to third activity

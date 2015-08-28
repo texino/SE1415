@@ -16,6 +16,7 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.esp1415.R;
@@ -27,17 +28,38 @@ public class SessionListFragment extends ListFragment {
 
 	private RenameDeleteDialog dialog;
 	private List<SessionInfo> items = new ArrayList<SessionInfo>();
+	private EditText renameText;
+	private boolean isDialogOpen;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
-
+	
+	//saving the state of the fragment
+	public void onSaveInstanceState(Bundle state)
+	{
+		if(isDialogOpen) {
+			state.putString("rename", renameText.getText().toString());
+			state.putBoolean("notified", isDialogOpen);
+		}
+		super.onSaveInstanceState(state);
+	}
+	
+	//restore the state of the fragment
+	public void onRestoreInstanceState(Bundle state)
+	{
+		isDialogOpen = state.getBoolean("notified", false);
+		if (isDialogOpen){
+			renameText.setText(state.getCharSequence("rename").toString());
+			// show the dialog
+			dialog.show(getFragmentManager(), "dialog");
+		}
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
-		// setting up onClick listeners
 
 		// get the ListView witch handle the click and long press Android events
 		ListView lv = getListView();
@@ -58,6 +80,9 @@ public class SessionListFragment extends ListFragment {
 				return onLongListItemClick(v, pos, id);
 			}
 		});
+		renameText = (EditText) getActivity().findViewById(R.id.renamesession);
+		if(savedInstanceState != null)
+			onRestoreInstanceState(savedInstanceState);
 	}
 
 	// single click implementation
