@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -30,33 +31,38 @@ public class SessionListFragment extends ListFragment {
 	private List<SessionInfo> items = new ArrayList<SessionInfo>();
 	private EditText renameText;
 	private boolean isDialogOpen;
+	private String savedId;
+	private String savedName;
+	private boolean savedStatus;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
-	
-	//saving the state of the fragment
-	public void onSaveInstanceState(Bundle state)
-	{
-		if(isDialogOpen) {
+
+	// saving the state of the fragment
+	public void onSaveInstanceState(Bundle state) {
+		if (isDialogOpen) {
+			state.putString("id", savedId);
 			state.putString("rename", renameText.getText().toString());
-			state.putBoolean("notified", isDialogOpen);
+			state.putBoolean("state", savedStatus);
+			state.putBoolean("dialog", isDialogOpen);
 		}
 		super.onSaveInstanceState(state);
 	}
-	
-	//restore the state of the fragment
-	public void onRestoreInstanceState(Bundle state)
-	{
-		isDialogOpen = state.getBoolean("notified", false);
-		if (isDialogOpen){
-			renameText.setText(state.getCharSequence("rename").toString());
-			// show the dialog
+
+	// restore the state of the fragment
+	public void onRestoreInstanceState(Bundle state) {
+		isDialogOpen = state.getBoolean("dialog", false);
+		if (isDialogOpen) {
+			savedName = state.getString("rename").toString();
+			savedId = state.getString("id");
+			savedStatus = state.getBoolean("dialog");
+			dialog = new RenameDeleteDialog(savedId, savedName, savedStatus);
 			dialog.show(getFragmentManager(), "dialog");
 		}
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -80,9 +86,8 @@ public class SessionListFragment extends ListFragment {
 				return onLongListItemClick(v, pos, id);
 			}
 		});
-		renameText = (EditText) getActivity().findViewById(R.id.renamesession);
-		if(savedInstanceState != null)
-			onRestoreInstanceState(savedInstanceState);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_rename_delete, null);
+		renameText = (EditText) view.findViewById(R.id.renamesession);
 	}
 
 	// single click implementation
@@ -107,10 +112,13 @@ public class SessionListFragment extends ListFragment {
 	// long click implementation
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		SessionInfo item = items.get(pos);
-		dialog = new RenameDeleteDialog(item.getId(), item.getName(),
-				item.getName(), item.getStatus());
+		savedId = item.getId();
+		savedStatus = item.getStatus();
+		savedName = item.getName();
+		dialog = new RenameDeleteDialog(savedId, savedName, savedStatus);
 		// show the dialog
 		dialog.show(getFragmentManager(), "dialog");
+		isDialogOpen = true;
 		return true;
 	}
 

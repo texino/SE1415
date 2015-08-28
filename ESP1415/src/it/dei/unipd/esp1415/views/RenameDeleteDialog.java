@@ -33,11 +33,13 @@ public class RenameDeleteDialog extends DialogFragment {
 	private String sessionName;
 	private Context context;
 
+	public RenameDeleteDialog() {
+	}
+
 	public RenameDeleteDialog(String sessionId, String sessionName,
-			String title, boolean isRunning) {
+			boolean isRunning) {
 		this.sessionId = sessionId;
 		this.sessionName = sessionName;
-		this.title += title;
 		this.isRunning = isRunning;
 	}
 
@@ -89,6 +91,7 @@ public class RenameDeleteDialog extends DialogFragment {
 				.findViewById(R.id.renamesession);
 		editText.setText(sessionName);
 		builder.setView(layout)
+				.setCancelable(false)
 				// Add action buttons
 				.setPositiveButton(R.string.rename,
 						new DialogInterface.OnClickListener() {
@@ -98,10 +101,11 @@ public class RenameDeleteDialog extends DialogFragment {
 								String newName = editText.getText().toString();
 								// if newName is an empty string, dismiss dialog
 								// with toast
-								if (newName.equals(""))
+								if (newName.equals("")) {
 									Toast.makeText(context, R.string.ritenta,
 											Toast.LENGTH_SHORT).show();
-								else {
+									dialog.dismiss();
+								} else {
 									// save new name
 									try {
 										LocalStorage.renameSession(sessionId,
@@ -123,15 +127,14 @@ public class RenameDeleteDialog extends DialogFragment {
 									Toast.makeText(context,
 											R.string.toast_confirm,
 											Toast.LENGTH_SHORT).show();
-									RenameDeleteDialog.this.getDialog()
-											.dismiss();
+									dialog.dismiss();
 								}
 							}
 						})
 				.setNegativeButton(R.string.cancel,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								RenameDeleteDialog.this.getDialog().dismiss();
+								dialog.dismiss();
 							}
 						});
 		return builder.create();

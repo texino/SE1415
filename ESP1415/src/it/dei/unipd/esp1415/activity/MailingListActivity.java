@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,8 +34,10 @@ public class MailingListActivity extends Activity {
 	private List<String> items;
 	private ArrayAdapter<String> adapter;
 	private Context context;
-	private AlertDialog.Builder deleteDialog;
-	private AlertDialog.Builder addDialog;
+	private AlertDialog.Builder deleteBuilder;
+	private AlertDialog.Builder addBuilder;
+	private AlertDialog addDialog;
+	private AlertDialog deleteDialog;
 	private String mailString;
 	private ListView lv;
 	private boolean isAddDialogOpen;
@@ -67,72 +70,31 @@ public class MailingListActivity extends Activity {
 		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_plus))
-				.withButtonColor(R.color.fab_color)
+				.withButtonColor(getResources().getColor(R.color.fab_color))
 				.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
 				.withMargins(0, 0, 16, 16).create();
 		// set the listener to FAB button
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				addDialog = new AlertDialog.Builder(context);
+				createAddDialog();
 				isAddDialogOpen = true;
-				LayoutInflater inflater = getLayoutInflater();
-				View dialoglayout = inflater.inflate(R.layout.dialog_rename,
-						null);
-				addedMail = (EditText) dialoglayout
-						.findViewById(R.id.edittextrename);
-				addDialog
-						.setView(dialoglayout)
-						.setTitle(R.string.mail_dialog_title1)
-						.setPositiveButton(R.string.conferma,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int id) {
-										String newMail = addedMail.getText()
-												.toString();
-										if (newMail.equals("")) {
-											Toast.makeText(context,
-													R.string.ritenta,
-													Toast.LENGTH_SHORT).show();
-										} else {
-											adapter.add(newMail);
-											saveData();
-										}
-										isAddDialogOpen = false;
-									}
-								})
-						.setNegativeButton(R.string.cancel,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int id) {
-										dialog.dismiss();
-										isAddDialogOpen = false;
-									}
-								}).create().setOnDismissListener(
-				new DialogInterface.OnDismissListener() {
-
-					@Override
-					public void onDismiss(DialogInterface dialog) {
-						isAddDialogOpen = false;
-					}
-				});
+				addDialog = addBuilder.create();
 				addDialog.show();
 			}
-		});/*
-		if (savedInstanceState != null)
-			onRestoreInstanceState(savedInstanceState);*/
+		});
 	}
 
 	// saving the state of the activity
 	public void onSaveInstanceState(Bundle state) {
 		if (isAddDialogOpen) {
+			addDialog.dismiss();
 			state.putString("newMail", addedMail.getText().toString());
 			state.putBoolean("addDialog", isAddDialogOpen);
 		} else if (isDeleteDialogOpen) {
-			state.putBoolean("deleteDialog", isDeleteDialogOpen);
+			deleteDialog.dismiss();
 			state.putString("deleteMail", mailString);
+			state.putBoolean("deleteDialog", isDeleteDialogOpen);
 		}
 		super.onSaveInstanceState(state);
 	}
@@ -142,12 +104,17 @@ public class MailingListActivity extends Activity {
 		isAddDialogOpen = state.getBoolean("addDialog", false);
 		isDeleteDialogOpen = state.getBoolean("deleteDialog", false);
 		if (isAddDialogOpen) {
-			fabButton.performClick();
-			addedMail.setText(state.getCharSequence("newMail").toString());
+			createAddDialog();
+			addedMail.setText(state.getString("newMail"));
+			addDialog = addBuilder.create();
+			addDialog.show();
+			isAddDialogOpen = true;
 		} else if (isDeleteDialogOpen) {
-			mailString = state.getCharSequence("deleteMail").toString();
+			mailString = state.getString("deleteMail");
 			createDeleteDialog();
+			deleteDialog = deleteBuilder.create();
 			deleteDialog.show();
+			isDeleteDialogOpen = true;
 		}
 	}
 
@@ -155,14 +122,64 @@ public class MailingListActivity extends Activity {
 	protected boolean onLongListItemClick(View v, int pos, long id) {
 		mailString = adapter.getItem(pos);
 		createDeleteDialog();
+		deleteDialog = deleteBuilder.create();
 		deleteDialog.show();
 		isDeleteDialogOpen = true;
 		return true;
 	}
 
+	private void createAddDialog() {
+		addBuilder = new AlertDialog.Builder(context);
+		LayoutInflater inflater = getLayoutInflater();
+		View dialoglayout = inflater.inflate(R.layout.dialog_rename, null);
+		addedMail = (EditText) dialoglayout.findViewById(R.id.edittextrename);
+		addBuilder
+				.setView(dialoglayout)
+				.setTitle(R.string.mail_dialog_title1)
+				.setPositiveButton(R.string.conferma,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								String newMail = addedMail.getText().toString();
+								if (newMail.equals("")) {
+									Toast.makeText(context, R.string.ritenta,
+											Toast.LENGTH_SHORT).show();
+								} else {
+									adapter.add(newMail);
+									saveData();
+								}
+								isAddDialogOpen = false;
+							}
+						})
+				.setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.dismiss();
+								isAddDialogOpen = false;
+							}
+						}).create();
+		addBuilder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					isAddDialogOpen = false;
+					dialog.dismiss();
+					return true;
+				}
+				return false;
+
+			}
+		});
+		addBuilder.setCancelable(false);
+	}
+
 	private void createDeleteDialog() {
 		// create the dialog
-		deleteDialog = new AlertDialog.Builder(context)
+		deleteBuilder = new AlertDialog.Builder(context)
 				.setTitle(R.string.mail_dialog_title2)
 				.setMessage(mailString)
 				.setPositiveButton(R.string.conferma,
@@ -183,14 +200,22 @@ public class MailingListActivity extends Activity {
 							}
 						});
 		;
-		deleteDialog.create().setOnCancelListener(
-				new DialogInterface.OnCancelListener() {
-					
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						isDeleteDialogOpen = false;
-					}
-				});
+		deleteBuilder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					isDeleteDialogOpen = false;
+					dialog.dismiss();
+					return true;
+				}
+				return false;
+
+			}
+		});
+		deleteBuilder.setCancelable(false);
 	}
 
 	private List<String> getData() {
