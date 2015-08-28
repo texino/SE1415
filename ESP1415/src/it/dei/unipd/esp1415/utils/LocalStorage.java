@@ -713,4 +713,9 @@ public class LocalStorage {
 			throw e;
 		}
 	}
+		
+		public static void setSystemLanguage(String language){
+			//TODO
+		}
+
 }

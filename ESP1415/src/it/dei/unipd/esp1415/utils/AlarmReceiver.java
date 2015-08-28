@@ -73,9 +73,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 						intentClick, Intent.FLAG_ACTIVITY_NEW_TASK);
 				// build the notification
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-						context).setSmallIcon(R.drawable.plus_circle)
-						.setContentTitle(context.getString(R.string.notification_title))
-						.setContentText(context.getString(R.string.notification_message))
+						context)
+						.setSmallIcon(R.drawable.plus_circle)
+						.setContentTitle(
+								context.getString(R.string.notification_title))
+						.setContentText(
+								context.getString(R.string.notification_message))
 						.setLights(Color.GREEN, 1000, 1000).setAutoCancel(true)
 						.setContentIntent(pIntent);
 				// check and set notification settings

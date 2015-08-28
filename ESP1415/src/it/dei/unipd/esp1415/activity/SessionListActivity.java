@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,6 +27,7 @@ public class SessionListActivity extends FragmentActivity {
 
 	private FloatingActionButton fabButton;
 	private boolean isSessionRunning;
+	private String language;
 	public static final String RUNNING = "RUNNING";
 
 	@Override
@@ -33,7 +36,9 @@ public class SessionListActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		// set the activity layout
 		setContentView(R.layout.activity_session_list_layout);
-
+		language = PreferenceStorage.getSimpleData(this,
+				SettingsActivity.languageKey);
+		LocalStorage.setSystemLanguage(language);
 		// create and set FAB button
 		fabButton = new FloatingActionButton.Builder(this)
 				.withDrawable(getResources().getDrawable(R.drawable.ic_plus))

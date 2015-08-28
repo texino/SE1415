@@ -1,6 +1,7 @@
 package it.dei.unipd.esp1415.activity;
 
 import it.dei.unipd.esp1415.utils.AlarmReceiver;
+import it.dei.unipd.esp1415.utils.LocalStorage;
 import it.dei.unipd.esp1415.utils.PreferenceStorage;
 
 import java.util.Calendar;
@@ -78,7 +79,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 		// activity context
 		context = this;
-		
+
 		singleRateString = getString(R.string.single_rate_summary);
 		multiRateString = getString(R.string.multi_rate_summary);
 
@@ -215,7 +216,7 @@ public class SettingsActivity extends PreferenceActivity {
 							language = itKey;
 							PreferenceStorage.storeSimpleData(context,
 									languageKey, language);
-							// TODO richiamare il metodo LocalStorage passargli language
+							LocalStorage.setSystemLanguage(language);
 							// update summary
 							languagePref.setSummary(languageList[0]);
 							break;
@@ -224,7 +225,7 @@ public class SettingsActivity extends PreferenceActivity {
 							language = enKey;
 							PreferenceStorage.storeSimpleData(context,
 									languageKey, language);
-							// TODO richiamare il metodo LocalStorage
+							LocalStorage.setSystemLanguage(language);
 							// update summary
 							languagePref.setSummary(languageList[1]);
 							break;
@@ -331,7 +332,8 @@ public class SettingsActivity extends PreferenceActivity {
 			if (stringLanguage.equals("")) {
 				selectedLanguage = 0;
 				stringLanguage = itKey;
-				PreferenceStorage.storeSimpleData(context, languageKey, stringLanguage);
+				PreferenceStorage.storeSimpleData(context, languageKey,
+						stringLanguage);
 				// set summary
 				preference.setSummary(languageList[0]);
 			} else {
@@ -339,7 +341,8 @@ public class SettingsActivity extends PreferenceActivity {
 					selectedLanguage = 0;
 				else
 					selectedLanguage = 1;
-				PreferenceStorage.storeSimpleData(context, languageKey, stringLanguage);
+				PreferenceStorage.storeSimpleData(context, languageKey,
+						stringLanguage);
 				// set summary
 				preference.setSummary(languageList[selectedLanguage]);
 			}
