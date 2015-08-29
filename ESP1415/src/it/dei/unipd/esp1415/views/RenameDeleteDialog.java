@@ -45,14 +45,17 @@ public class RenameDeleteDialog extends DialogFragment {
 
 	// saving the state of the dialog
 	public void onSaveInstanceState(Bundle state) {
+		state.putString("id", sessionId);
 		state.putBoolean("garbage", isRunning);
 		super.onSaveInstanceState(state);
 	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		if (savedInstanceState != null)
+		if (savedInstanceState != null) {
+			sessionId = savedInstanceState.getString("id");
 			isRunning = savedInstanceState.getBoolean("garbage");
+		}
 		// get activity context (for fragment)
 		context = getActivity();
 		title = getString(R.string.title_dialog_rename_delete);
