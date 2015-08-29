@@ -46,7 +46,7 @@ public class RenameDeleteDialog extends DialogFragment {
 	// saving the state of the dialog
 	public void onSaveInstanceState(Bundle state) {
 		state.putString("id", sessionId);
-		state.putBoolean("garbage", isRunning);
+		state.putBoolean("running", isRunning);
 		super.onSaveInstanceState(state);
 	}
 
@@ -54,7 +54,7 @@ public class RenameDeleteDialog extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			sessionId = savedInstanceState.getString("id");
-			isRunning = savedInstanceState.getBoolean("garbage");
+			isRunning = savedInstanceState.getBoolean("running");
 		}
 		// get activity context (for fragment)
 		context = getActivity();
@@ -89,11 +89,10 @@ public class RenameDeleteDialog extends DialogFragment {
 				// fragment update
 				refreshfragment();
 				// toast to confirm deletion
-				Toast.makeText(
-						context,
-						R.string.dialog_message1 + sessionName
-								+ R.string.dialog_message2, Toast.LENGTH_SHORT)
-						.show();
+				String message1 = getString(R.string.dialog_message1);
+				String message2 = getString(R.string.dialog_message2);
+				Toast.makeText(context, message1 + " " + sessionName + " " + message2,
+						Toast.LENGTH_SHORT).show();
 				RenameDeleteDialog.this.getDialog().dismiss();
 			}
 		});
