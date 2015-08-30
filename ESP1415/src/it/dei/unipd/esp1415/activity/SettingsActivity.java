@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
@@ -62,6 +63,9 @@ public class SettingsActivity extends PreferenceActivity {
 	private static Context context;
 	private String singleRateString;
 	private String multiRateString;
+	private boolean rateDialogOpen;
+	private boolean languageDialogOpen;
+	private boolean timeDialogOpen;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -96,9 +100,31 @@ public class SettingsActivity extends PreferenceActivity {
 		timePickerDialog = new TimePickerDialog(this, mOnTimeSetListener, hour,
 				minutes, true);
 		timePickerDialog.setTitle(R.string.alarm_dialog_title);
+		timePickerDialog.setCancelable(false);
+		timePickerDialog.setButton(Dialog.BUTTON_NEGATIVE,
+				getString(R.string.cancel),
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						timeDialogOpen = false;
+
+					}
+				});
+		timePickerDialog
+				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						timeDialogOpen = false;
+
+					}
+				});
 		alarmPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
 				timePickerDialog.show();
+				timeDialogOpen = true;
 				return true;
 			}
 		});
@@ -125,9 +151,12 @@ public class SettingsActivity extends PreferenceActivity {
 						vibrationPref.setEnabled(check);
 						alarmPref.setEnabled(check);
 						// if checked set alarm
-						if (check)
+						if (check) {
 							setAlarm(hour, minutes, context);
-						else
+							Toast.makeText(context, R.string.alarm_confirm,
+									Toast.LENGTH_SHORT).show();
+							;
+						} else
 							cancelAlarm();
 						return true;
 					}
@@ -137,6 +166,7 @@ public class SettingsActivity extends PreferenceActivity {
 		final Preference ratePref = (Preference) findPreference("sampleratekey");
 		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
 		builder1.setTitle(R.string.rate_dialog_title);
+		builder1.setCancelable(false);
 		builder1.setSingleChoiceItems(rateList, selectedRate,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int rate) {
@@ -184,12 +214,14 @@ public class SettingsActivity extends PreferenceActivity {
 							break;
 						}
 						sampleRateDialog.dismiss();
+						rateDialogOpen = false;
 					}
 				});
 		sampleRateDialog = builder1.create();
 		ratePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
 				sampleRateDialog.show();
+				rateDialogOpen = true;
 				return true;
 			}
 		});
@@ -206,6 +238,7 @@ public class SettingsActivity extends PreferenceActivity {
 		final Preference languagePref = (Preference) findPreference("languagekey");
 		AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
 		builder2.setTitle(R.string.language_dialog_title);
+		builder2.setCancelable(false);
 		builder2.setSingleChoiceItems(languageList, selectedLanguage,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int choice) {
@@ -231,6 +264,7 @@ public class SettingsActivity extends PreferenceActivity {
 							break;
 						}
 						languageDialog.dismiss();
+						languageDialogOpen = false;
 					}
 				});
 		languageDialog = builder2.create();
@@ -238,6 +272,7 @@ public class SettingsActivity extends PreferenceActivity {
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 					public boolean onPreferenceClick(Preference preference) {
 						languageDialog.show();
+						languageDialogOpen = true;
 						return true;
 					}
 				});
@@ -252,6 +287,58 @@ public class SettingsActivity extends PreferenceActivity {
 			ratePref.setEnabled(false);
 			durationPref.setEnabled(false);
 			mailPref.setEnabled(false);
+		}
+	}
+
+	// saving the state of the activity
+	public void onSaveInstanceState(Bundle state) {
+		state.putBoolean("rate", rateDialogOpen);
+		state.putBoolean("language", languageDialogOpen);
+		state.putBoolean("timeBool", timeDialogOpen);
+		if (rateDialogOpen)
+			sampleRateDialog.dismiss();
+		if (languageDialogOpen)
+			languageDialog.dismiss();
+		if (timeDialogOpen) {
+			state.putBundle("time", timePickerDialog.onSaveInstanceState());
+			timePickerDialog.dismiss();
+		}
+		super.onSaveInstanceState(state);
+	}
+
+	@Override
+	public void onPause() {
+
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (rateDialogOpen)
+			sampleRateDialog.show();
+		if (languageDialogOpen)
+			languageDialog.show();
+		if (timeDialogOpen) {
+			timePickerDialog.show();
+		}
+	}
+
+	// restore the state of the activity
+	public void onRestoreInstanceState(Bundle state) {
+		// Always call the superclass so it can restore the view hierarchy
+		super.onRestoreInstanceState(state);
+		rateDialogOpen = state.getBoolean("rate");
+		languageDialogOpen = state.getBoolean("language");
+		timeDialogOpen = state.getBoolean("timeBool");
+		if (rateDialogOpen)
+			sampleRateDialog.show();
+		if (languageDialogOpen)
+			languageDialog.show();
+		if (timeDialogOpen) {
+			Bundle bundle = state.getBundle("time");
+			timePickerDialog.onRestoreInstanceState(bundle);
+			timePickerDialog.show();
 		}
 	}
 
@@ -451,6 +538,8 @@ public class SettingsActivity extends PreferenceActivity {
 			bindPreferenceSummaryToValue(findPreference("alarmtimekey"));
 			// set the alarm
 			setAlarm(hour, minutes, context);
+			timePickerDialog.dismiss();
+			timeDialogOpen = false;
 		}
 	};
 

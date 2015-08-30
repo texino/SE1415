@@ -84,6 +84,7 @@
     <string name="message_24h">Forse è troppo, riprova!</string>
     <string name="single_rate_summary">campione al secondo</string>
     <string name="multi_rate_summary">campioni al secondo</string>
+    <string name="alarm_confirm">Notifica attivata!</string>
     <!-- Notification strings -->
     <string name="notification_title">Fall Detector</string>
     <string name="notification_message">Clicca per iniziare una nuova sessione</string>

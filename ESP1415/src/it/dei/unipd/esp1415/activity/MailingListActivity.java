@@ -101,6 +101,8 @@ public class MailingListActivity extends Activity {
 
 	// restore the state of the activity
 	public void onRestoreInstanceState(Bundle state) {
+		// Always call the superclass so it can restore the view hierarchy
+		super.onRestoreInstanceState(state);
 		isAddDialogOpen = state.getBoolean("addDialog", false);
 		isDeleteDialogOpen = state.getBoolean("deleteDialog", false);
 		if (isAddDialogOpen) {
@@ -243,5 +245,9 @@ public class MailingListActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		items = getData();
+		if (isDeleteDialogOpen)
+			deleteDialog.show();
+		if (isAddDialogOpen)
+			addDialog.show();
 	}
 }
